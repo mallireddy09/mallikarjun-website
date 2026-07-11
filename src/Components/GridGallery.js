@@ -6,9 +6,24 @@ function GridGallery({ items, altPrefix = "item" }) {
     <GridGalleryStyled>
       {items.map((item) => (
         <div key={item.id} className="gallery-item">
-          <div className="image">
-            <img src={item.image} alt={`${altPrefix}_${item.id}`} />
-          </div>
+          {item.image ? (
+            <div className="image">
+              <img
+                src={item.image}
+                alt={`${altPrefix}_${item.id}`}
+                loading="lazy"
+              />
+            </div>
+          ) : (
+            <div className="text-card">
+              <span className="issuer">{item.by}</span>
+              {(item.month || item.date) && (
+                <span className="issued">
+                  {[item.month, item.date].filter(Boolean).join(" ")}
+                </span>
+              )}
+            </div>
+          )}
           <div className="title">
             <a href={item.link} target="_blank" rel="noreferrer">
               {item.title}
@@ -23,11 +38,17 @@ function GridGallery({ items, altPrefix = "item" }) {
 const GridGalleryStyled = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-column-gap: 2rem;
-  grid-row-gap: 2rem;
-  @media screen and (max-width: 770px) {
-    grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+
+  @media screen and (max-width: 900px) {
+    gap: 1.25rem;
   }
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .gallery-item {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
@@ -35,29 +56,72 @@ const GridGalleryStyled = styled.div`
     border-radius: 16px;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    min-width: 0;
+
     &:hover {
       transform: translateY(-4px);
       box-shadow: var(--card-hover-shadow);
       border-color: var(--primary-color);
     }
+
+    @media (hover: none) {
+      &:hover {
+        transform: none;
+      }
+    }
   }
+
   .image {
     width: 100%;
     overflow: hidden;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
     border-radius: 12px;
+    aspect-ratio: 16 / 10;
+    background: var(--background-dark-grey);
+
     img {
       width: 100%;
-      height: 90%;
+      height: 100%;
       object-fit: cover;
       border-radius: 8px;
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
       &:hover {
         cursor: pointer;
         transform: scale(1.04);
       }
     }
   }
+
+  .text-card {
+    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 12px;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--primary-color-rgb), 0.12),
+      rgba(var(--primary-color-rgb), 0.04)
+    );
+    border: 1px solid var(--glass-border);
+
+    .issuer {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--primary-color);
+    }
+    .issued {
+      font-size: 0.9rem;
+      color: var(--font-light-color);
+    }
+  }
+
   .title {
     a {
       font-size: 1rem;
@@ -66,10 +130,12 @@ const GridGalleryStyled = styled.div`
       display: inline-block;
       color: var(--white-color);
       cursor: pointer;
-      transition: all 0.3s ease;
-      &:hover {
-        color: var(--primary-color);
-      }
+      transition: color 0.3s ease;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
+    a:hover {
+      color: var(--primary-color);
     }
   }
 `;

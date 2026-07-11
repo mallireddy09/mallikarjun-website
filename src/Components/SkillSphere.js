@@ -2,17 +2,13 @@ import React, { useEffect } from 'react'
 import './styles.css'
 import { initSkillSphere } from '../helper/sphere'
 
-const SkillSphere = props => {
-    const {theme} = props;
-
+const SkillSphere = () => {
     useEffect(() => {
-        if (theme) {
-            initSkillSphere(theme)
-        }
-    },[theme])
+        initSkillSphere()
+    }, [])
 
   return (
-    <div id="mainSphereContainer" style={{display: "flex", justifyContent: "center", alignItems: "center",width:'60%',}}>
+    <div id="mainSphereContainer">
          <canvas id="myCanvas" width="100%" height="100%"></canvas>
         <div id="svg-container" style={{display:"none"}}>
         <svg viewBox="0 0 128 128">

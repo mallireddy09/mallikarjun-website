@@ -1,152 +1,74 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
 
-function Particle({theme})  {
-  const particlesInit = useCallback(async engine => {
-    await loadSlim(engine);
-}, []);
+function getParticleOptions(theme) {
+  const color = theme === "light-theme" ? "#007bff" : "#ffffff";
+  const isMobile =
+    typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
+  const prefersReduced =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// const particlesLoaded = useCallback(async container => {
-//     await console.log(container);
-// }, []);
+  return {
+    fpsLimit: isMobile ? 60 : 120,
+    interactivity: {
+      events: {
+        onClick: { enable: !isMobile, mode: "push" },
+        onHover: { enable: !isMobile && !prefersReduced, mode: "repulse" },
+        resize: true,
+      },
+      modes: {
+        push: { quantity: 3 },
+        repulse: { distance: 150, duration: 0.4 },
+      },
+    },
+    particles: {
+      color: { value: color },
+      links: {
+        color,
+        distance: 140,
+        enable: !prefersReduced,
+        opacity: 0.6,
+        width: 0.8,
+      },
+      move: {
+        direction: "none",
+        enable: !prefersReduced,
+        outModes: { default: "bounce" },
+        random: false,
+        speed: isMobile ? 1.5 : 3,
+        straight: false,
+      },
+      number: {
+        density: { enable: true, area: 1600 },
+        value: prefersReduced ? 16 : isMobile ? 28 : 55,
+      },
+      opacity: { value: 0.6 },
+      shape: { type: "circle" },
+      size: { value: { min: 1, max: isMobile ? 2.5 : 3.5 } },
+    },
+    detectRetina: true,
+  };
+}
+
+function Particle({ theme }) {
+  const particlesInit = useCallback(async (engine) => {
+    await loadSlim(engine);
+  }, []);
+
+  const options = useMemo(() => getParticleOptions(theme), [theme]);
 
   return (
-    <div className="App">
-     <Particles
-            width="100%"
-            height="100vh" 
-            id="tsparticles"
-            init={particlesInit}
-            // loaded={particlesLoaded}
-            options={{
-                // background: {
-                //     color: {
-                //         value: "#0d47a1",
-                //     },
-                // },
-                fpsLimit: 120,
-                interactivity: {
-                    events: {
-                        onClick: {
-                            enable: true,
-                            mode: "push",
-                        },
-                        onHover: {
-                            enable: true,
-                            mode: "repulse",
-                        },
-                        resize: true,
-                    },
-                    modes: {
-                      push: {
-                          quantity: 4,
-                      },
-                      repulse: {
-                          distance: 200,
-                          duration: 0.4,
-                      },
-                  },
-              },
-            //   particles: {
-            //     number:{
-            //       value:109,
-            //       density:{
-            //         enable: true,
-            //         value_area: 1200
-            //       }
-            //     },
-            //     color:{
-            //       value: '#636e72'
-            //     },
-            //     shape:{
-            //       type: 'circle',
-            //       stroke: {
-            //         width: 0
-            //       },
-            //       polygon:{
-            //         nb_sides: 6
-            //       }
-            //     },
-            //     line_linked: {
-            //       enable: false,
-            //       distance: 150,
-            //       opacity: 0.9,
-            //       width: 1,
-            //       shadow: {
-            //         enable: true,
-            //         color: "#e74c3c",
-            //         blur: 5
-            //       }
-            //     },
-            //     move:{
-            //       enable: true,
-            //       random: true,
-            //       speed: .6,
-            //       attract:{
-            //         rotateX: 600,
-            //         rotateY: 1200
-            //       }
-            //     },
-            //     size: {
-            //       value: 4,
-            //       random: true,
-            //       anim:{
-            //         speed: 40,
-            //         size_min: 0.1
-            //       }
-            //     },
-            //     opacity: {
-            //       value: 0.8,
-            //       anim: {
-            //         speed: 1,
-            //         opacity_min: 0.1
-            //       }
-            //     }
-            //   },
-              particles: {
-                  color: {
-                      value: `${theme === 'light-theme' ? '#007bff' : '#ffffff'}`,
-                    //   value: `${theme === 'light-theme' ? '#3498db' : '#1abc9c'}`,
-                  },
-                  links: {
-                      color: `${theme === 'light-theme' ? '#007bff' : '#ffffff'}`,
-                    //   color: `${theme === 'light-theme' ? '#3498db' : '#1abc9c'}`,
-                      distance: 150,
-                      enable: true,
-                      opacity: 0.5,
-                      width: 1,
-                  },
-                  move: {
-                      direction: "none",
-                      enable: true,
-                      outModes: {
-                          default: "bounce",
-                      },
-                      random: false,
-                      speed: 6,
-                      straight: false,
-                  },number: {
-                    density: {
-                        enable: true,
-                        area: 1600,
-                    },
-                    value: 80,
-                },
-                opacity: {
-                    value: 0.5,
-                },
-                shape: {
-                    type: "circle",
-                },
-                size: {
-                    value: { min: 1, max: 5 },
-                },
-            },
-            detectRetina: true,
-        }}
+    <Particles
+      width="100%"
+      height="100%"
+      id="tsparticles"
+      init={particlesInit}
+      options={options}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
     />
-    </div>
   );
 }
+
 export default Particle;

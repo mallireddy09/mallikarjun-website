@@ -18,18 +18,14 @@ const TitleStyled = styled.div`
   position: relative;
   h2 {
     color: var(--white-color);
-    font-size: 3.1rem;
+    font-size: clamp(1.75rem, 5vw, 3.1rem);
     font-weight: 800;
     text-transform: uppercase;
     position: relative;
     padding-bottom: 0.7rem;
     letter-spacing: -0.01em;
-    @media screen and (max-width: 496px) {
-      font-size: 2.5rem;
-    }
-    @media screen and (max-width: 370px) {
-      font-size: 1.8rem;
-    }
+    word-wrap: break-word;
+
     &::before {
       content: "";
       position: absolute;
@@ -57,21 +53,15 @@ const TitleStyled = styled.div`
     span {
       font-weight: 900;
       color: var(--underlay-text-color);
-      font-size: 5rem;
+      font-size: clamp(2rem, 8vw, 5rem);
       position: absolute;
       left: 0;
       top: 30%;
       z-index: -1;
       user-select: none;
-      @media screen and (max-width: 620px) {
-        font-size: 4rem;
-      }
-      @media screen and (max-width: 496px) {
-        font-size: 3rem;
-      }
-      @media screen and (max-width: 370px) {
-        font-size: 2rem;
-      }
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
     }
   }
 `;

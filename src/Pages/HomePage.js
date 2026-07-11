@@ -5,11 +5,10 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import Particle from "../Components/Particle";
 import { ReactTyped as Typed } from "react-typed";
 import PrimaryButton from "../Components/PrimaryButton";
-import { NavLink } from "react-router-dom";
+import { PROFILE, HERO_ROLES, HERO_SUMMARY } from "../data/profile";
 import "./styles.css";
 
-function HomePage(props) {
-  const { theme } = props;
+function HomePage({ theme }) {
   return (
     <HomePageStyled>
       <div className="particle-con">
@@ -17,48 +16,40 @@ function HomePage(props) {
       </div>
 
       <div className="hero-glow" />
-      <div className="underlayText">Mallikarjun Reddy</div>
+      <div className="underlayText">{PROFILE.name}</div>
       <div className="typography">
         <div className="status-badge">
           <span className="pulse" />
-          Open to opportunities
+          Data Engineer at NVIDIA
         </div>
         <h1>
           Hi, I'm{" "}
-          <span className="myname gradient-text">
-            Mallikarjun Reddy
-          </span>
+          <span className="myname gradient-text">{PROFILE.name}</span>
         </h1>
         <h5>
           A{" "}
           <Typed
-            strings={[
-              "Senior Data Engineer",
-              "AI/ML Engineer",
-              "Data Scientist",
-              "Data Engineer",
-              "Software Engineer",
-            ]}
+            strings={HERO_ROLES}
             typeSpeed={80}
             backSpeed={40}
             loop
             className="typing"
           />
         </h5>
-        <p>
-          Specializing in Data Engineering, AI/ML, and Data Science with 6+
-          years of experience, I'm dedicated to driving innovation and
-          building scalable data solutions. Let's collaborate to transform
-          data into actionable strategies and elevate your projects to new
-          heights!
-        </p>
+        <p>{HERO_SUMMARY}</p>
         <div className="social">
           <div className="icons">
-            <a href="https://github.com/mallireddy09" className="icon i-github" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <a
+              href={PROFILE.github}
+              className="icon i-github"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+            >
               <GithubIcon />
             </a>
             <a
-              href="https://www.linkedin.com/in/mallireddy09/"
+              href={PROFILE.linkedin}
               className="icon i-linkedin"
               target="_blank"
               rel="noreferrer"
@@ -67,10 +58,8 @@ function HomePage(props) {
               <LinkedInIcon />
             </a>
           </div>
-          <PrimaryButton icon={true} title={"Resume"} />
-          <NavLink to="/about">
-            <PrimaryButton icon={false} title={"Read more"} />
-          </NavLink>
+          <PrimaryButton title="Resume" showDownloadIcon />
+          <PrimaryButton title="Read more" href="#about" />
         </div>
 
         <div className="scroll-indicator">
@@ -86,16 +75,28 @@ function HomePage(props) {
 const HomePageStyled = styled.header`
   width: 100%;
   height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   overflow: hidden;
+
+  .particle-con {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
 
   .hero-glow {
     position: absolute;
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
+    width: min(600px, 120vw);
+    height: min(600px, 120vw);
     background: radial-gradient(
       circle,
       rgba(var(--primary-color-rgb), 0.08) 0%,
@@ -126,10 +127,12 @@ const HomePageStyled = styled.header`
     border: 1px solid var(--border-color);
     background: var(--glass-bg);
     backdrop-filter: blur(8px);
-    font-size: 0.85rem;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
     color: var(--primary-color);
     font-weight: 600;
     margin-bottom: 1.5rem;
+    max-width: 100%;
+    white-space: nowrap;
     .pulse {
       width: 8px;
       height: 8px;
@@ -150,16 +153,19 @@ const HomePageStyled = styled.header`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80%;
+    width: min(90%, 900px);
     max-width: 900px;
-    padding: 0 10px;
+    padding: calc(var(--fixed-chrome) + 0.5rem) 1rem 2rem;
     line-height: 1.5;
     z-index: 1;
     @media screen and (max-width: 768px) {
-      width: 90%;
+      width: min(94%, 900px);
+      top: 52%;
     }
-    @media screen and (max-width: 502px) {
-      width: 95%;
+    @media screen and (max-width: 480px) {
+      width: 100%;
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
     h1 {
       margin-bottom: 0.5rem;
@@ -178,7 +184,7 @@ const HomePageStyled = styled.header`
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
       margin-top: 1.5rem;
       a {
         display: inline-flex;
@@ -187,27 +193,32 @@ const HomePageStyled = styled.header`
       .icons {
         display: flex;
         align-items: center;
+        gap: 0.5rem;
         .icon {
           border: 2px solid var(--border-color);
           display: flex;
           align-items: center;
           justify-content: center;
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
           &:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
             transform: translateY(-3px);
             box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.3);
           }
-          &:not(:last-child) {
-            margin-right: 0.5rem;
-          }
           svg {
-            margin: 0.5rem;
+            margin: 0;
+            font-size: 1.25rem;
           }
         }
+      }
+      @media screen and (max-width: 480px) {
+        gap: 0.65rem;
       }
       .i-github:hover {
         border-color: #5f4687;

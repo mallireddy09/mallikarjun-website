@@ -4,94 +4,22 @@ import { InnerLayout } from "../styles/Layouts";
 import Title from "../Components/Title";
 import AnimatedSection from "./AnimatedSection";
 import SkillSphere from "./SkillSphere";
+import skillsSections from "../data/skills";
+import { PROFILE } from "../data/profile";
 import "./styles.css";
 
-const skillsSections = [
-  {
-    heading: "Core Technologies",
-    categories: [
-      {
-        label: "Languages & Processing",
-        items: ["Python", "SQL", "Java", "PySpark", "REST APIs", "JavaScript", "React", "Linux", "GenAI", "AI/ML", "A/B Testing"],
-      },
-      {
-        label: "Databases",
-        items: ["MySQL", "SQL Server (T-SQL)", "Stored Procedures", "PostgreSQL", "Oracle", "MongoDB", "DynamoDB"],
-      },
-    ],
-  },
-  {
-    heading: "Data & Big Data",
-    categories: [
-      {
-        label: "Data Warehousing & Tools",
-        items: ["Snowflake", "Redshift", "BigQuery", "Databricks", "Delta Lake", "Apache Beam", "dbt"],
-      },
-      {
-        label: "Big Data & Ecosystems",
-        items: ["Hadoop", "HDFS", "MapReduce", "Hive", "HBase", "SparkSQL", "Spark", "Airflow", "Presto", "Spark Streaming", "Kafka", "Flink"],
-      },
-    ],
-  },
-  {
-    heading: "Cloud Platforms",
-    categories: [
-      {
-        label: "AWS",
-        items: ["S3", "Lambda", "EMR", "SageMaker", "Glue", "SNS", "SQS", "IAM", "ECS", "EKS", "Step Functions"],
-      },
-      {
-        label: "Azure",
-        items: ["Microsoft Fabric", "Data Lake Gen2", "Data Factory", "Synapse Analytics", "Azure Functions", "Azure SQL", "Logic Apps"],
-      },
-      {
-        label: "Snowflake & GCP",
-        items: ["Snow Pipe", "Snow Pro", "Clustering", "Materialized Views", "dbt", "Cloud Composer", "Cloud Run", "Pub/Sub", "IAM", "GCS"],
-      },
-    ],
-  },
-  {
-    heading: "Architecture & Engineering",
-    categories: [
-      {
-        label: "Data Architecture",
-        items: ["ELT/ETL Design", "Data Modeling", "Data Lakes", "Lakehouses", "Object Storage", "Data Quality", "Governance"],
-      },
-      {
-        label: "DevOps",
-        items: ["Terraform", "CloudFormation", "Docker", "Kubernetes", "Azure DevOps", "CI/CD", "Git", "Azure Monitor"],
-      },
-    ],
-  },
-  {
-    heading: "Tools & Practices",
-    categories: [
-      {
-        label: "Visualization",
-        items: ["Tableau", "Power BI", "Looker", "QuickSight"],
-      },
-      {
-        label: "Consulting",
-        items: ["Technical Design", "Requirements Gathering", "Documentation", "Client-Facing Communication", "Estimation"],
-      },
-      {
-        label: "Methodologies",
-        items: ["SDLC", "Agile (Scrum)", "Jira", "Confluence", "Trello", "Root Cause Analysis"],
-      },
-    ],
-  },
-];
-
 function Skills({ theme }) {
+  const leetcodeTheme = theme === "light-theme" ? "light" : "dark";
+
   return (
     <SkillsStyled>
       <AnimatedSection>
-        <Title title={"Skills"} span={"skills"} />
+        <Title title="Skills" span="skills" />
       </AnimatedSection>
 
       <AnimatedSection delay={0.05}>
         <div className="sphere-wrapper">
-          <SkillSphere theme={theme} />
+          <SkillSphere />
         </div>
       </AnimatedSection>
 
@@ -126,16 +54,10 @@ function Skills({ theme }) {
         <AnimatedSection delay={0.35}>
           <div className="leetcode-section">
             <span className="section-label">LeetCode Profile</span>
-            <a
-              href="https://leetcode.com/u/mallikarjun09/"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={PROFILE.leetcode} target="_blank" rel="noreferrer">
               <img
-                src={`https://leetcard.jacoblin.cool/mallikarjun09?theme=${
-                  theme === "light-theme" ? "light" : "dark"
-                }&font=Gowun%20Batang&ext=heatmap&border=0`}
-                alt="LeetCode stats for mallikarjun09"
+                src={`https://leetcard.jacoblin.cool/mallikarjun09?theme=${leetcodeTheme}&font=Gowun%20Batang&ext=heatmap&border=0`}
+                alt={`LeetCode stats for ${PROFILE.name}`}
                 className="leetcode-img"
               />
             </a>
@@ -158,7 +80,7 @@ const SkillsStyled = styled.section`
 
   .skills-section {
     &:not(:first-child) {
-      margin-top: 2.5rem;
+      margin-top: 1.5rem;
     }
   }
 
@@ -186,7 +108,7 @@ const SkillsStyled = styled.section`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 900px) {
       grid-template-columns: 1fr;
     }
   }
@@ -250,7 +172,7 @@ const SkillsStyled = styled.section`
   }
 
   .leetcode-section {
-    margin-top: 3rem;
+    margin-top: 1.75rem;
     .section-label {
       display: inline-block;
       font-size: 0.85rem;

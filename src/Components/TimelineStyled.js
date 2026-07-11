@@ -2,17 +2,17 @@ import styled from "styled-components";
 
 const TimelineStyled = styled.section`
   .small-title {
-    padding-bottom: 3rem;
+    padding-bottom: 1.25rem;
   }
+
   .u-small-title-margin {
-    margin-top: 4rem;
+    margin-top: 0.75rem;
   }
-  .u-small-title-no-pad {
-    padding-left: 0;
-  }
+
   .resume-content {
     border-left: 2px solid var(--border-color);
     position: relative;
+
     &::before {
       content: "";
       position: absolute;

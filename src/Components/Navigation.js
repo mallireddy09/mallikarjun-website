@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
 import avatar from "../img/arjun_image.jpg";
 import home from "../Components/Assets/home.svg";
 import darkHome from "../Components/Assets/darkHome.svg";
@@ -20,25 +19,87 @@ import skills from "../Components/Assets/skills.svg";
 import darkSkills from "../Components/Assets/darkSkills.svg";
 import darkEducation from "../Components/Assets/darkEducation.svg";
 import education from "../Components/Assets/education.svg";
+import { SECTIONS } from "../data/sections";
 
-const NAV_ITEMS = [
-  { to: "/", label: "Home", icon: home, darkIcon: darkHome, end: true },
-  { to: "/about", label: "About", icon: about, darkIcon: darkAbout },
-  { to: "/skills", label: "Skills", icon: skills, darkIcon: darkSkills },
-  { to: "/experience", label: "Experience", icon: resume, darkIcon: darkResume },
-  { to: "/education", label: "Education", icon: education, darkIcon: darkEducation },
-  { to: "/projects", label: "Projects", icon: project, darkIcon: darkProject },
-  { to: "/blogs", label: "Blogs", icon: blog, darkIcon: darkBlog },
-  { to: "/certification", label: "Certification", icon: certification, darkIcon: darkCertification },
-  { to: "/contact", label: "Contact", icon: contact, darkIcon: darkContact },
-];
+const NAV_ICONS = {
+  home: { icon: home, darkIcon: darkHome },
+  about: { icon: about, darkIcon: darkAbout },
+  skills: { icon: skills, darkIcon: darkSkills },
+  experience: { icon: resume, darkIcon: darkResume },
+  education: { icon: education, darkIcon: darkEducation },
+  projects: { icon: project, darkIcon: darkProject },
+  blogs: { icon: blog, darkIcon: darkBlog },
+  certification: { icon: certification, darkIcon: darkCertification },
+  contact: { icon: contact, darkIcon: darkContact },
+};
 
 function Navigation({ theme, onClose }) {
   const [isHovering, setIsHovering] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
   const isLight = theme === "light-theme";
 
   const handleMouseOver = useCallback(() => setIsHovering(true), []);
   const handleMouseOut = useCallback(() => setIsHovering(false), []);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const updateActiveSection = () => {
+      const elements = SECTIONS.map(({ id }) =>
+        document.getElementById(id)
+      ).filter(Boolean);
+      if (!elements.length) return;
+
+      // Activate the section that owns the upper-middle of the viewport,
+      // so sidebar matches the section filling the screen.
+      const marker = window.scrollY + window.innerHeight * 0.35;
+      let current = elements[0].id;
+
+      for (const el of elements) {
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        if (top <= marker + 1) {
+          current = el.id;
+        } else {
+          break;
+        }
+      }
+
+      const docHeight = document.documentElement.scrollHeight;
+      const scrolledToBottom =
+        window.scrollY + window.innerHeight >= docHeight - 24;
+      if (scrolledToBottom) {
+        current = elements[elements.length - 1].id;
+      }
+
+      setActiveSection((prev) => (prev === current ? prev : current));
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  const scrollToSection = (id) => (event) => {
+    event.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      setActiveSection(id);
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.history.replaceState(null, "", `/#${id}`);
+    }
+    onClose?.();
+  };
 
   return (
     <NavigationStyled>
@@ -52,23 +113,25 @@ function Navigation({ theme, onClose }) {
         />
       </div>
       <ul className="nav-items">
-        {NAV_ITEMS.map((item) => (
-          <li className="nav-item" key={item.to}>
-            <NavLink
-              to={item.to}
-              end={item.end || false}
-              className={({ isActive }) => (isActive ? "active-class" : "")}
-              onClick={onClose}
-            >
-              <img
-                src={isLight ? item.darkIcon : item.icon}
-                alt={item.label}
-                className="nav-icon"
-              />
-              {item.label}
-            </NavLink>
-          </li>
-        ))}
+        {SECTIONS.map((item) => {
+          const icons = NAV_ICONS[item.id];
+          return (
+            <li className="nav-item" key={item.id}>
+              <a
+                href={`#${item.id}`}
+                className={activeSection === item.id ? "active-class" : ""}
+                onClick={scrollToSection(item.id)}
+              >
+                <img
+                  src={isLight ? icons.darkIcon : icons.icon}
+                  alt={item.label}
+                  className="nav-icon"
+                />
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
       <footer className="footer">
         <p>
@@ -93,8 +156,8 @@ const NavigationStyled = styled.nav`
     text-align: center;
     padding: 1.8rem 0;
     img {
-      width: 130px;
-      height: 130px;
+      width: clamp(96px, 22vw, 130px);
+      height: clamp(96px, 22vw, 130px);
       border-radius: 50%;
       border: 3px solid var(--primary-color);
       box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.2);
@@ -133,7 +196,8 @@ const NavigationStyled = styled.nav`
       a {
         display: flex;
         align-items: center;
-        padding: 0.6rem 1.5rem;
+        min-height: 44px;
+        padding: 0.75rem 1.5rem;
         position: relative;
         z-index: 10;
         text-transform: uppercase;
@@ -142,6 +206,7 @@ const NavigationStyled = styled.nav`
         font-size: 0.85rem;
         letter-spacing: 1px;
         color: var(--font-light-color);
+        -webkit-tap-highlight-color: transparent;
         &:hover {
           cursor: pointer;
           color: var(--primary-color);

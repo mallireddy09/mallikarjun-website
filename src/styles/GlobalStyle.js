@@ -1,6 +1,18 @@
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
+:root {
+  --sidebar-width: 16.3rem;
+  --bp-desktop: 1200px;
+  --bp-tablet: 900px;
+  --bp-mobile: 768px;
+  --bp-small: 480px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --fixed-chrome: calc(3.75rem + var(--safe-top));
+}
 
 .light-theme{
     --primary-color: #007bff;
@@ -65,6 +77,12 @@ const GlobalStyle = createGlobalStyle`
     --glass-border: rgba(30, 34, 53, 0.5);
 }
 
+html {
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -72,19 +90,38 @@ const GlobalStyle = createGlobalStyle`
     list-style: none;
     text-decoration: none;
     font-family: 'Nunito', sans-serif;
-    font-size: 1.1rem;
 }
 
-html{
-    scroll-behavior: smooth;
+html, body {
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 body{
     background-color: var(--background-dark-color);
     color: var(--font-light-color);
+    font-size: 1.05rem;
     transition: background-color 0.5s ease, color 0.4s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+
+body.nav-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  body {
+    font-size: 0.95rem;
+  }
 }
 
 body::-webkit-scrollbar{
@@ -106,30 +143,22 @@ body::-webkit-scrollbar-track{
 a{
     font-family: inherit;
     color: inherit;
-    font-size: 1rem;
+    font-size: inherit;
     transition: color 0.3s ease;
 }
 
+img, video, canvas, svg {
+  max-width: 100%;
+}
+
 h1{
-    font-size: 4rem;
+    font-size: clamp(2rem, 5vw, 4rem);
     color: var(--white-color);
     font-weight: 800;
     letter-spacing: -0.02em;
-    line-height: 1.1;
+    line-height: 1.15;
     span{
         font-size: inherit;
-        @media screen and (max-width: 768px){
-            font-size: 3rem;
-        }
-        @media screen and (max-width: 502px){
-            font-size: 2.2rem;
-        }
-    }
-    @media screen and (max-width: 768px){
-        font-size: 3rem;
-    }
-    @media screen and (max-width: 502px){
-        font-size: 2.2rem;
     }
 }
 
@@ -139,14 +168,11 @@ h2{
 }
 
 h5{
-    font-size: 1.5rem;
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
     color: var(--white-color);
     font-weight: 600;
     span{
-        font-size: 1.5rem;
-        @media screen and (max-width: 502px){
-            font-size: 1.3rem;
-        }
+        font-size: inherit;
     }
 }
 
@@ -173,22 +199,33 @@ p{
 // Scroll Reveal Animation
 .reveal{
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(16px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
 }
 .reveal.visible{
     opacity: 1;
     transform: translateY(0);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 // Theme Toggle Button
 .theme-toggle-btn{
     position: fixed;
-    right: 1.5rem;
-    top: 1.5rem;
+    right: calc(1.5rem + var(--safe-right));
+    top: calc(1.5rem + var(--safe-top));
     width: 3rem;
     height: 3rem;
+    min-width: 44px;
+    min-height: 44px;
     border-radius: 50%;
     border: 2px solid var(--border-color);
     background-color: var(--glass-bg);
@@ -202,6 +239,7 @@ p{
     justify-content: center;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    -webkit-tap-highlight-color: transparent;
     svg{
         font-size: 1.3rem;
         transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -218,18 +256,20 @@ p{
 }
 @media screen and (max-width: 1200px){
     .theme-toggle-btn{
-        right: 5rem;
-        top: 1rem;
+        right: calc(5rem + var(--safe-right));
+        top: calc(1rem + var(--safe-top));
     }
 }
-@media screen and (max-width: 502px){
+@media screen and (max-width: 480px){
     .theme-toggle-btn{
-        width: 2.5rem;
-        height: 2.5rem;
-        right: 4.5rem;
-        top: 0.8rem;
+        width: 2.75rem;
+        height: 2.75rem;
+        min-width: 44px;
+        min-height: 44px;
+        right: calc(4.5rem + var(--safe-right));
+        top: calc(0.85rem + var(--safe-top));
         svg{
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
     }
 }
@@ -237,8 +277,7 @@ p{
 // Nav Overlay
 .nav-overlay{
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
@@ -255,18 +294,23 @@ p{
 // Nav Toggler
 .ham-burger-menu{
     position: fixed;
-    right: 1.5rem;
-    top: 0.8rem;
+    right: calc(1.25rem + var(--safe-right));
+    top: calc(0.75rem + var(--safe-top));
     display: none;
     z-index: 25;
+    -webkit-tap-highlight-color: transparent;
+    button {
+      width: 44px;
+      height: 44px;
+    }
     svg{
-        font-size: 2.2rem;
+        font-size: 2rem;
         color: var(--primary-color);
         transition: transform 0.3s ease;
     }
 }
 .nav-toggle{
-    transform: translateX(0);
+    transform: translateX(0) !important;
     z-index: 20;
 }
 @media screen and (max-width: 1200px){

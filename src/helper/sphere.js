@@ -207,8 +207,7 @@
 //     render();
 // }
 
-export const initSkillSphere = (theme) => {
-    const bgColor = theme === 'light-theme' ? '#FFF' : '#000';
+export const initSkillSphere = () => {
     const DOT_RADIUS = 64;
     const SCALE = 1.1;
     const MIN_SPEED = 0.0007;
