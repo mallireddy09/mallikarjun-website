@@ -4,12 +4,13 @@ import { initSkillSphere } from '../helper/sphere'
 
 const SkillSphere = () => {
     useEffect(() => {
-        initSkillSphere()
+        const cleanup = initSkillSphere();
+        return typeof cleanup === "function" ? cleanup : undefined;
     }, [])
 
   return (
     <div id="mainSphereContainer">
-         <canvas id="myCanvas" width="100%" height="100%"></canvas>
+         <canvas id="myCanvas" aria-hidden="true" />
         <div id="svg-container" style={{display:"none"}}>
         <svg viewBox="0 0 128 128">
             <g fill="#00979C" fillRule="evenodd">

@@ -214,6 +214,11 @@ export const initSkillSphere = () => {
     const MOUSE_SPEED = 0.05;
 
     let svgs = document.getElementById("svg-container");
+    var canvas = document.getElementById("myCanvas");
+    if (!svgs || !canvas) {
+        return () => {};
+    }
+
     let COLORS = Array(svgs?.children.length);
     let PATHS = [...svgs?.children].map((svg, i) => {
         if (svg.children[0].tagName === "g") {
@@ -235,58 +240,34 @@ export const initSkillSphere = () => {
     });
 
     const SAMPLES = PATHS.length;
-
-    var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
 
-    let width = canvas.offsetWidth;
-    let height = canvas.offsetHeight;
-
+    let width = 0;
+    let height = 0;
     let PERSPECTIVE;
     let PROJECTION_CENTER_X;
     let PROJECTION_CENTER_Y;
     let GLOBE_RADIUS;
+    let rafId = 0;
+    let disposed = false;
 
-    // function onResize() {
-    //     PERSPECTIVE = width * 0.8;
-    //     PROJECTION_CENTER_X = width;
-    //     PROJECTION_CENTER_Y = height;
-    //     GLOBE_RADIUS = Math.min(width, height) / 4;
-
-    //     width = canvas.offsetWidth;
-    //     height = canvas.offsetHeight;
-
-    //     if (window.devicePixelRatio > 1) {
-    //         canvas.width = canvas.clientWidth * 2;
-    //         canvas.height = canvas.clientHeight * 2;
-    //         ctx.scale(1.2, 1.2);
-    //     } else {
-    //         canvas.width = width;
-    //         canvas.height = height;
-    //     }
-    // }
     function onResize() {
-        // Adjust PERSPECTIVE for both desktop and mobile
+        // CSS controls display size; attributes must be numeric pixels for the buffer.
+        width = Math.max(1, Math.floor(canvas.clientWidth || canvas.offsetWidth));
+        height = Math.max(1, Math.floor(canvas.clientHeight || canvas.offsetHeight));
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
         PERSPECTIVE = width * (window.innerWidth > 768 ? 0.8 : 1.2);
-    
         PROJECTION_CENTER_X = width / (window.innerWidth > 768 ? 1.8 : 1.5);
         PROJECTION_CENTER_Y = height / 1.6;
         GLOBE_RADIUS = Math.min(width, height) / (window.innerWidth > 768 ? 2.6 : 3);
-    
-        width = canvas.offsetWidth;
-        height = canvas.offsetHeight;
-    
-        if (window.devicePixelRatio > 1) {
-            canvas.width = canvas.clientWidth * 2;
-            canvas.height = canvas.clientHeight * 2;
-            ctx.scale(2, 2);
-        } else {
-            canvas.width = width;
-            canvas.height = height;
-        }
     }
-    
-    window.addEventListener('resize', onResize);
+
+    window.addEventListener("resize", onResize);
     onResize();
 
     let PHI = Math.PI * (3.0 - Math.sqrt(5.0));
@@ -297,18 +278,18 @@ export const initSkillSphere = () => {
     let mouse_y = 0;
     let mouse_moving = false;
 
-    canvas.addEventListener('mousemove', e => {
+    const onMouseMove = (e) => {
         mouse_moving = true;
         mouse_x = e.offsetX - width / 2;
         mouse_y = e.offsetY - height / 2;
         VY = MOUSE_SPEED * mouse_x / width;
         VZ = MOUSE_SPEED * mouse_y / height;
-    });
-    canvas.addEventListener("mouseout", function (event) {
+    };
+    const onMouseOut = () => {
         mouse_moving = false;
-        
+
         function slowDownSpin() {
-            if (mouse_moving) {
+            if (mouse_moving || disposed) {
                 return;
             }
             VZ /= 1.3;
@@ -325,7 +306,10 @@ export const initSkillSphere = () => {
             setTimeout(slowDownSpin, 200);
         }
         slowDownSpin();
-    }, false);
+    };
+
+    canvas.addEventListener("mousemove", onMouseMove);
+    canvas.addEventListener("mouseout", onMouseOut);
 
     class Dot {
         constructor(i, paths) {
@@ -374,6 +358,7 @@ export const initSkillSphere = () => {
     const dots = PATHS.map((e, i) => new Dot(i, e));
 
     function render() {
+        if (disposed) return;
         ctx.clearRect(0, 0, width, height);
         dots.sort((dot1, dot2) => {
             return dot1.scaleProjected - dot2.scaleProjected;
@@ -381,9 +366,17 @@ export const initSkillSphere = () => {
         dots.forEach(dot => {
             dot.draw();
         });
-        window.requestAnimationFrame(render);
+        rafId = window.requestAnimationFrame(render);
     }
     render();
+
+    return () => {
+        disposed = true;
+        window.cancelAnimationFrame(rafId);
+        window.removeEventListener("resize", onResize);
+        canvas.removeEventListener("mousemove", onMouseMove);
+        canvas.removeEventListener("mouseout", onMouseOut);
+    };
 };
 
 
