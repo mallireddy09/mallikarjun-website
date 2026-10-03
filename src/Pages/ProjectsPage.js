@@ -10,17 +10,7 @@ const allButtons = ['All', ...new Set(projects.map(item => item.category))]
 
 function ProjectsPage() {
     const [menuItem, setMenuItems] = useState(projects);
-    const [button] = useState(allButtons);
-
-    const filter = (button) => {
-        if(button === 'All'){
-            setMenuItems(projects);
-            return;
-        }
-
-        const filteredData = projects.filter(item => item.category === button);
-        setMenuItems(filteredData);
-    }
+    const filter = (category) => setMenuItems(category === 'All' ? projects : projects.filter(item => item.category === category));
     return (
         <MainLayout>
             <AnimatedSection>
@@ -28,7 +18,7 @@ function ProjectsPage() {
             </AnimatedSection>
             <InnerLayout>
                 <AnimatedSection delay={0.1}>
-                    <Button filter={filter} button={button} />
+                    <Button filter={filter} button={allButtons} />
                 </AnimatedSection>
                 <AnimatedSection delay={0.15}>
                     <Menu menuItem={menuItem} />

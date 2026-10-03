@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import avatar from "../img/arjun_image.jpg";
 import home from "../Components/Assets/home.svg";
@@ -34,12 +34,8 @@ const NAV_ICONS = {
 };
 
 function Navigation({ theme, onClose }) {
-  const [isHovering, setIsHovering] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const isLight = theme === "light-theme";
-
-  const handleMouseOver = useCallback(() => setIsHovering(true), []);
-  const handleMouseOut = useCallback(() => setIsHovering(false), []);
 
   useEffect(() => {
     let frame = 0;
@@ -96,7 +92,7 @@ function Navigation({ theme, onClose }) {
     if (el) {
       setActiveSection(id);
       el.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.replaceState(null, "", `/#${id}`);
+      window.history.replaceState(null, "", `#${id}`);
     }
     onClose?.();
   };
@@ -107,9 +103,6 @@ function Navigation({ theme, onClose }) {
         <img
           src={avatar}
           alt="Mallikarjun Reddy"
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-          className={isHovering ? "hovering" : ""}
         />
       </div>
       <ul className="nav-items">
@@ -163,7 +156,7 @@ const NavigationStyled = styled.nav`
       box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.2);
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       object-fit: cover;
-      &.hovering {
+      &:hover {
         transform: scale(1.08);
         box-shadow: 0 0 30px rgba(var(--primary-color-rgb), 0.35);
       }

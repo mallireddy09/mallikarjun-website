@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import GithubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import XIcon from "@mui/icons-material/X";
 import Particle from "../Components/Particle";
 import { ReactTyped as Typed } from "react-typed";
 import PrimaryButton from "../Components/PrimaryButton";
@@ -56,6 +57,15 @@ function HomePage({ theme }) {
               aria-label="LinkedIn"
             >
               <LinkedInIcon />
+            </a>
+            <a
+              href={PROFILE.twitter}
+              className="icon"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="X (Twitter)"
+            >
+              <XIcon />
             </a>
           </div>
           <PrimaryButton title="Resume" showDownloadIcon />

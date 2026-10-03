@@ -5,6 +5,7 @@ export const PROFILE = {
   location: "United States",
   github: "https://github.com/mallireddy09",
   linkedin: "https://www.linkedin.com/in/mallireddy09/",
+  twitter: "https://x.com/mallireddy09",
   resume:
     "https://drive.google.com/file/d/1UppfWTSqy5KcXqWSr9PwjwqOBsqEcQPK/view?usp=sharing",
   leetcode: "https://leetcode.com/u/mallikarjun09/",

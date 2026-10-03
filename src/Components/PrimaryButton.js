@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { PROFILE } from "../data/profile";
 
-function PrimaryButton({ title, to, href, showDownloadIcon = false }) {
+function PrimaryButton({ title, href, showDownloadIcon = false }) {
   const content = (
     <>
       {showDownloadIcon && <FileDownloadOutlinedIcon />}
@@ -21,24 +20,20 @@ function PrimaryButton({ title, to, href, showDownloadIcon = false }) {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.replaceState(null, "", `/#${id}`);
+      window.history.replaceState(null, "", `#${id}`);
     }
   };
 
   return (
     <PrimaryButtonStyled>
-      {to ? (
-        <NavLink to={to}>{content}</NavLink>
-      ) : (
-        <a
-          href={href || PROFILE.resume}
-          target={isHashLink ? undefined : "_blank"}
-          rel={isHashLink ? undefined : "noreferrer"}
-          onClick={handleHashClick}
-        >
-          {content}
-        </a>
-      )}
+      <a
+        href={href || PROFILE.resume}
+        target={isHashLink ? undefined : "_blank"}
+        rel={isHashLink ? undefined : "noreferrer"}
+        onClick={handleHashClick}
+      >
+        {content}
+      </a>
     </PrimaryButtonStyled>
   );
 }

@@ -20,7 +20,7 @@ npm run build        # production build → ./build
 npm test             # Jest via react-scripts
 ```
 
-CI on `main` runs `npm install --force` and `npm run build`, then publishes `./build` to the `build` branch (GitHub Pages via `peaceiris/actions-gh-pages`).
+CI on `mallikarjun-website` runs `npm ci`, the tests, and `npm run build`, then deploys `./build` directly to GitHub Pages using the official Pages actions. Set the repository's Pages publishing source to GitHub Actions. The build uses the Pages base path for assets and the router basename.
 
 ## Layout
 
