@@ -1,7 +1,6 @@
 export const PROFILE = {
   name: "Mallikarjun Reddy",
   email: "mallireddy0912@gmail.com",
-  phone: "+1 716-544-1888",
   location: "United States",
   github: "https://github.com/mallireddy09",
   linkedin: "https://www.linkedin.com/in/mallireddy09/",

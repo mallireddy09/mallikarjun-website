@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { MainLayout, InnerLayout } from "../styles/Layouts";
 import Title from "../Components/Title";
-import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ContactItem from "../Components/ContactItem";
@@ -79,7 +78,6 @@ function ContactPage() {
             </form>
           </div>
           <div className="right-content">
-            <ContactItem title="Phone" icon={<PhoneIcon />} cont1={PROFILE.phone} />
             <ContactItem title="Email" icon={<EmailIcon />} cont1={PROFILE.email} />
             <ContactItem
               title="Address"
