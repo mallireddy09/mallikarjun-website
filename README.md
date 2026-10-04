@@ -11,7 +11,7 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 - One continuous portfolio page with section navigation and smooth scrolling
 - Sidebar open by default beside desktop content, with a three-dot toggle; phones/tablets start closed with a hamburger toggle
 - Light and dark themes, particle effects, and animated role text
-- A two-column hero with MR² branding, project/resume CTAs, and a company impact bar
+- A centered hero with matching outline project/resume CTAs and a company impact bar
 - Two-paragraph About narrative with a Key Highlights card
 - Six skills sections with every skill linked to official documentation in a new tab
 - Project category filters
@@ -89,7 +89,7 @@ The site uses hash links to scroll between sections on the same page. Append the
 - Use `Title` with `animated` for section headings, `GalleryPage` for image/text galleries, and `ResumeTimeline` for work and education entries.
 - Use `FormField` for labeled inputs and textareas. The project category `Button` is controlled by the selection in `ProjectsPage`.
 - Reuse `src/styles/shared.js` for glass surfaces and gradient text, and `src/styles/media.js` for the desktop/drawer breakpoint.
-- Reuse `BrandMark` for the existing MR² artwork and `PrimaryButton` with `variant="filled"` or the default outline for CTAs.
+- Reuse `PrimaryButton` for outline CTAs; use `showDownloadIcon` for the resume action.
 - Each skill appears once in `src/data/skills.js`; AWS IAM and GCP IAM retain their distinct documentation links. Linux belongs in DevOps, transformation tools in orchestration, and monitoring tools in observability.
 
 ## Contact

@@ -11,7 +11,6 @@ import "./styles.css";
 import IconLinks from "../Components/IconLinks";
 import { gradientText } from "../styles/shared";
 import { DRAWER_MEDIA } from "../styles/media";
-import BrandMark from "../Components/BrandMark";
 
 const SOCIAL_LINKS = [
   { key: "github", href: PROFILE.github, label: "GitHub", Icon: GithubIcon, className: "icon i-github" },
@@ -28,7 +27,7 @@ function HomePage({ theme }) {
 
       <div className="hero-glow" />
       <div className="underlayText">{PROFILE.name}</div>
-      <div className="hero-grid">
+      <div className="hero-content">
         <div className="typography">
           <div className="status-badge">
             <span className="pulse" />
@@ -58,18 +57,14 @@ function HomePage({ theme }) {
           </div>
           <div className="social">
             <div className="hero-actions">
-              <PrimaryButton title="View Projects" href="#projects" variant="filled" />
-              <PrimaryButton title="Download Resume" showDownloadIcon />
+              <PrimaryButton title="View Projects" href="#projects" />
+              <PrimaryButton title="Resume" showDownloadIcon />
             </div>
             <div className="icons">
               <IconLinks links={SOCIAL_LINKS} />
             </div>
           </div>
         </div>
-        <figure className="hero-brand" aria-label="MR²: Data, AI, and Cloud">
-          <BrandMark decorative />
-          <figcaption>DATA <span>·</span> AI <span>·</span> CLOUD</figcaption>
-        </figure>
       </div>
       <div className="scroll-indicator" aria-hidden="true">
         <div className="mouse">
@@ -160,6 +155,8 @@ const HomePageStyled = styled.header`
   .typography {
     position: relative;
     min-width: 0;
+    max-width: 800px;
+    margin: 0 auto;
     line-height: 1.5;
     z-index: 1;
     h1 {
@@ -177,7 +174,7 @@ const HomePageStyled = styled.header`
       margin-bottom: 1rem;
     }
     p {
-      max-width: 650px;
+      max-width: 800px;
       color: var(--font-light-color);
       @media screen and (max-width: 502px) {
         font-size: 0.95rem;
@@ -241,12 +238,8 @@ const HomePageStyled = styled.header`
     }
   }
 
-  .hero-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
-    align-items: center;
-    gap: clamp(1.5rem, 3vw, 3rem);
-    width: min(100%, 1320px);
+  .hero-content {
+    width: min(100%, 1000px);
     margin: 0 auto;
     padding: calc(var(--fixed-chrome) + 1.5rem) 3rem 6rem;
     position: relative;
@@ -279,44 +272,14 @@ const HomePageStyled = styled.header`
     }
   }
 
-  .hero-brand {
-    min-width: 0;
-    width: 100%;
-    border-radius: 24px;
-    background: #0f172a;
-    border: 1px solid rgba(0, 220, 236, 0.25);
-    box-shadow: 0 20px 70px rgba(var(--primary-color-rgb), 0.12);
-    overflow: hidden;
-    img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-    figcaption {
-      text-align: center;
-      padding: 0 1rem 1.75rem;
-      color: #f5f7fa;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      span { color: #00dcec; margin: 0 0.3rem; }
-    }
-  }
-
   @media screen and (max-width: 1000px) {
-    .hero-grid {
-      grid-template-columns: minmax(0, 1fr);
+    .hero-content {
       padding: calc(var(--fixed-chrome) + 1rem) 1.75rem 2.5rem;
-      gap: 2rem;
-    }
-    .hero-brand {
-      max-width: 320px;
-      justify-self: center;
     }
   }
 
   @media screen and (max-width: 480px) {
-    .hero-grid { padding: calc(var(--fixed-chrome) + 0.75rem) 1rem 2rem; }
-    .hero-brand { max-width: 260px; }
+    .hero-content { padding: calc(var(--fixed-chrome) + 0.75rem) 1rem 2rem; }
   }
 
   .scroll-indicator {

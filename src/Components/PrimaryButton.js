@@ -5,7 +5,7 @@ import { PROFILE } from "../data/profile";
 import { scrollToSection } from "../helper/navigation";
 import ExternalLink from "./ExternalLink";
 
-function PrimaryButton({ title, href, showDownloadIcon = false, variant = "outline" }) {
+function PrimaryButton({ title, href, showDownloadIcon = false }) {
   const content = (
     <>
       {showDownloadIcon && <FileDownloadOutlinedIcon />}
@@ -23,7 +23,7 @@ function PrimaryButton({ title, href, showDownloadIcon = false, variant = "outli
   };
 
   return (
-    <PrimaryButtonStyled $variant={variant}>
+    <PrimaryButtonStyled>
       <Link
         href={href || PROFILE.resume}
         onClick={handleHashClick}
@@ -53,7 +53,7 @@ const PrimaryButtonStyled = styled.div`
 
     a {
       border-color: var(--primary-color);
-      background: ${({ $variant }) => $variant === "filled" ? "var(--primary-color)" : "var(--glass-bg)"};
+      background: var(--glass-bg);
     }
   }
 
@@ -64,10 +64,10 @@ const PrimaryButtonStyled = styled.div`
     justify-content: center;
     min-height: 48px;
     padding: 0.75rem 1.35rem;
-    border: 2px solid ${({ $variant }) => $variant === "filled" ? "var(--primary-color)" : "var(--border-color)"};
+    border: 2px solid var(--border-color);
     border-radius: 50px;
-    background: ${({ $variant }) => $variant === "filled" ? "var(--primary-color)" : "transparent"};
-    color: ${({ $variant }) => $variant === "filled" ? "var(--on-primary-color)" : "var(--white-color)"};
+    background: transparent;
+    color: var(--white-color);
     font-weight: 700;
     transition: background 0.3s ease, border-color 0.3s ease;
     position: relative;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import BrandMark from "./BrandMark";
+import avatar from "../img/arjun_image.jpg";
 import home from "../Components/Assets/home.svg";
 import darkHome from "../Components/Assets/darkHome.svg";
 import about from "../Components/Assets/about.svg";
@@ -96,8 +96,8 @@ function Navigation({ theme, onClose }) {
 
   return (
     <NavigationStyled>
-      <div className="nav-brand">
-        <BrandMark />
+      <div className="avatar">
+        <img src={avatar} alt="Mallikarjun Reddy" />
       </div>
       <ul className="nav-items">
         {SECTIONS.map((item) => {
@@ -138,16 +138,23 @@ const NavigationStyled = styled.nav`
   height: 100%;
   width: 100%;
 
-  .nav-brand {
+  .avatar {
     width: 100%;
     border-bottom: 1px solid var(--border-color);
     text-align: center;
-    padding: 1.25rem 1.5rem;
+    padding: 1.8rem 0;
     img {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
+      width: clamp(96px, 22vw, 130px);
+      height: clamp(96px, 22vw, 130px);
+      border-radius: 50%;
+      border: 3px solid var(--primary-color);
+      box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.2);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      object-fit: cover;
+      &:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 30px rgba(var(--primary-color-rgb), 0.35);
+      }
     }
   }
 
