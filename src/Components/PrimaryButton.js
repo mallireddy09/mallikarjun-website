@@ -5,7 +5,7 @@ import { PROFILE } from "../data/profile";
 import { scrollToSection } from "../helper/navigation";
 import ExternalLink from "./ExternalLink";
 
-function PrimaryButton({ title, href, showDownloadIcon = false }) {
+function PrimaryButton({ title, href, showDownloadIcon = false, variant = "outline" }) {
   const content = (
     <>
       {showDownloadIcon && <FileDownloadOutlinedIcon />}
@@ -23,7 +23,7 @@ function PrimaryButton({ title, href, showDownloadIcon = false }) {
   };
 
   return (
-    <PrimaryButtonStyled>
+    <PrimaryButtonStyled $variant={variant}>
       <Link
         href={href || PROFILE.resume}
         onClick={handleHashClick}
@@ -35,52 +35,25 @@ function PrimaryButton({ title, href, showDownloadIcon = false }) {
 }
 
 const PrimaryButtonStyled = styled.div`
-  border: 2px solid var(--border-color);
   margin-left: 0;
-  padding: 0.75rem 1.35rem;
-  min-height: 44px;
-  height: auto;
-  border-radius: 50px;
   cursor: pointer;
   display: inline-flex;
-  align-items: center;
   font-size: 0.9rem;
-  text-transform: uppercase;
   position: relative;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
 
   @media screen and (max-width: 480px) {
-    padding: 0.7rem 1.1rem;
     font-size: 0.8rem;
   }
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-primary);
-    transition: left 0.4s ease;
-    z-index: 0;
-  }
-
   &:hover {
-    border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.3);
 
-    &::before {
-      left: 0;
-    }
-
     a {
-      color: #fff;
-      position: relative;
-      z-index: 1;
+      border-color: var(--primary-color);
+      background: ${({ $variant }) => $variant === "filled" ? "var(--primary-color)" : "var(--glass-bg)"};
     }
   }
 
@@ -88,10 +61,20 @@ const PrimaryButtonStyled = styled.div`
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: color 0.4s ease;
-    color: var(--white-color);
+    justify-content: center;
+    min-height: 48px;
+    padding: 0.75rem 1.35rem;
+    border: 2px solid ${({ $variant }) => $variant === "filled" ? "var(--primary-color)" : "var(--border-color)"};
+    border-radius: 50px;
+    background: ${({ $variant }) => $variant === "filled" ? "var(--primary-color)" : "transparent"};
+    color: ${({ $variant }) => $variant === "filled" ? "var(--on-primary-color)" : "var(--white-color)"};
+    font-weight: 700;
+    transition: background 0.3s ease, border-color 0.3s ease;
     position: relative;
     z-index: 1;
+    @media screen and (max-width: 480px) {
+      padding: 0.7rem 1.1rem;
+    }
   }
 `;
 

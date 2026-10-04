@@ -10,6 +10,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import Sidebar from "./Components/SideBar";
 import PortfolioPage from "./Pages/PortfolioPage";
 import { DESKTOP_QUERY } from "./styles/media";
+import BrandMark from "./Components/BrandMark";
+import { scrollToSection } from "./helper/navigation";
 
 function App() {
   const [theme, setTheme] = useState("dark-theme");
@@ -109,6 +111,17 @@ function App() {
       </div>
 
       <MainContentStyled $sidebarOpen={isDesktop && navToggle}>
+        <a
+          className="header-brand"
+          href="#home"
+          aria-label="Mallikarjun Reddy home"
+          onClick={(event) => {
+            event.preventDefault();
+            scrollToSection("home");
+          }}
+        >
+          <BrandMark decorative />
+        </a>
         <div className="lines" aria-hidden="true">
           <div className="line-1"></div>
           <div className="line-2"></div>
@@ -133,6 +146,18 @@ const MainContentStyled = styled.main`
   max-width: 100%;
   overflow-x: clip;
   transition: margin-left 0.4s ease, width 0.4s ease;
+
+  .header-brand {
+    position: fixed;
+    top: calc(0.75rem + var(--safe-top));
+    left: ${({ $sidebarOpen }) => $sidebarOpen ? "calc(var(--sidebar-width) + 1.25rem + var(--safe-left))" : "calc(1.25rem + var(--safe-left))"};
+    width: 88px;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 18;
+    transition: left 0.4s ease;
+    img { display: block; width: 100%; height: auto; }
+  }
 
   .lines {
     position: absolute;

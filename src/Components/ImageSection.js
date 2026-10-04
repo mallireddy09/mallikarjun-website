@@ -1,97 +1,109 @@
 import React from "react";
 import styled from "styled-components";
-import { PROFILE, ABOUT_SUMMARY } from "../data/profile";
-import { glassSurface, gradientText } from "../styles/shared";
+import { PROFILE, ABOUT_PARAGRAPHS, ABOUT_HIGHLIGHTS } from "../data/profile";
+import { glassCard, gradientText } from "../styles/shared";
 
 function ImageSection() {
   return (
     <ImageSectionStyled>
-      <div className="right-content">
-        <h4>
-          I am <span>{PROFILE.name}</span>
-        </h4>
-        <h2>Data Engineer | AI Engineer</h2>
-        <p className="paragraph">{ABOUT_SUMMARY}</p>
-        <div className="about-info">
-          <div className="info-card">
-            <span className="info-label">Location</span>
-            <span className="info-value">{PROFILE.location}</span>
-          </div>
-        </div>
+      <div className="about-narrative">
+        <h3>I am <span>{PROFILE.name}</span></h3>
+        <h4>Data Engineer | AI Engineer</h4>
+        {ABOUT_PARAGRAPHS.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
       </div>
+      <aside className="highlights-card" aria-labelledby="highlights-title">
+        <h3 id="highlights-title">Key Highlights</h3>
+        <dl>
+          {ABOUT_HIGHLIGHTS.map(({ label, value, detail }) => (
+            <div className="highlight" key={label}>
+              <dt>{label}</dt>
+              <dd>
+                <span className="highlight-pill">{value}</span>
+                {detail && <span className="highlight-detail">{detail}</span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </aside>
     </ImageSectionStyled>
   );
 }
 
 const ImageSectionStyled = styled.div`
   margin-top: 1.5rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 2rem;
 
-  @media screen and (max-width: 1000px) {
-    flex-direction: column;
-  }
-
-  .right-content {
-    width: 100%;
-
-    h4 {
+  .about-narrative {
+    min-width: 0;
+    h3 {
       font-size: clamp(1.4rem, 3vw, 2rem);
       color: var(--white-color);
-
-      span {
-        font-size: inherit;
-        ${gradientText}
-      }
+      span { ${gradientText} }
     }
-
-    h2 {
-      margin-top: 0.3rem;
-      font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+    h4 {
+      margin-top: 0.4rem;
+      font-size: 1rem;
+      color: var(--primary-color);
     }
-
-    .paragraph {
-      padding: 1rem 0;
+    p {
+      margin-top: 1rem;
       text-align: left;
       line-height: 1.8;
       color: var(--font-light-color);
       font-size: 0.95rem;
     }
+  }
 
-    .about-info {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-      padding-bottom: 1.4rem;
-      max-width: 20rem;
+  .highlights-card {
+    ${glassCard}
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    min-width: 0;
+    h3 {
+      font-size: 1.15rem;
+      color: var(--white-color);
+      margin-bottom: 1.25rem;
+    }
+    dl { display: grid; gap: 1.25rem; }
+    dt {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+      color: var(--font-light-color);
+    }
+    .highlight-pill {
+      display: inline-block;
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      padding: 0.4rem 0.85rem;
+      background: var(--background-light-color-2);
+      color: var(--white-color);
+      font-size: 0.85rem;
+      font-weight: 600;
+      max-width: 100%;
+    }
+    .highlight-detail {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--font-light-color);
+    }
+  }
 
-      .info-card {
-        ${glassSurface}
-        border-radius: 12px;
-        padding: 1rem 1.2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  @media screen and (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    .highlights-card dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
 
-        &:hover {
-          border-color: var(--primary-color);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.1);
-        }
-
-        .info-label {
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: var(--primary-color);
-          font-weight: 600;
-        }
-
-        .info-value {
-          color: var(--white-color);
-          font-weight: 500;
-        }
-      }
+  @media screen and (max-width: 480px) {
+    .highlights-card {
+      padding: 1.25rem;
+      dl { grid-template-columns: minmax(0, 1fr); }
     }
   }
 `;

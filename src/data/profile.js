@@ -11,13 +11,24 @@ export const PROFILE = {
 };
 
 export const HERO_ROLES = [
-  "Data Engineer",
-  "AI/ML Engineer",
-  "Data Scientist",
+  "A Data Engineer",
+  "An AI/ML Engineer",
+  "A Cloud Platform Engineer",
 ];
 
 export const HERO_SUMMARY =
   "Data & AI Engineer specializing in scalable data pipelines and multi-cloud infrastructure across GCP, AWS, and Azure. Holding an M.S. in Data Science from the University at Buffalo, I leverage experience across high-scale environments including NVIDIA, Microsoft, Home Depot, and Uber (via Nineleaps) to transform complex, raw data into resilient, analytics-ready platforms.";
 
-export const ABOUT_SUMMARY =
-  "I'm a Data Engineer and AI Engineer with experience designing, building, and optimizing scalable data pipelines and cloud data platforms. I hold an M.S. in Data Science from the University at Buffalo (SUNY) and currently work at NVIDIA on the Data and Observability Platform. Previously I've contributed at Microsoft, The Home Depot, University at Buffalo, and Nineleaps (clients including Uber and Tim Hortons), with a focus on ETL/ELT workflows, Spark/PySpark, and cloud platforms across AWS, Azure, and GCP. I'm passionate about building secure, high-performance data solutions that drive business value, and always eager to learn, collaborate, and innovate in data engineering and real-time analytics.";
+export const PAST_IMPACT = ["NVIDIA", "MICROSOFT", "THE HOME DEPOT", "UBER"];
+
+export const ABOUT_PARAGRAPHS = [
+  "I build high-throughput data platforms that turn complex, raw data into reliable foundations for analytics and AI. Across AWS, GCP, and Azure, my work connects scalable ingestion, Spark/PySpark processing, and well-designed ETL/ELT workflows to deliver resilient, analytics-ready systems.",
+  "At NVIDIA, I work on the Data and Observability Platform. Experience at Microsoft, The Home Depot, and Uber as a consultant via Nineleaps shapes how I approach performance, data quality, and dependable cloud infrastructure. With an M.S. in Data Science from the University at Buffalo, I bring a practical understanding of both the platforms that move data and the insights they support.",
+];
+
+export const ABOUT_HIGHLIGHTS = [
+  { label: "Degree", value: "M.S. in Data Science", detail: "University at Buffalo (UB)" },
+  { label: "Current Role", value: "Data & Observability", detail: "NVIDIA" },
+  { label: "Cloud Tech", value: "AWS · GCP · Azure" },
+  { label: "Location", value: PROFILE.location },
+];

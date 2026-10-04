@@ -13,6 +13,7 @@ const GlobalStyle = createGlobalStyle`
 
 .light-theme{
     --primary-color: #007bff;
+    --on-primary-color: #0a0a0f;
     --primary-color-rgb: 0, 123, 255;
     --background-dark-color: #f8f9fc;
     --background-dark-grey: #e8ecf1;
@@ -34,6 +35,7 @@ const GlobalStyle = createGlobalStyle`
 
 .dark-theme{
     --primary-color: #00d2d3;
+    --on-primary-color: #0a0a0f;
     --primary-color-rgb: 0, 210, 211;
     --background-dark-color: #0a0a0f;
     --background-dark-grey: #12121a;

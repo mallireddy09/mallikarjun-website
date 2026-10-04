@@ -69,7 +69,7 @@ const PortfolioStyled = styled.div`
   overflow-x: clip;
 
   .portfolio-section {
-    scroll-margin-top: 0;
+    scroll-margin-top: calc(var(--fixed-chrome) + 0.75rem);
     position: relative;
     width: 100%;
     min-height: 0;

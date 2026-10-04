@@ -6,11 +6,12 @@ import XIcon from "@mui/icons-material/X";
 import Particle from "../Components/Particle";
 import { ReactTyped as Typed } from "react-typed";
 import PrimaryButton from "../Components/PrimaryButton";
-import { PROFILE, HERO_ROLES, HERO_SUMMARY } from "../data/profile";
+import { PROFILE, HERO_ROLES, HERO_SUMMARY, PAST_IMPACT } from "../data/profile";
 import "./styles.css";
 import IconLinks from "../Components/IconLinks";
 import { gradientText } from "../styles/shared";
 import { DRAWER_MEDIA } from "../styles/media";
+import BrandMark from "../Components/BrandMark";
 
 const SOCIAL_LINKS = [
   { key: "github", href: PROFILE.github, label: "GitHub", Icon: GithubIcon, className: "icon i-github" },
@@ -27,33 +28,48 @@ function HomePage({ theme }) {
 
       <div className="hero-glow" />
       <div className="underlayText">{PROFILE.name}</div>
-      <div className="typography">
-        <div className="status-badge">
-          <span className="pulse" />
-          Data Engineer at NVIDIA
-        </div>
-        <h1>
-          Hi, I'm{" "}
-          <span className="myname gradient-text">{PROFILE.name}</span>
-        </h1>
-        <h5>
-          A{" "}
-          <Typed
-            strings={HERO_ROLES}
-            typeSpeed={80}
-            backSpeed={40}
-            loop
-            className="typing"
-          />
-        </h5>
-        <p>{HERO_SUMMARY}</p>
-        <div className="social">
-          <div className="icons">
-            <IconLinks links={SOCIAL_LINKS} />
+      <div className="hero-grid">
+        <div className="typography">
+          <div className="status-badge">
+            <span className="pulse" />
+            Data Engineer at NVIDIA
           </div>
-          <PrimaryButton title="Resume" showDownloadIcon />
-          <PrimaryButton title="Read more" href="#about" />
+          <h1>
+            <span className="greeting">Hi, I'm</span>
+            <span className="myname gradient-text">{PROFILE.name}</span>
+          </h1>
+          <h5 aria-label="Data Engineer, AI/ML Engineer, and Cloud Platform Engineer">
+            <span aria-hidden="true">
+              <Typed
+                strings={HERO_ROLES}
+                typeSpeed={80}
+                backSpeed={40}
+                loop
+                className="typing"
+              />
+            </span>
+          </h5>
+          <p>{HERO_SUMMARY}</p>
+          <div className="impact-bar" aria-label="Past impact at">
+            <span className="impact-label">PAST IMPACT AT:</span>
+            <ul>
+              {PAST_IMPACT.map((company) => <li key={company}>{company}</li>)}
+            </ul>
+          </div>
+          <div className="social">
+            <div className="hero-actions">
+              <PrimaryButton title="View Projects" href="#projects" variant="filled" />
+              <PrimaryButton title="Download Resume" showDownloadIcon />
+            </div>
+            <div className="icons">
+              <IconLinks links={SOCIAL_LINKS} />
+            </div>
+          </div>
         </div>
+        <figure className="hero-brand" aria-label="MR²: Data, AI, and Cloud">
+          <BrandMark decorative />
+          <figcaption>DATA <span>·</span> AI <span>·</span> CLOUD</figcaption>
+        </figure>
       </div>
       <div className="scroll-indicator" aria-hidden="true">
         <div className="mouse">
@@ -143,22 +159,19 @@ const HomePageStyled = styled.header`
 
   .typography {
     position: relative;
-    margin: 0 auto;
-    width: min(90%, 900px);
-    max-width: 900px;
-    padding: calc(var(--fixed-chrome) + 0.5rem) 1rem 6rem;
+    min-width: 0;
     line-height: 1.5;
     z-index: 1;
-    @media screen and (max-width: 768px) {
-      width: min(94%, 900px);
-    }
-    @media screen and (max-width: 480px) {
-      width: 100%;
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
     h1 {
-      margin-bottom: 0.5rem;
+      font-size: clamp(2.1rem, 3.7vw, 3.6rem);
+      margin-bottom: 1rem;
+      .greeting {
+        display: block;
+        font-size: 0.55em;
+        font-weight: 500;
+        color: var(--white-color);
+        margin-bottom: 0.4rem;
+      }
     }
     h5 {
       margin-bottom: 1rem;
@@ -174,8 +187,13 @@ const HomePageStyled = styled.header`
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1rem;
       margin-top: 1.5rem;
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
       a {
         display: inline-flex;
         align-items: center;
@@ -185,7 +203,7 @@ const HomePageStyled = styled.header`
         align-items: center;
         gap: 0.5rem;
         .icon {
-          border: 2px solid var(--border-color);
+          border: 1px solid var(--border-color);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -223,6 +241,84 @@ const HomePageStyled = styled.header`
     }
   }
 
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    width: min(100%, 1320px);
+    margin: 0 auto;
+    padding: calc(var(--fixed-chrome) + 1.5rem) 3rem 6rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .impact-bar {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    .impact-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--font-light-color);
+    }
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 0.75rem;
+      margin-top: 0.4rem;
+      color: var(--white-color);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      li:not(:last-child)::after {
+        content: "·";
+        margin-left: 0.75rem;
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .hero-brand {
+    min-width: 0;
+    width: 100%;
+    border-radius: 24px;
+    background: #0f172a;
+    border: 1px solid rgba(0, 220, 236, 0.25);
+    box-shadow: 0 20px 70px rgba(var(--primary-color-rgb), 0.12);
+    overflow: hidden;
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      text-align: center;
+      padding: 0 1rem 1.75rem;
+      color: #f5f7fa;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      span { color: #00dcec; margin: 0 0.3rem; }
+    }
+  }
+
+  @media screen and (max-width: 1000px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+      padding: calc(var(--fixed-chrome) + 1rem) 1.75rem 2.5rem;
+      gap: 2rem;
+    }
+    .hero-brand {
+      max-width: 320px;
+      justify-self: center;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .hero-grid { padding: calc(var(--fixed-chrome) + 0.75rem) 1rem 2rem; }
+    .hero-brand { max-width: 260px; }
+  }
+
   .scroll-indicator {
     position: absolute;
     bottom: 2rem;
@@ -258,10 +354,6 @@ const HomePageStyled = styled.header`
   @media ${DRAWER_MEDIA} {
     height: auto;
     min-height: 0;
-
-    .typography {
-      padding-bottom: 2rem;
-    }
 
     .scroll-indicator {
       display: none;
