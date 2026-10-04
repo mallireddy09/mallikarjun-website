@@ -71,11 +71,10 @@ function HomePage({ theme }) {
           <PrimaryButton title="Resume" showDownloadIcon />
           <PrimaryButton title="Read more" href="#about" />
         </div>
-
-        <div className="scroll-indicator">
-          <div className="mouse">
-            <div className="wheel" />
-          </div>
+      </div>
+      <div className="scroll-indicator" aria-hidden="true">
+        <div className="mouse">
+          <div className="wheel" />
         </div>
       </div>
     </HomePageStyled>
@@ -84,12 +83,16 @@ function HomePage({ theme }) {
 
 const HomePageStyled = styled.header`
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
+  display: flex;
+  align-items: center;
   position: relative;
   overflow: hidden;
+
+  .underlayText {
+    top: 0;
+  }
 
   .particle-con {
     position: absolute;
@@ -159,18 +162,15 @@ const HomePageStyled = styled.header`
   }
 
   .typography {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
+    margin: 0 auto;
     width: min(90%, 900px);
     max-width: 900px;
-    padding: calc(var(--fixed-chrome) + 0.5rem) 1rem 2rem;
+    padding: calc(var(--fixed-chrome) + 0.5rem) 1rem 6rem;
     line-height: 1.5;
     z-index: 1;
     @media screen and (max-width: 768px) {
       width: min(94%, 900px);
-      top: 52%;
     }
     @media screen and (max-width: 480px) {
       width: 100%;
@@ -280,11 +280,7 @@ const HomePageStyled = styled.header`
     min-height: 0;
 
     .typography {
-      position: relative;
-      top: auto;
-      left: auto;
-      transform: none;
-      margin: 0 auto;
+      padding-bottom: 2rem;
     }
 
     .scroll-indicator {

@@ -10,19 +10,33 @@ import CloseIcon from "@mui/icons-material/Close";
 import Sidebar from "./Components/SideBar";
 import PortfolioPage from "./Pages/PortfolioPage";
 
+const DESKTOP_QUERY = "(min-width: 1201px) and (pointer: fine)";
+
 function App() {
   const [theme, setTheme] = useState("dark-theme");
-  const [navToggle, setNavToggle] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
+  const [navToggle, setNavToggle] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
   const menuButtonRef = useRef(null);
+  const isOverlayOpen = navToggle && !isDesktop;
+
+  useEffect(() => {
+    const media = window.matchMedia(DESKTOP_QUERY);
+    const onChange = ({ matches }) => {
+      setIsDesktop(matches);
+      setNavToggle(matches);
+    };
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     document.documentElement.className = theme;
   }, [theme]);
 
   useEffect(() => {
-    document.body.classList.toggle("nav-open", navToggle);
+    document.body.classList.toggle("nav-open", isOverlayOpen);
     return () => document.body.classList.remove("nav-open");
-  }, [navToggle]);
+  }, [isOverlayOpen]);
 
   useEffect(() => {
     if (!navToggle) return undefined;
@@ -30,14 +44,14 @@ function App() {
       ...document.querySelectorAll("#site-sidebar a[href]"),
       menuButtonRef.current,
     ].filter(Boolean);
-    menuItems[0]?.focus({ preventScroll: true });
+    if (isOverlayOpen) menuItems[0]?.focus({ preventScroll: true });
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
         setNavToggle(false);
         menuButtonRef.current?.focus({ preventScroll: true });
       }
-      if (event.key === "Tab") {
+      if (event.key === "Tab" && isOverlayOpen) {
         const index = menuItems.indexOf(document.activeElement);
         const next = index < 0
           ? (event.shiftKey ? menuItems.length - 1 : 0)
@@ -48,7 +62,7 @@ function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [navToggle]);
+  }, [navToggle, isOverlayOpen]);
 
   const themeToggler = () => {
     setTheme((prev) =>
@@ -63,9 +77,9 @@ function App() {
 
   return (
     <div className="App">
-      <Sidebar navToggle={navToggle} theme={theme} onClose={closeNav} />
+      <Sidebar navToggle={navToggle} theme={theme} onClose={isDesktop ? undefined : closeNav} />
 
-      {navToggle && (
+      {isOverlayOpen && (
         <div
           className="nav-overlay"
           onClick={closeNav}
@@ -92,18 +106,12 @@ function App() {
           aria-expanded={navToggle}
           aria-controls="site-sidebar"
         >
-          {navToggle ? (
-            <CloseIcon />
-          ) : (
-            <>
-              <MenuIcon className="mobile-menu-icon" />
-              <MoreVertIcon className="desktop-menu-icon" />
-            </>
-          )}
+          {navToggle ? <CloseIcon className="mobile-menu-icon" /> : <MenuIcon className="mobile-menu-icon" />}
+          <MoreVertIcon className="desktop-menu-icon" />
         </IconButton>
       </div>
 
-      <MainContentStyled>
+      <MainContentStyled $sidebarOpen={isDesktop && navToggle}>
         <div className="lines" aria-hidden="true">
           <div className="line-1"></div>
           <div className="line-2"></div>
@@ -121,12 +129,13 @@ function App() {
 
 const MainContentStyled = styled.main`
   position: relative;
-  margin-left: 0;
+  margin-left: ${({ $sidebarOpen }) => $sidebarOpen ? "var(--sidebar-width)" : "0"};
   min-height: 100vh;
   min-height: 100dvh;
-  width: 100%;
+  width: ${({ $sidebarOpen }) => $sidebarOpen ? "calc(100% - var(--sidebar-width))" : "100%"};
   max-width: 100%;
   overflow-x: clip;
+  transition: margin-left 0.4s ease, width 0.4s ease;
 
   .lines {
     position: absolute;
