@@ -4,7 +4,7 @@ Guidance for AI agents working in this repository.
 
 ## Project
 
-Personal portfolio site for Mallikarjun Reddy (Senior Data Engineer & AI/ML Engineer), live at [mallikarjun.in](https://www.mallikarjun.in/).
+Personal portfolio site for Mallikarjun Reddy (Senior Data Engineer & AI/ML Engineer), live at [mallireddy09.github.io/mallireddy09/](https://mallireddy09.github.io/mallireddy09/). Source code is in `mallireddy09/mallikarjun-website` on `main`.
 
 - **Stack:** Create React App (`react-scripts` 5), React 18, React Router 6
 - **Styling:** styled-components, CSS variables for light/dark themes, MUI icons/components
@@ -20,7 +20,7 @@ npm run build        # production build → ./build
 npm test             # Jest via react-scripts
 ```
 
-CI on `mallikarjun-website` runs `npm ci`, the tests, and `npm run build`, then deploys `./build` directly to GitHub Pages using the official Pages actions. Set the repository's Pages publishing source to GitHub Actions. The build uses the Pages base path for assets and the router basename.
+CI on `main` runs `npm ci`, the tests, and `PUBLIC_URL=/mallireddy09 npm run build`, then publishes `./build` to the `gh-pages` branch of `mallireddy09/mallireddy09` using the `PAGES_DEPLOY_KEY` Actions secret. That publishing repository uses branch-based GitHub Pages from `gh-pages` at the root. The build path sets the assets and router basename.
 
 ## Layout
 

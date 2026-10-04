@@ -3,13 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - mallikarjun-website
+      - main
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: github-pages
@@ -18,9 +16,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -29,14 +24,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test -- --watchAll=false --runInBand
-      - uses: actions/configure-pages@v5
-        id: pages
       - run: npm run build
         env:
-          PUBLIC_URL: ${{ steps.pages.outputs.base_path }}
+          PUBLIC_URL: /mallireddy09
       - run: cp build/index.html build/404.html
-      - uses: actions/upload-pages-artifact@v4
+      - name: Publish to the Pages repository
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
-          path: build
-      - uses: actions/deploy-pages@v4
-        id: deployment
+          deploy_key: ${{ secrets.PAGES_DEPLOY_KEY }}
+          external_repository: mallireddy09/mallireddy09
+          publish_branch: gh-pages
+          publish_dir: ./build

@@ -4,7 +4,7 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 
 **Live site:** [mallireddy09.github.io/mallireddy09/](https://mallireddy09.github.io/mallireddy09/)
 
-**Repository:** [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09/tree/mallikarjun-website) · **Website branch:** `mallikarjun-website`
+**Source repository:** [mallireddy09/mallikarjun-website](https://github.com/mallireddy09/mallikarjun-website) · **Source branch:** `main`
 
 ## Features
 
@@ -27,8 +27,8 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 Use Node.js 24 and npm to match the deployment workflow.
 
 ```bash
-git clone --branch mallikarjun-website https://github.com/mallireddy09/mallireddy09.git
-cd mallireddy09
+git clone https://github.com/mallireddy09/mallikarjun-website.git
+cd mallikarjun-website
 npm ci
 npm start
 ```
@@ -86,10 +86,10 @@ The site uses hash links to scroll between sections on the same page. Append the
 
 ## Deploy
 
-Pushes to `mallikarjun-website` in `mallireddy09/mallireddy09` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow installs dependencies with `npm ci`, runs tests, builds the site, and deploys `build/` to GitHub Pages using the official Pages actions.
+Pushes to `main` in `mallireddy09/mallikarjun-website` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow installs dependencies with `npm ci`, runs tests, builds with `PUBLIC_URL=/mallireddy09`, and publishes the generated files to the `gh-pages` branch of [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09).
 
-In the `mallireddy09/mallireddy09` repository's **Settings → Pages**, select **GitHub Actions** as the publishing source. The site URL is [mallireddy09.github.io/mallireddy09/](https://mallireddy09.github.io/mallireddy09/).
+In the `mallireddy09/mallireddy09` repository's **Settings → Pages**, select **Deploy from a branch**, then **gh-pages** and **/ (root)**. The site URL is [mallireddy09.github.io/mallireddy09/](https://mallireddy09.github.io/mallireddy09/).
 
-The `github-pages` environment must allow deployments from `mallikarjun-website`. This branch contains the portfolio application; the repository's `main` branch retains the GitHub profile README and earlier site files.
+The source repository's `PAGES_DEPLOY_KEY` Actions secret contains a deploy key with write access to the publishing repository. The workflow uses `peaceiris/actions-gh-pages`, pinned to its v4 commit, to publish across repositories. The code remains in `mallikarjun-website`; `mallireddy09` holds the published build so the site's URL keeps the requested path.
 
-The workflow derives `PUBLIC_URL` from the Pages configuration, which sets the asset paths and router basename. It also creates `404.html` for older section URLs such as `/about`. Generated `build/` files are deployed as an artifact and are not committed.
+`PUBLIC_URL` sets the asset paths and router basename. The workflow also creates `404.html` for older section URLs such as `/about`. Generated `build/` files are not committed to the source repository.
