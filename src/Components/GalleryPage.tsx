@@ -1,5 +1,4 @@
 import type { GalleryItem } from "../types/portfolio";
-import React from "react";
 import Title from "./Title";
 import GridGallery from "./GridGallery";
 import { MainLayout, InnerLayout } from "../styles/Layouts";

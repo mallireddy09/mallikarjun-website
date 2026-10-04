@@ -1,5 +1,4 @@
 import type { SvgIconComponent } from "@mui/icons-material";
-import React from "react";
 import ExternalLink from "./ExternalLink";
 
 export interface IconLink {

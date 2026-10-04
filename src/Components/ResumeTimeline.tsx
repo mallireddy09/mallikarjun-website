@@ -1,5 +1,4 @@
 import type { TimelineEntry } from "../types/portfolio";
-import React from "react";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import SchoolIcon from "@mui/icons-material/School";
 import { InnerLayout } from "../styles/Layouts";

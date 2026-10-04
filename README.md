@@ -88,6 +88,14 @@ Old `/certification` and `#certification` links resolve to `#certifications`. Le
 
 React components and tests use `.tsx`; data, helpers, hooks, and styles use `.ts`. `tsconfig.json` enables strict checking, and `src/types/portfolio.ts` holds shared content and theme types.
 
+### TypeScript compatibility
+
+The current Create React App 5 build uses the pinned TypeScript 4.9.5 compiler. CRA requires `moduleResolution: "node"` and rewrites other resolution settings during startup/build; its TypeScript peer dependency supports versions 3 and 4.
+
+The legacy `node` (`node10`) resolution setting is [deprecated in TypeScript 6 and removed in TypeScript 7](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html). Migrating this bundled web app to a build tool such as Vite and a modern TypeScript compiler will allow `moduleResolution: "bundler"`. Changing this setting alone, or suppressing the warning, does not make the CRA build compatible with TypeScript 7.
+
+`npm run typecheck` also checks for unused local declarations and parameters. Before deleting assets, check application imports, CSS, HTML metadata, and manifest references: the MR² share image and app icons are used outside React components.
+
 ### Reusing existing code
 
 - Use `src/helper/navigation.ts` for section scrolling; sidebar links, home buttons, and deep links share this implementation.

@@ -1,5 +1,4 @@
 import type { ThemeProps } from "../types/portfolio";
-import React from "react";
 import Skills from "../Components/Skills";
 import { MainLayout } from "../styles/Layouts";
 

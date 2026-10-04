@@ -57,7 +57,7 @@ beforeEach(() => {
   motion = {
     matches: false, media: "(prefers-reduced-motion: reduce)", onchange: null,
     addListener: jest.fn(), removeListener: jest.fn(), dispatchEvent: jest.fn(),
-    addEventListener: jest.fn((event: string, callback: () => void) => { motionChanged = callback; }),
+    addEventListener: jest.fn((_event: string, callback: () => void) => { motionChanged = callback; }),
     removeEventListener: jest.fn(),
   };
   window.matchMedia = jest.fn(() => motion);

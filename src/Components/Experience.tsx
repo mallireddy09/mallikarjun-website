@@ -1,4 +1,3 @@
-import React from "react";
 import ResumeTimeline from "./ResumeTimeline";
 import experience from "../data/experience";
 

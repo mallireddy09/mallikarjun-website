@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {MainLayout, InnerLayout} from '../styles/Layouts';
 import Title from '../Components/Title';
 import projects from '../data/projects';

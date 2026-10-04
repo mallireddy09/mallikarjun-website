@@ -1,4 +1,4 @@
-import React, { act } from "react";
+import { act } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
@@ -22,7 +22,7 @@ beforeEach(() => {
     addListener: jest.fn(),
     removeListener: jest.fn(),
     dispatchEvent: jest.fn(),
-    addEventListener: jest.fn((event: string, listener: typeof onMediaChange) => { onMediaChange = listener; }),
+    addEventListener: jest.fn((_event: string, listener: typeof onMediaChange) => { onMediaChange = listener; }),
     removeEventListener: jest.fn(),
   };
   window.matchMedia = jest.fn(() => media);

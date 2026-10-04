@@ -1,5 +1,4 @@
 import type { Project } from "../types/portfolio";
-import React from "react";
 import styled from "styled-components";
 import GitHub from "@mui/icons-material/GitHub";
 import YouTube from "@mui/icons-material/YouTube";

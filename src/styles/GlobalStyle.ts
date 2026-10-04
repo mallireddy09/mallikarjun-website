@@ -167,11 +167,6 @@ p{
     line-height: 1.7;
 }
 
-// Utilities
-.u-margin-bottom{
-    margin-bottom: 4rem;
-}
-
 // Scroll Reveal Animation
 .reveal{
     opacity: 0;

@@ -1,5 +1,5 @@
 import type { Theme } from "./types/portfolio";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 import { Route, Routes } from "react-router-dom";
 import { IconButton } from "@mui/material";

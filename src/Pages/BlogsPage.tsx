@@ -1,4 +1,3 @@
-import React from "react";
 import GalleryPage from "../Components/GalleryPage";
 import blogs from "../data/blogs";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import { ABOUT_PARAGRAPHS, ABOUT_HIGHLIGHTS } from "../data/profile";
 import { glassCard } from "../styles/shared";

@@ -1,5 +1,4 @@
 import type { ThemeProps } from "../types/portfolio";
-import React from "react";
 import styled from "styled-components";
 import Navigation from "./Navigation";
 
