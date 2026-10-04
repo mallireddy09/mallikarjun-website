@@ -39,9 +39,16 @@ function Skills({ theme }) {
                     <h4 className="card-label">{category.label}</h4>
                     <div className="chip-list">
                       {category.items.map((item) => (
-                        <span key={item} className="chip">
-                          {item}
-                        </span>
+                        <a
+                          key={item.label}
+                          className="chip"
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`${item.label} documentation (opens in a new tab)`}
+                        >
+                          {item.label}
+                        </a>
                       ))}
                     </div>
                   </div>
@@ -162,12 +169,13 @@ const SkillsStyled = styled.section`
     color: var(--font-light-color);
     background: transparent;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    cursor: default;
-    &:hover {
+    cursor: pointer;
+    &:hover, &:focus-visible {
       border-color: var(--primary-color);
       color: var(--primary-color);
       background: rgba(var(--primary-color-rgb), 0.08);
       transform: translateY(-1px);
+      text-decoration: underline;
     }
   }
 

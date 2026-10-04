@@ -11,6 +11,7 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 - One continuous portfolio page with section navigation and smooth scrolling
 - Sidebar open by default beside desktop content, with a three-dot toggle; phones/tablets start closed with a hamburger toggle
 - Light and dark themes, particle effects, and animated role text
+- Six skills sections with every skill linked to official documentation in a new tab
 - Project category filters
 - GitHub, LinkedIn, X, and resume links
 - Contact section with email, location, and a form that opens the visitor's email client
