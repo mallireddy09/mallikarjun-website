@@ -1,0 +1,46 @@
+import type { ThemeProps } from "../types/portfolio";
+import React from "react";
+import styled from "styled-components";
+import Navigation from "./Navigation";
+
+function Sidebar({ navToggle, theme, onClose }: ThemeProps & { navToggle: boolean; onClose?: () => void }) {
+  return (
+    <SidebarStyled
+      id="site-sidebar"
+      className={`${navToggle ? "nav-toggle" : ""}`}
+      aria-hidden={!navToggle}
+      inert={navToggle ? undefined : ""}
+    >
+      <Navigation theme={theme} onClose={onClose} />
+    </SidebarStyled>
+  );
+}
+
+const SidebarStyled = styled.div<{ inert?: "" }>`
+  width: min(var(--sidebar-width), 85vw);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  height: 100dvh;
+  background-color: var(--sidebar-dark-color);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 20;
+  border-right: 1px solid var(--border-color);
+  padding-bottom: var(--safe-bottom);
+  transform: translateX(-100%);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 10px;
+  }
+`;
+
+export default Sidebar;

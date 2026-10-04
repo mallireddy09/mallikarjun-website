@@ -12,7 +12,7 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 - Sidebar open by default beside desktop content, with a three-dot toggle; phones/tablets start closed with a hamburger toggle
 - Light and dark themes, particle effects, and animated role text
 - A centered hero with matching outline project/resume CTAs and a company impact bar
-- Two-paragraph About narrative with a Key Highlights card
+- Three-paragraph About narrative with a Key Highlights card
 - Six skills sections with every skill linked to official documentation in a new tab
 - Project category filters
 - GitHub, LinkedIn, X, and resume links
@@ -20,7 +20,7 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 
 ## Stack
 
-- React 18 + Create React App
+- React 18 + TypeScript/TSX + Create React App
 - React Router 6
 - styled-components + MUI
 - react-particles / tsparticles, react-typed
@@ -43,6 +43,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Command | Description |
 |---------|-------------|
 | `npm start` | Development server |
+| `npm run typecheck` | Strict TypeScript checks, including tests |
 | `npm run build` | Production build to `./build` |
 | `npm test` | Run tests |
 | `npm test -- --watchAll=false --runInBand` | Run tests once, as in CI |
@@ -55,42 +56,46 @@ PUBLIC_URL=/mallireddy09 npm run build
 
 ## Site structure
 
-The site uses hash links to scroll between sections on the same page. Append these anchors to the live URL:
+The menu and page use the same typed section registry, so their order stays aligned. The site uses hash links to scroll between sections on the same page. Append these anchors to the live URL:
 
 | Anchor | Section |
 |-------|---------|
 | `#home` | Home |
 | `#about` | About |
-| `#skills` | Skills |
 | `#experience` | Experience |
-| `#education` | Education |
 | `#projects` | Projects |
+| `#skills` | Skills |
+| `#certifications` | Certifications |
+| `#education` | Education |
 | `#blogs` | Blogs |
-| `#certification` | Certifications |
 | `#contact` | Contact |
+
+Old `/certification` and `#certification` links resolve to `#certifications`. Legacy section routes preserve query strings when normalized.
 
 ## Updating content
 
 | Location | Content |
 |----------|---------|
-| `src/data/profile.js` | Name, summaries, roles, email, location, social links, and resume URL |
-| `src/data/experience.js`, `src/data/companies.js` | Work experience and company details |
-| `src/data/education.js`, `src/data/skills.js` | Education and skills |
-| `src/data/projects.js`, `src/data/blogs.js`, `src/data/certification.js` | Projects, articles, and certifications |
-| `src/data/sections.js` | Section order and navigation labels |
+| `src/data/profile.ts` | Name, summaries, roles, email, location, social links, and resume URL |
+| `src/data/experience.ts`, `src/data/companies.ts` | Work experience and company details |
+| `src/data/education.ts`, `src/data/skills.ts` | Education and skills |
+| `src/data/projects.ts`, `src/data/blogs.ts`, `src/data/certification.ts` | Projects, articles, and certifications |
+| `src/data/sections.ts` | Section order and navigation labels |
 | `src/Pages/` | Section components |
 | `src/Components/`, `src/styles/` | Shared components, layouts, and styling |
 | `public/brand-mr-squared.svg`, `public/*mr2*` | Shared MR² artwork, favicons, and app icons |
 
+React components and tests use `.tsx`; data, helpers, hooks, and styles use `.ts`. `tsconfig.json` enables strict checking, and `src/types/portfolio.ts` holds shared content and theme types.
+
 ### Reusing existing code
 
-- Use `src/helper/navigation.js` for section scrolling; sidebar links, home buttons, and deep links share this implementation.
+- Use `src/helper/navigation.ts` for section scrolling; sidebar links, home buttons, and deep links share this implementation.
 - Use `ExternalLink` for links that open in a new tab and `IconLinks` for lists of icon links.
 - Use `Title` with `animated` for section headings, `GalleryPage` for image/text galleries, and `ResumeTimeline` for work and education entries.
 - Use `FormField` for labeled inputs and textareas. The project category `Button` is controlled by the selection in `ProjectsPage`.
-- Reuse `src/styles/shared.js` for glass surfaces and gradient text, and `src/styles/media.js` for the desktop/drawer breakpoint.
+- Reuse `src/styles/shared.ts` for glass surfaces and gradient text, and `src/styles/media.ts` for the desktop/drawer breakpoint.
 - Reuse `PrimaryButton` for outline CTAs; use `showDownloadIcon` for the resume action.
-- Each skill appears once in `src/data/skills.js`; AWS IAM and GCP IAM retain their distinct documentation links. Linux belongs in DevOps, transformation tools in orchestration, and monitoring tools in observability.
+- Each skill appears once in `src/data/skills.ts`; AWS IAM and GCP IAM retain their distinct documentation links. Linux belongs in DevOps, transformation tools in orchestration, and monitoring tools in observability.
 
 ## Contact
 
@@ -100,7 +105,7 @@ The site uses hash links to scroll between sections on the same page. Append the
 
 ## Deploy
 
-Pushes to `main` in `mallireddy09/mallikarjun-website` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow installs dependencies with `npm ci`, runs tests, builds with `PUBLIC_URL=/mallireddy09`, and publishes the generated files to the `gh-pages` branch of [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09).
+Pushes to `main` in `mallireddy09/mallikarjun-website` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow installs dependencies with `npm ci`, checks TypeScript, runs tests, builds with `PUBLIC_URL=/mallireddy09`, and publishes the generated files to the `gh-pages` branch of [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09).
 
 In the `mallireddy09/mallireddy09` repository's **Settings → Pages**, select **Deploy from a branch**, then **gh-pages** and **/ (root)**. The site URL is [mallireddy09.github.io/mallireddy09/](https://mallireddy09.github.io/mallireddy09/).
 
