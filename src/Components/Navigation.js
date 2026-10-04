@@ -46,9 +46,8 @@ function Navigation({ theme, onClose }) {
       ).filter(Boolean);
       if (!elements.length) return;
 
-      // Activate the section that owns the upper-middle of the viewport,
-      // so sidebar matches the section filling the screen.
-      const marker = window.scrollY + window.innerHeight * 0.35;
+      // A small top offset keeps short content sections active after navigation.
+      const marker = window.scrollY + Math.min(window.innerHeight * 0.2, 120);
       let current = elements[0].id;
 
       for (const el of elements) {
@@ -113,6 +112,7 @@ function Navigation({ theme, onClose }) {
               <a
                 href={`#${item.id}`}
                 className={activeSection === item.id ? "active-class" : ""}
+                aria-current={activeSection === item.id ? "location" : undefined}
                 onClick={scrollToSection(item.id)}
               >
                 <img

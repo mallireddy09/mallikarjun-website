@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Route, Routes } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import MenuIcon from "@mui/icons-material/Menu";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CloseIcon from "@mui/icons-material/Close";
 import Sidebar from "./Components/SideBar";
 import PortfolioPage from "./Pages/PortfolioPage";
@@ -12,6 +13,7 @@ import PortfolioPage from "./Pages/PortfolioPage";
 function App() {
   const [theme, setTheme] = useState("dark-theme");
   const [navToggle, setNavToggle] = useState(false);
+  const menuButtonRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.className = theme;
@@ -24,8 +26,25 @@ function App() {
 
   useEffect(() => {
     if (!navToggle) return undefined;
+    const menuItems = [
+      ...document.querySelectorAll("#site-sidebar a[href]"),
+      menuButtonRef.current,
+    ].filter(Boolean);
+    menuItems[0]?.focus({ preventScroll: true });
+
     const onKeyDown = (event) => {
-      if (event.key === "Escape") setNavToggle(false);
+      if (event.key === "Escape") {
+        setNavToggle(false);
+        menuButtonRef.current?.focus({ preventScroll: true });
+      }
+      if (event.key === "Tab") {
+        const index = menuItems.indexOf(document.activeElement);
+        const next = index < 0
+          ? (event.shiftKey ? menuItems.length - 1 : 0)
+          : (index + (event.shiftKey ? -1 : 1) + menuItems.length) % menuItems.length;
+        event.preventDefault();
+        menuItems[next]?.focus({ preventScroll: true });
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -37,7 +56,10 @@ function App() {
     );
   };
 
-  const closeNav = () => setNavToggle(false);
+  const closeNav = () => {
+    setNavToggle(false);
+    menuButtonRef.current?.focus({ preventScroll: true });
+  };
 
   return (
     <div className="App">
@@ -64,12 +86,20 @@ function App() {
 
       <div className="ham-burger-menu">
         <IconButton
-          onClick={() => setNavToggle((open) => !open)}
+          ref={menuButtonRef}
+          onClick={() => navToggle ? closeNav() : setNavToggle(true)}
           aria-label={navToggle ? "Close menu" : "Open menu"}
           aria-expanded={navToggle}
           aria-controls="site-sidebar"
         >
-          {navToggle ? <CloseIcon /> : <MenuIcon />}
+          {navToggle ? (
+            <CloseIcon />
+          ) : (
+            <>
+              <MenuIcon className="mobile-menu-icon" />
+              <MoreVertIcon className="desktop-menu-icon" />
+            </>
+          )}
         </IconButton>
       </div>
 
@@ -91,18 +121,12 @@ function App() {
 
 const MainContentStyled = styled.main`
   position: relative;
-  margin-left: var(--sidebar-width);
+  margin-left: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  width: calc(100% - var(--sidebar-width));
+  width: 100%;
   max-width: 100%;
   overflow-x: clip;
-  transition: margin-left 0.4s ease, width 0.4s ease;
-
-  @media screen and (max-width: 1200px) {
-    margin-left: 0;
-    width: 100%;
-  }
 
   .lines {
     position: absolute;

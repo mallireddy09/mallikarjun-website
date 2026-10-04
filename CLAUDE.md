@@ -52,7 +52,7 @@ public/                  # static assets, index.html, .htaccess
 | `/certification` | CertificationPage |
 | `/contact` | ContactPage |
 
-Theme is `"dark-theme"` | `"light-theme"` on `document.documentElement` (CSS class). Sidebar collapses below 1200px; hamburger + overlay handle mobile nav.
+Theme is `"dark-theme"` | `"light-theme"` on `document.documentElement` (CSS class). The sidebar starts closed on every device and opens as an overlay drawer. The toggle uses a hamburger below 1200px or on touch devices, and a three-dot menu on desktop. Content sections fit their content; the desktop hero remains a full-screen introduction.
 
 ## Conventions
 

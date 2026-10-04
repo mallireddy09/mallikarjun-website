@@ -77,30 +77,19 @@ const PortfolioStyled = styled.div`
     scroll-margin-top: 0;
     position: relative;
     width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
   }
 
   .portfolio-section > * {
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     width: 100%;
   }
 
   #home.portfolio-section {
     scroll-margin-top: 0;
-  }
-
-  @media screen and (max-width: 1200px), screen and (pointer: coarse) {
-    .portfolio-section {
-      min-height: 0;
-    }
-
-    .portfolio-section > * {
-      flex: 0 0 auto;
-    }
   }
 `;
 

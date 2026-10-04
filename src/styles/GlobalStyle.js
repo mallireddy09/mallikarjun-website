@@ -195,8 +195,8 @@ p{
 // Theme Toggle Button
 .theme-toggle-btn{
     position: fixed;
-    right: calc(1.5rem + var(--safe-right));
-    top: calc(1.5rem + var(--safe-top));
+    right: calc(5rem + var(--safe-right));
+    top: calc(1rem + var(--safe-top));
     width: 3rem;
     height: 3rem;
     min-width: 44px;
@@ -228,12 +228,6 @@ p{
 }
 .theme-toggle-btn:active{
     transform: scale(0.95);
-}
-@media screen and (max-width: 1200px){
-    .theme-toggle-btn{
-        right: calc(5rem + var(--safe-right));
-        top: calc(1rem + var(--safe-top));
-    }
 }
 @media screen and (max-width: 480px){
     .theme-toggle-btn{
@@ -271,7 +265,7 @@ p{
     position: fixed;
     right: calc(1.25rem + var(--safe-right));
     top: calc(0.75rem + var(--safe-top));
-    display: none;
+    display: block;
     z-index: 25;
     -webkit-tap-highlight-color: transparent;
     button {
@@ -283,14 +277,21 @@ p{
         color: var(--primary-color);
         transition: transform 0.3s ease;
     }
+    .mobile-menu-icon {
+        display: none;
+    }
+    .desktop-menu-icon {
+        display: block;
+    }
 }
 .nav-toggle{
     transform: translateX(0) !important;
     z-index: 20;
 }
-@media screen and (max-width: 1200px){
+@media screen and (max-width: 1200px), screen and (pointer: coarse){
     .ham-burger-menu{
-        display: block;
+        .mobile-menu-icon { display: block; }
+        .desktop-menu-icon { display: none; }
     }
 }
 

@@ -7,6 +7,8 @@ function Sidebar({ navToggle, theme, onClose }) {
     <SidebarStyled
       id="site-sidebar"
       className={`${navToggle ? "nav-toggle" : ""}`}
+      aria-hidden={!navToggle}
+      inert={navToggle ? undefined : ""}
     >
       <Navigation theme={theme} onClose={onClose} />
     </SidebarStyled>
@@ -14,7 +16,7 @@ function Sidebar({ navToggle, theme, onClose }) {
 }
 
 const SidebarStyled = styled.div`
-  width: var(--sidebar-width);
+  width: min(var(--sidebar-width), 85vw);
   position: fixed;
   top: 0;
   left: 0;
@@ -28,6 +30,8 @@ const SidebarStyled = styled.div`
   z-index: 20;
   border-right: 1px solid var(--border-color);
   padding-bottom: var(--safe-bottom);
+  transform: translateX(-100%);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -35,12 +39,6 @@ const SidebarStyled = styled.div`
   &::-webkit-scrollbar-thumb {
     background-color: var(--border-color);
     border-radius: 10px;
-  }
-
-  @media screen and (max-width: 1200px) {
-    transform: translateX(-100%);
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
-    width: min(var(--sidebar-width), 85vw);
   }
 `;
 
