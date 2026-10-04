@@ -92,6 +92,16 @@ const PortfolioStyled = styled.div`
   #home.portfolio-section {
     scroll-margin-top: 0;
   }
+
+  @media screen and (max-width: 1200px), screen and (pointer: coarse) {
+    .portfolio-section {
+      min-height: 0;
+    }
+
+    .portfolio-section > * {
+      flex: 0 0 auto;
+    }
+  }
 `;
 
 export default PortfolioPage;

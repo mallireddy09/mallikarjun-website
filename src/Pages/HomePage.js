@@ -275,6 +275,23 @@ const HomePageStyled = styled.header`
     }
   }
 
+  @media screen and (max-width: 1200px), screen and (pointer: coarse) {
+    height: auto;
+    min-height: 0;
+
+    .typography {
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none;
+      margin: 0 auto;
+    }
+
+    .scroll-indicator {
+      display: none;
+    }
+  }
+
   @keyframes bounce {
     0%, 100% { transform: translateX(-50%) translateY(0); }
     50% { transform: translateX(-50%) translateY(8px); }
