@@ -40,21 +40,10 @@ const PrimaryButtonStyled = styled.div`
   display: inline-flex;
   font-size: 0.9rem;
   position: relative;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
 
   @media screen and (max-width: 480px) {
     font-size: 0.8rem;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.3);
-
-    a {
-      border-color: var(--primary-color);
-      background: var(--glass-bg);
-    }
   }
 
   a {
@@ -69,9 +58,16 @@ const PrimaryButtonStyled = styled.div`
     background: transparent;
     color: var(--white-color);
     font-weight: 700;
-    transition: background 0.3s ease, border-color 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease,
+      box-shadow 0.3s ease, transform 0.3s ease;
     position: relative;
     z-index: 1;
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.3);
+      border-color: var(--primary-color);
+      background: var(--glass-bg);
+    }
     @media screen and (max-width: 480px) {
       padding: 0.7rem 1.1rem;
     }

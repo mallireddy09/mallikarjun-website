@@ -10,7 +10,7 @@ import PrimaryButton from "../Components/PrimaryButton";
 import { PROFILE, HERO_ROLES, HERO_SUMMARY, PAST_IMPACT } from "../data/profile";
 import "./styles.css";
 import IconLinks from "../Components/IconLinks";
-import { gradientText } from "../styles/shared";
+import { companyLogo, gradientText } from "../styles/shared";
 import { DRAWER_MEDIA } from "../styles/media";
 
 const SOCIAL_LINKS = [
@@ -53,19 +53,18 @@ function HomePage({ theme }: ThemeProps) {
           <p>{HERO_SUMMARY}</p>
           <div className="social">
             <div className="hero-actions">
-              <PrimaryButton title="View Projects" href="#projects" />
               <PrimaryButton title="Resume" showDownloadIcon />
             </div>
             <div className="icons">
               <IconLinks links={SOCIAL_LINKS} />
             </div>
           </div>
-          <div className="impact-bar" aria-label="Past impact at">
-            <span className="impact-label">PAST IMPACT AT:</span>
+          <div className="impact-bar" aria-label="Engineering impact at">
+            <span className="impact-label">ENGINEERING IMPACT AT:</span>
             <ul>
               {PAST_IMPACT.map((company) => (
                 <li key={company.name}>
-                  <img src={company.logo} alt="" width="24" height="24" />
+                  <img src={company.logo} alt="" />
                   {company.name}
                 </li>
               ))}
@@ -278,12 +277,7 @@ const HomePageStyled = styled.header`
         gap: 0.45rem;
       }
       img {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
-        background: #fff;
-        border-radius: 4px;
-        flex-shrink: 0;
+        ${companyLogo}
       }
       li:not(:last-child)::after {
         content: "·";

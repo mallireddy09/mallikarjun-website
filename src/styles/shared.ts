@@ -16,3 +16,11 @@ export const gradientText = css`
   -webkit-text-fill-color: transparent;
   background-clip: text;
 `;
+
+export const companyLogo = css`
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  border-radius: 4px;
+  flex-shrink: 0;
+`;

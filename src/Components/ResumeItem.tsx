@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import ExternalLink from "./ExternalLink";
+import { companyLogo } from "../styles/shared";
 
 interface ResumeItemProps {
   year: string; title: string; subTitle: string; link: string; text?: string; logo?: string;
@@ -113,11 +114,7 @@ const ResumeItemStyled = styled.div`
       max-width: 100%;
 
       .company-logo {
-        width: 2rem;
-        height: 2rem;
-        object-fit: contain;
-        border-radius: 4px;
-        flex-shrink: 0;
+        ${companyLogo}
       }
 
       h6 {
