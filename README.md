@@ -79,6 +79,15 @@ The site uses hash links to scroll between sections on the same page. Append the
 | `src/Pages/` | Section components |
 | `src/Components/`, `src/styles/` | Shared components, layouts, and styling |
 
+### Reusing existing code
+
+- Use `src/helper/navigation.js` for section scrolling; sidebar links, home buttons, and deep links share this implementation.
+- Use `ExternalLink` for links that open in a new tab and `IconLinks` for lists of icon links.
+- Use `Title` with `animated` for section headings, `GalleryPage` for image/text galleries, and `ResumeTimeline` for work and education entries.
+- Use `FormField` for labeled inputs and textareas. The project category `Button` is controlled by the selection in `ProjectsPage`.
+- Reuse `src/styles/shared.js` for glass surfaces and gradient text, and `src/styles/media.js` for the desktop/drawer breakpoint.
+- Skills repeated across categories share their documentation metadata in `src/data/skills.js`; AWS and GCP IAM retain separate links.
+
 ## Contact
 
 - Email: [mallireddy0912@gmail.com](mailto:mallireddy0912@gmail.com)

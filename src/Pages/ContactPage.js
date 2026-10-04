@@ -7,14 +7,25 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ContactItem from "../Components/ContactItem";
 import SecondaryButton from "../Components/SecondaryButton";
 import { PROFILE } from "../data/profile";
+import FormField from "../Components/FormField";
+
+const CONTACT_FIELDS = [
+  { name: "name", id: "name", label: "Enter your name*", type: "text", required: true },
+  { name: "replyEmail", id: "email", label: "Enter your email*", type: "email", required: true },
+  { name: "subject", id: "subject", label: "Enter your subject", type: "text" },
+  { name: "message", id: "textarea", label: "Enter your Message*", multiline: true, cols: "30", rows: "10" },
+];
 
 function ContactPage() {
-  const [name, setName] = useState("");
-  const [replyEmail, setReplyEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
+  const [form, setForm] = useState({ name: "", replyEmail: "", subject: "", message: "" });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setForm((current) => ({ ...current, [name]: value }));
+  };
 
   const sendEmail = () => {
+    const { name, replyEmail, subject, message } = form;
     const emailSubject = subject || "Regarding your inquiry";
     const body = `Hello,\n\nI am ${name}.\n${message}\n\nFrom: ${name} (${replyEmail})`;
     const mailtoUrl = `mailto:${PROFILE.email}?subject=${encodeURIComponent(
@@ -33,45 +44,14 @@ function ContactPage() {
               <h4>Get In Touch</h4>
             </div>
             <form className="form" onSubmit={(e) => e.preventDefault()}>
-              <div className="form-field">
-                <label htmlFor="name">Enter your name*</label>
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
+              {CONTACT_FIELDS.map((field) => (
+                <FormField
+                  key={field.name}
+                  {...field}
+                  value={form[field.name]}
+                  onChange={handleChange}
                 />
-              </div>
-              <div className="form-field">
-                <label htmlFor="email">Enter your email*</label>
-                <input
-                  type="email"
-                  id="email"
-                  value={replyEmail}
-                  onChange={(e) => setReplyEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-field">
-                <label htmlFor="subject">Enter your subject</label>
-                <input
-                  type="text"
-                  id="subject"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                />
-              </div>
-              <div className="form-field">
-                <label htmlFor="textarea">Enter your Message*</label>
-                <textarea
-                  id="textarea"
-                  cols="30"
-                  rows="10"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-              </div>
+              ))}
               <div className="form-field f-button">
                 <SecondaryButton title="Send Email" onClick={sendEmail} />
               </div>

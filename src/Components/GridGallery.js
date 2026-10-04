@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import ExternalLink from "./ExternalLink";
+import { glassCard } from "../styles/shared";
 
 function GridGallery({ items, altPrefix = "item" }) {
   return (
@@ -25,9 +27,9 @@ function GridGallery({ items, altPrefix = "item" }) {
             </div>
           )}
           <div className="title">
-            <a href={item.link} target="_blank" rel="noreferrer">
+            <ExternalLink href={item.link}>
               {item.title}
-            </a>
+            </ExternalLink>
           </div>
         </div>
       ))}
@@ -50,10 +52,8 @@ const GridGalleryStyled = styled.div`
   }
 
   .gallery-item {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    ${glassCard}
     padding: 1rem;
-    border-radius: 16px;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     min-width: 0;

@@ -1,5 +1,13 @@
 const skill = (label, url) => ({ label, url });
 
+const sharedSkills = {
+  bigQuery: skill("BigQuery", "https://docs.cloud.google.com/bigquery/docs"),
+  dataform: skill("Dataform", "https://docs.cloud.google.com/dataform/docs"),
+  pubSub: skill("Pub/Sub", "https://docs.cloud.google.com/pubsub/docs"),
+  grafana: skill("Grafana", "https://grafana.com/docs/grafana/latest/"),
+  kibana: skill("Kibana", "https://www.elastic.co/docs/explore-analyze"),
+};
+
 const skillsSections = [
   {
     heading: "Core Technologies",
@@ -39,7 +47,7 @@ const skillsSections = [
         items: [
           skill("Snowflake", "https://docs.snowflake.com/en/"),
           skill("Databricks", "https://docs.databricks.com/aws/en/"),
-          skill("BigQuery", "https://docs.cloud.google.com/bigquery/docs"),
+          sharedSkills.bigQuery,
           skill("Redshift", "https://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html"),
           skill("Delta Lake", "https://docs.delta.io/latest/index.html"),
         ],
@@ -77,11 +85,11 @@ const skillsSections = [
       {
         label: "Transformation & Workflow",
         items: [
-          skill("Dataform", "https://docs.cloud.google.com/dataform/docs"),
+          sharedSkills.dataform,
           skill("dbt", "https://docs.getdbt.com/docs/introduction"),
           skill("Apache Airflow", "https://airflow.apache.org/docs/apache-airflow/stable/"),
           skill("Kafka", "https://kafka.apache.org/documentation/"),
-          skill("Pub/Sub", "https://docs.cloud.google.com/pubsub/docs"),
+          sharedSkills.pubSub,
         ],
       },
     ],
@@ -108,11 +116,11 @@ const skillsSections = [
       {
         label: "GCP",
         items: [
-          skill("BigQuery", "https://docs.cloud.google.com/bigquery/docs"),
+          sharedSkills.bigQuery,
           skill("Cloud Composer", "https://docs.cloud.google.com/composer/docs"),
-          skill("Dataform", "https://docs.cloud.google.com/dataform/docs"),
+          sharedSkills.dataform,
           skill("Cloud Run", "https://docs.cloud.google.com/run/docs"),
-          skill("Pub/Sub", "https://docs.cloud.google.com/pubsub/docs"),
+          sharedSkills.pubSub,
           skill("GCS", "https://docs.cloud.google.com/storage/docs"),
           skill("IAM", "https://docs.cloud.google.com/iam/docs"),
         ],
@@ -157,8 +165,8 @@ const skillsSections = [
       {
         label: "Observability & Monitoring",
         items: [
-          skill("Grafana", "https://grafana.com/docs/grafana/latest/"),
-          skill("Kibana", "https://www.elastic.co/docs/explore-analyze"),
+          sharedSkills.grafana,
+          sharedSkills.kibana,
           skill("Azure Monitor", "https://learn.microsoft.com/en-us/azure/azure-monitor/overview"),
         ],
       },
@@ -172,8 +180,8 @@ const skillsSections = [
         items: [
           skill("Tableau", "https://help.tableau.com/current/pro/desktop/en-us/default.htm"),
           skill("Power BI", "https://learn.microsoft.com/en-us/power-bi/"),
-          skill("Grafana", "https://grafana.com/docs/grafana/latest/"),
-          skill("Kibana", "https://www.elastic.co/docs/explore-analyze"),
+          sharedSkills.grafana,
+          sharedSkills.kibana,
         ],
       },
       {

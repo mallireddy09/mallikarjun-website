@@ -9,16 +9,20 @@ import AnimatedSection from '../Components/AnimatedSection';
 const allButtons = ['All', ...new Set(projects.map(item => item.category))]
 
 function ProjectsPage() {
-    const [menuItem, setMenuItems] = useState(projects);
-    const filter = (category) => setMenuItems(category === 'All' ? projects : projects.filter(item => item.category === category));
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const menuItem = selectedCategory === 'All'
+        ? projects
+        : projects.filter(item => item.category === selectedCategory);
     return (
         <MainLayout>
-            <AnimatedSection>
-                <Title title={'Projects'} span={'projects'} />
-            </AnimatedSection>
+            <Title title={'Projects'} span={'projects'} animated />
             <InnerLayout>
                 <AnimatedSection delay={0.1}>
-                    <Button filter={filter} button={allButtons} />
+                    <Button
+                        categories={allButtons}
+                        selectedCategory={selectedCategory}
+                        onSelect={setSelectedCategory}
+                    />
                 </AnimatedSection>
                 <AnimatedSection delay={0.15}>
                     <Menu menuItem={menuItem} />

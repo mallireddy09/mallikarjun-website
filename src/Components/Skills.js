@@ -6,6 +6,8 @@ import AnimatedSection from "./AnimatedSection";
 import SkillSphere from "./SkillSphere";
 import skillsSections from "../data/skills";
 import { PROFILE } from "../data/profile";
+import ExternalLink from "./ExternalLink";
+import { glassCard } from "../styles/shared";
 import "./styles.css";
 
 function Skills({ theme }) {
@@ -13,9 +15,7 @@ function Skills({ theme }) {
 
   return (
     <SkillsStyled>
-      <AnimatedSection>
-        <Title title="Skills" span="skills" />
-      </AnimatedSection>
+      <Title title="Skills" span="skills" animated />
 
       <AnimatedSection delay={0.05}>
         <div className="sphere-wrapper">
@@ -39,16 +39,14 @@ function Skills({ theme }) {
                     <h4 className="card-label">{category.label}</h4>
                     <div className="chip-list">
                       {category.items.map((item) => (
-                        <a
+                        <ExternalLink
                           key={item.label}
                           className="chip"
                           href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           title={`${item.label} documentation (opens in a new tab)`}
                         >
                           {item.label}
-                        </a>
+                        </ExternalLink>
                       ))}
                     </div>
                   </div>
@@ -61,13 +59,13 @@ function Skills({ theme }) {
         <AnimatedSection delay={0.35}>
           <div className="leetcode-section">
             <span className="section-label">LeetCode Profile</span>
-            <a href={PROFILE.leetcode} target="_blank" rel="noreferrer">
+            <ExternalLink href={PROFILE.leetcode}>
               <img
                 src={`https://leetcard.jacoblin.cool/mallikarjun09?theme=${leetcodeTheme}&font=Gowun%20Batang&ext=heatmap&border=0`}
                 alt={`LeetCode stats for ${PROFILE.name}`}
                 className="leetcode-img"
               />
-            </a>
+            </ExternalLink>
           </div>
         </AnimatedSection>
       </InnerLayout>
@@ -121,9 +119,7 @@ const SkillsStyled = styled.section`
   }
 
   .skill-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    ${glassCard}
     padding: 1.4rem 1.5rem;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     &:hover {

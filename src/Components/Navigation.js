@@ -20,6 +20,7 @@ import darkSkills from "../Components/Assets/darkSkills.svg";
 import darkEducation from "../Components/Assets/darkEducation.svg";
 import education from "../Components/Assets/education.svg";
 import { SECTIONS } from "../data/sections";
+import { scrollToSection } from "../helper/navigation";
 
 const NAV_ICONS = {
   home: { icon: home, darkIcon: darkHome },
@@ -85,13 +86,10 @@ function Navigation({ theme, onClose }) {
     };
   }, []);
 
-  const scrollToSection = (id) => (event) => {
+  const handleSectionClick = (id) => (event) => {
     event.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
+    if (scrollToSection(id)) {
       setActiveSection(id);
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.replaceState(null, "", `#${id}`);
     }
     onClose?.();
   };
@@ -113,7 +111,7 @@ function Navigation({ theme, onClose }) {
                 href={`#${item.id}`}
                 className={activeSection === item.id ? "active-class" : ""}
                 aria-current={activeSection === item.id ? "location" : undefined}
-                onClick={scrollToSection(item.id)}
+                onClick={handleSectionClick(item.id)}
               >
                 <img
                   src={isLight ? icons.darkIcon : icons.icon}

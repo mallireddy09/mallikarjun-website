@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { PROFILE } from "../data/profile";
+import { scrollToSection } from "../helper/navigation";
+import ExternalLink from "./ExternalLink";
 
 function PrimaryButton({ title, href, showDownloadIcon = false }) {
   const content = (
@@ -12,28 +14,22 @@ function PrimaryButton({ title, href, showDownloadIcon = false }) {
   );
 
   const isHashLink = typeof href === "string" && href.startsWith("#");
+  const Link = isHashLink ? "a" : ExternalLink;
 
   const handleHashClick = (event) => {
     if (!isHashLink) return;
     event.preventDefault();
-    const id = href.slice(1);
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.replaceState(null, "", `#${id}`);
-    }
+    scrollToSection(href.slice(1));
   };
 
   return (
     <PrimaryButtonStyled>
-      <a
+      <Link
         href={href || PROFILE.resume}
-        target={isHashLink ? undefined : "_blank"}
-        rel={isHashLink ? undefined : "noreferrer"}
         onClick={handleHashClick}
       >
         {content}
-      </a>
+      </Link>
     </PrimaryButtonStyled>
   );
 }

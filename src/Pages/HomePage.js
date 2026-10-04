@@ -8,6 +8,15 @@ import { ReactTyped as Typed } from "react-typed";
 import PrimaryButton from "../Components/PrimaryButton";
 import { PROFILE, HERO_ROLES, HERO_SUMMARY } from "../data/profile";
 import "./styles.css";
+import IconLinks from "../Components/IconLinks";
+import { gradientText } from "../styles/shared";
+import { DRAWER_MEDIA } from "../styles/media";
+
+const SOCIAL_LINKS = [
+  { key: "github", href: PROFILE.github, label: "GitHub", Icon: GithubIcon, className: "icon i-github" },
+  { key: "linkedin", href: PROFILE.linkedin, label: "LinkedIn", Icon: LinkedInIcon, className: "icon i-linkedin" },
+  { key: "twitter", href: PROFILE.twitter, label: "X (Twitter)", Icon: XIcon, className: "icon" },
+];
 
 function HomePage({ theme }) {
   return (
@@ -40,33 +49,7 @@ function HomePage({ theme }) {
         <p>{HERO_SUMMARY}</p>
         <div className="social">
           <div className="icons">
-            <a
-              href={PROFILE.github}
-              className="icon i-github"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-            >
-              <GithubIcon />
-            </a>
-            <a
-              href={PROFILE.linkedin}
-              className="icon i-linkedin"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-            >
-              <LinkedInIcon />
-            </a>
-            <a
-              href={PROFILE.twitter}
-              className="icon"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="X (Twitter)"
-            >
-              <XIcon />
-            </a>
+            <IconLinks links={SOCIAL_LINKS} />
           </div>
           <PrimaryButton title="Resume" showDownloadIcon />
           <PrimaryButton title="Read more" href="#about" />
@@ -125,10 +108,7 @@ const HomePageStyled = styled.header`
   }
 
   .gradient-text {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    ${gradientText}
   }
 
   .status-badge {
@@ -275,7 +255,7 @@ const HomePageStyled = styled.header`
     }
   }
 
-  @media screen and (max-width: 1200px), screen and (pointer: coarse) {
+  @media ${DRAWER_MEDIA} {
     height: auto;
     min-height: 0;
 

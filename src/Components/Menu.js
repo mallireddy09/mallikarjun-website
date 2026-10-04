@@ -3,12 +3,22 @@ import styled from "styled-components";
 import GitHub from "@mui/icons-material/GitHub";
 import YouTube from "@mui/icons-material/YouTube";
 import Play from "@mui/icons-material/PlayArrowOutlined";
+import IconLinks from "./IconLinks";
+import { glassCard } from "../styles/shared";
 
 const LINK_ICONS = [
   { key: "github", Icon: GitHub },
   { key: "demo", Icon: YouTube },
   { key: "store", Icon: Play },
 ];
+
+function ProjectLinks({ item }) {
+  return (
+    <IconLinks links={LINK_ICONS.map(({ key, Icon }) => ({
+      key, Icon, href: item[key], label: `${item.title} ${key}`,
+    }))} />
+  );
+}
 
 const Menu = ({ menuItem }) => {
   return (
@@ -19,37 +29,13 @@ const Menu = ({ menuItem }) => {
             <div className="portfolio-image">
               <img src={item.image} alt={item.title} loading="lazy" />
               <div className="overlay">
-                {LINK_ICONS.map(({ key, Icon }) =>
-                  item[key] ? (
-                    <a
-                      key={key}
-                      href={item[key]}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`${item.title} ${key}`}
-                    >
-                      <Icon />
-                    </a>
-                  ) : null
-                )}
+                <ProjectLinks item={item} />
               </div>
             </div>
             <h6>{item.title}</h6>
             <p>{item.text}</p>
             <div className="mobile-links">
-              {LINK_ICONS.map(({ key, Icon }) =>
-                item[key] ? (
-                  <a
-                    key={key}
-                    href={item[key]}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${item.title} ${key}`}
-                  >
-                    <Icon />
-                  </a>
-                ) : null
-              )}
+              <ProjectLinks item={item} />
             </div>
           </div>
         </div>
@@ -75,10 +61,8 @@ const MenuItemStyled = styled.div`
   }
 
   .grid-item {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    ${glassCard}
     box-shadow: var(--card-shadow);
-    border-radius: 16px;
     overflow: hidden;
     position: relative;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);

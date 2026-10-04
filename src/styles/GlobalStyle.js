@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import { DRAWER_MEDIA } from "./media";
 
 const GlobalStyle = createGlobalStyle`
 :root {
@@ -288,7 +289,7 @@ p{
     transform: translateX(0) !important;
     z-index: 20;
 }
-@media screen and (max-width: 1200px), screen and (pointer: coarse){
+@media ${DRAWER_MEDIA}{
     .ham-burger-menu{
         .mobile-menu-icon { display: block; }
         .desktop-menu-icon { display: none; }

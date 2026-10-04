@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import AnimatedSection from "./AnimatedSection";
 
-function Title({ title, span }) {
-  return (
+function Title({ title, span, animated = false }) {
+  const content = (
     <TitleStyled>
       <h2>
         {title}{" "}
@@ -12,6 +13,7 @@ function Title({ title, span }) {
       </h2>
     </TitleStyled>
   );
+  return animated ? <AnimatedSection>{content}</AnimatedSection> : content;
 }
 
 const TitleStyled = styled.div`

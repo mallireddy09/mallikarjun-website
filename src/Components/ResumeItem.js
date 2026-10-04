@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import ExternalLink from "./ExternalLink";
 
 function ResumeItem({ year, title, subTitle, text, link, logo }) {
   return (
@@ -10,10 +11,10 @@ function ResumeItem({ year, title, subTitle, text, link, logo }) {
       <div className="right-content">
         <p className="mobile-year">{year}</p>
         <h5>{title}</h5>
-        <a href={link} target="_blank" rel="noreferrer" className="company-link">
+        <ExternalLink href={link} className="company-link">
           {logo && <img src={logo} alt="" className="company-logo" />}
           <h6>{subTitle}</h6>
-        </a>
+        </ExternalLink>
         {text && <p>{text}</p>}
       </div>
     </ResumeItemStyled>

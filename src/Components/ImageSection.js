@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { PROFILE, ABOUT_SUMMARY } from "../data/profile";
+import { glassSurface, gradientText } from "../styles/shared";
 
 function ImageSection() {
   return (
@@ -39,10 +40,7 @@ const ImageSectionStyled = styled.div`
 
       span {
         font-size: inherit;
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        ${gradientText}
       }
     }
 
@@ -67,8 +65,7 @@ const ImageSectionStyled = styled.div`
       max-width: 20rem;
 
       .info-card {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
+        ${glassSurface}
         border-radius: 12px;
         padding: 1rem 1.2rem;
         display: flex;

@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-function Button({filter, button}) {
-    const [active, setActive] = useState(0);
+function Button({ categories, selectedCategory, onSelect }) {
     return (
         <ButtonsStyled>
             {
-                button.map((but, i) =>{
+                categories.map((category) =>{
                     return <ButtonStyled
-                        key={i}
-                        className={active === i ? 'active' : ''}
-                        onClick={() => {
-                            setActive(i);
-                            filter(but);
-                        }}
+                        key={category}
+                        type="button"
+                        className={selectedCategory === category ? 'active' : ''}
+                        aria-pressed={selectedCategory === category}
+                        onClick={() => onSelect(category)}
                     >
-                        {but}
+                        {category}
                     </ButtonStyled>
                 })
             }

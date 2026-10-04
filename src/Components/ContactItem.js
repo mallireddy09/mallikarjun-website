@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { glassCard } from "../styles/shared";
 
 function ContactItem({ title, icon, cont1 }) {
   return (
@@ -15,9 +16,7 @@ function ContactItem({ title, icon, cont1 }) {
 
 const ContactItemStyled = styled.div`
   padding: 1.5rem 2rem;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  ${glassCard}
   display: flex;
   align-items: center;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);

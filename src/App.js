@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 import { Route, Routes } from "react-router-dom";
 import { IconButton } from "@mui/material";
@@ -9,15 +9,18 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CloseIcon from "@mui/icons-material/Close";
 import Sidebar from "./Components/SideBar";
 import PortfolioPage from "./Pages/PortfolioPage";
-
-const DESKTOP_QUERY = "(min-width: 1201px) and (pointer: fine)";
+import { DESKTOP_QUERY } from "./styles/media";
 
 function App() {
   const [theme, setTheme] = useState("dark-theme");
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
-  const [navToggle, setNavToggle] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
+  const [navToggle, setNavToggle] = useState(isDesktop);
   const menuButtonRef = useRef(null);
   const isOverlayOpen = navToggle && !isDesktop;
+  const closeNav = useCallback(() => {
+    setNavToggle(false);
+    menuButtonRef.current?.focus({ preventScroll: true });
+  }, []);
 
   useEffect(() => {
     const media = window.matchMedia(DESKTOP_QUERY);
@@ -48,8 +51,7 @@ function App() {
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
-        setNavToggle(false);
-        menuButtonRef.current?.focus({ preventScroll: true });
+        closeNav();
       }
       if (event.key === "Tab" && isOverlayOpen) {
         const index = menuItems.indexOf(document.activeElement);
@@ -62,17 +64,12 @@ function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [navToggle, isOverlayOpen]);
+  }, [navToggle, isOverlayOpen, closeNav]);
 
   const themeToggler = () => {
     setTheme((prev) =>
       prev === "light-theme" ? "dark-theme" : "light-theme"
     );
-  };
-
-  const closeNav = () => {
-    setNavToggle(false);
-    menuButtonRef.current?.focus({ preventScroll: true });
   };
 
   return (

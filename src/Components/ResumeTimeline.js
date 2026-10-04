@@ -16,9 +16,7 @@ const ICONS = {
 function ResumeTimeline({ title, span, sectionTitle, icon = "work", items }) {
   return (
     <TimelineStyled>
-      <AnimatedSection>
-        <Title title={title} span={span} />
-      </AnimatedSection>
+      <Title title={title} span={span} animated />
       <InnerLayout>
         <AnimatedSection delay={0.1}>
           <div className="small-title u-small-title-margin">

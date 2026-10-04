@@ -11,6 +11,19 @@ import BlogsPage from "./BlogsPage";
 import CertificationPage from "./CertificationPage";
 import ContactPage from "./ContactPage";
 import { SECTIONS } from "../data/sections";
+import { scrollToSection } from "../helper/navigation";
+
+const SECTION_COMPONENTS = {
+  home: HomePage,
+  about: AboutPage,
+  skills: SkillsPage,
+  experience: ExperiencePage,
+  education: EducationPage,
+  projects: ProjectsPage,
+  blogs: BlogsPage,
+  certification: CertificationPage,
+  contact: ContactPage,
+};
 
 function pathToSectionId(pathname) {
   if (!pathname || pathname === "/") return "home";
@@ -25,45 +38,27 @@ function PortfolioPage({ theme }) {
     const fromHash = location.hash?.replace("#", "");
     const fromPath = pathToSectionId(location.pathname);
 
-    // Deep link from old routes like /about
-    if (location.pathname !== "/" && !fromHash) {
-      const el = document.getElementById(fromPath);
-      if (!el) return undefined;
-      const timer = window.setTimeout(() => {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-        navigate(`/#${fromPath}`, { replace: true });
-      }, 50);
-      return () => window.clearTimeout(timer);
-    }
+    const isLegacyRoute = location.pathname !== "/" && !fromHash;
+    const id = isLegacyRoute ? fromPath : fromHash;
+    if (!id || (!isLegacyRoute && id === "home")) return undefined;
 
-    // Hash link like /#skills
-    if (fromHash && fromHash !== "home") {
-      const el = document.getElementById(fromHash);
-      if (!el) return undefined;
-      const timer = window.setTimeout(() => {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 50);
-      return () => window.clearTimeout(timer);
-    }
-
-    return undefined;
+    const timer = window.setTimeout(() => {
+      const found = scrollToSection(id, { updateHash: false });
+      if (found && isLegacyRoute) navigate(`/#${id}`, { replace: true });
+    }, 50);
+    return () => window.clearTimeout(timer);
   }, [location.pathname, location.hash, navigate]);
 
   return (
     <PortfolioStyled>
-      {SECTIONS.map(({ id }) => (
-        <section key={id} id={id} className="portfolio-section">
-          {id === "home" && <HomePage theme={theme} />}
-          {id === "about" && <AboutPage />}
-          {id === "skills" && <SkillsPage theme={theme} />}
-          {id === "experience" && <ExperiencePage />}
-          {id === "education" && <EducationPage />}
-          {id === "projects" && <ProjectsPage />}
-          {id === "blogs" && <BlogsPage />}
-          {id === "certification" && <CertificationPage />}
-          {id === "contact" && <ContactPage />}
-        </section>
-      ))}
+      {SECTIONS.map(({ id }) => {
+        const Component = SECTION_COMPONENTS[id];
+        return (
+          <section key={id} id={id} className="portfolio-section">
+            <Component theme={theme} />
+          </section>
+        );
+      })}
     </PortfolioStyled>
   );
 }

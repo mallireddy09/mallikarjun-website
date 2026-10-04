@@ -9,9 +9,7 @@ function AboutPage() {
   return (
     <AboutStyled>
       <MainLayout>
-        <AnimatedSection>
-          <Title title="About Me" span="About Me" />
-        </AnimatedSection>
+        <Title title="About Me" span="About Me" animated />
         <AnimatedSection delay={0.1}>
           <ImageSection />
         </AnimatedSection>
