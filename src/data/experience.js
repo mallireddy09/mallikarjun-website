@@ -1,6 +1,6 @@
 import { companies } from "./companies";
 
-const { nvidia, homeDepot, microsoft, buffalo, buffaloDining, nineleaps } =
+const { nvidia, homeDepot, microsoft, buffalo, buffaloDining, nineleaps, uber } =
   companies;
 
 const experience = [
@@ -49,8 +49,8 @@ const experience = [
   {
     year: "Aug 17, 2022 - Apr 3, 2023",
     title: "Data Engineer (Member of Technical Staff II)",
-    company: nineleaps,
-    text: "Client: Uber",
+    company: uber,
+    text: "Consultant via Nineleaps",
   },
   {
     year: "Jan 17, 2022 - Aug 16, 2022",

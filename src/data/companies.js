@@ -3,6 +3,7 @@ import homeDepotLogo from "../img/companies/homedepot.png";
 import microsoftLogo from "../img/companies/microsoft.svg";
 import buffaloLogo from "../img/companies/buffalo.png";
 import nineleapsLogo from "../img/companies/nineleaps.png";
+import uberLogo from "../img/companies/uber.jpg";
 import gitamLogo from "../img/companies/gitam.png";
 
 export const companies = {
@@ -35,6 +36,11 @@ export const companies = {
     name: "Nineleaps",
     url: "https://www.nineleaps.com/",
     logo: nineleapsLogo,
+  },
+  uber: {
+    name: "Uber",
+    url: "https://www.uber.com/",
+    logo: uberLogo,
   },
   gitam: {
     name: "GITAM University",
