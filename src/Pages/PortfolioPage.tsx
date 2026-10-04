@@ -43,13 +43,25 @@ function PortfolioPage({ theme }: ThemeProps) {
     const id = resolveSectionId(rawId);
     if (!id) return undefined;
 
-    const timer = window.setTimeout(() => {
-      const found = scrollToSection(id, { updateHash: false });
-      if (found && (isLegacyRoute || rawId !== id)) {
-        navigate({ pathname: "/", search: location.search, hash: `#${id}` }, { replace: true });
-      }
-    }, 50);
-    return () => window.clearTimeout(timer);
+    let cancelled = false;
+    const initialHash = window.location.hash;
+    // Let layout request its fonts before aligning the anchor to the final text sizes.
+    let frame = window.requestAnimationFrame(() => {
+      void (document.fonts?.ready ?? Promise.resolve()).then(() => {
+        if (cancelled) return;
+        frame = window.requestAnimationFrame(() => {
+          if (cancelled || window.location.hash !== initialHash) return;
+          const found = scrollToSection(id, { updateHash: false });
+          if (found && (isLegacyRoute || rawId !== id)) {
+            navigate({ pathname: "/", search: location.search, hash: `#${id}` }, { replace: true });
+          }
+        });
+      });
+    });
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
+    };
   }, [location.pathname, location.hash, location.search, navigate]);
 
   return (

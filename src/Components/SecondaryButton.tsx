@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-function SecondaryButton({ title, onClick }: { title: string; onClick: React.MouseEventHandler<HTMLButtonElement> }) {
+type SecondaryButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { title: string };
+
+function SecondaryButton({ title, type = "button", ...props }: SecondaryButtonProps) {
   return (
-    <SecondaryButtonStyled type="button" onClick={onClick}>
+    <SecondaryButtonStyled type={type} {...props}>
       {title}
     </SecondaryButtonStyled>
   );

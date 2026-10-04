@@ -42,10 +42,22 @@ export const initSkillSphere = () => {
     let PROJECTION_CENTER_X = 0;
     let PROJECTION_CENTER_Y = 0;
     let GLOBE_RADIUS = 0;
-    let rafId = 0;
+    let rafId: number | null = null;
+    let slowDownTimer: number | undefined;
     let disposed = false;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const rect = canvas.getBoundingClientRect();
+    let isInView = rect.bottom > 0 && rect.top < window.innerHeight &&
+        rect.right > 0 && rect.left < window.innerWidth;
 
-    function onResize() {
+    const canAnimate = () => !disposed && isInView && !document.hidden && !motionPreference.matches;
+
+    function clearSlowDownTimer() {
+        window.clearTimeout(slowDownTimer);
+        slowDownTimer = undefined;
+    }
+
+    function resizeCanvas() {
         // CSS controls display size; attributes must be numeric pixels for the buffer.
         width = Math.max(1, Math.floor(canvas.clientWidth || canvas.offsetWidth));
         height = Math.max(1, Math.floor(canvas.clientHeight || canvas.offsetHeight));
@@ -61,8 +73,7 @@ export const initSkillSphere = () => {
         GLOBE_RADIUS = Math.min(width, height) / (window.innerWidth > 768 ? 2.6 : 3);
     }
 
-    window.addEventListener("resize", onResize);
-    onResize();
+    resizeCanvas();
 
     let PHI = Math.PI * (3.0 - Math.sqrt(5.0));
     let VX = MIN_SPEED;
@@ -73,32 +84,32 @@ export const initSkillSphere = () => {
     let mouse_moving = false;
 
     const onMouseMove = (e: MouseEvent) => {
+        if (!canAnimate()) return;
+        clearSlowDownTimer();
         mouse_moving = true;
         mouse_x = e.offsetX - width / 2;
         mouse_y = e.offsetY - height / 2;
         VY = MOUSE_SPEED * mouse_x / width;
         VZ = MOUSE_SPEED * mouse_y / height;
     };
+    function slowDownSpin() {
+        slowDownTimer = undefined;
+        if (mouse_moving || !canAnimate()) return;
+        VZ /= 1.3;
+        VY /= 1.3;
+        if (Math.abs(VZ) <= MIN_SPEED) {
+            VZ = (Math.sign(VZ) || 1) * MIN_SPEED;
+        }
+        if (Math.abs(VY) <= MIN_SPEED) {
+            VY = (Math.sign(VY) || 1) * MIN_SPEED;
+        }
+        if (Math.abs(VZ) <= MIN_SPEED && Math.abs(VY) <= MIN_SPEED) return;
+        slowDownTimer = window.setTimeout(slowDownSpin, 200);
+    }
+
     const onMouseOut = () => {
         mouse_moving = false;
-
-        function slowDownSpin() {
-            if (mouse_moving || disposed) {
-                return;
-            }
-            VZ /= 1.3;
-            VY /= 1.3;
-            if (Math.abs(VZ) <= MIN_SPEED) {
-                VZ = Math.sign(VZ) * MIN_SPEED;
-            }
-            if (Math.abs(VY) <= MIN_SPEED) {
-                VY = Math.sign(VY) * MIN_SPEED;
-            }
-            if ((VZ === MIN_SPEED) || (VY === MIN_SPEED)) {
-                return;
-            }
-            setTimeout(slowDownSpin, 200);
-        }
+        clearSlowDownTimer();
         slowDownSpin();
     };
 
@@ -139,14 +150,14 @@ export const initSkillSphere = () => {
             this.y = y3;
             this.z = z3;
         }
-        project() {
-            this.rotate();
+        project(animate: boolean) {
+            if (animate) this.rotate();
             this.scaleProjected = PERSPECTIVE / (PERSPECTIVE + this.z * GLOBE_RADIUS);
             this.xProjected = (this.x * GLOBE_RADIUS * this.scaleProjected) + PROJECTION_CENTER_X - DOT_RADIUS * this.scaleProjected;
             this.yProjected = (this.y * GLOBE_RADIUS * this.scaleProjected) + PROJECTION_CENTER_Y - DOT_RADIUS * this.scaleProjected;
         }
-        draw() {
-            this.project();
+        draw(animate: boolean) {
+            this.project(animate);
             ctx.save();
             ctx.globalAlpha = Math.abs(1 - this.z * 3 * GLOBE_RADIUS / width);
             ctx.beginPath();
@@ -161,25 +172,65 @@ export const initSkillSphere = () => {
     }
     const dots = PATHS.map((e, i) => new Dot(i, e));
 
-    function render() {
+    function drawFrame(animate: boolean) {
         if (disposed) return;
         ctx.clearRect(0, 0, width, height);
         dots.sort((dot1, dot2) => {
             return dot1.scaleProjected - dot2.scaleProjected;
         });
         dots.forEach(dot => {
-            dot.draw();
+            dot.draw(animate);
         });
+    }
+
+    function render() {
+        rafId = null;
+        if (!canAnimate()) return;
+        drawFrame(true);
         rafId = window.requestAnimationFrame(render);
     }
-    render();
+
+    function pause() {
+        if (rafId !== null) window.cancelAnimationFrame(rafId);
+        rafId = null;
+        clearSlowDownTimer();
+        mouse_moving = false;
+        VY = (Math.sign(VY) || 1) * MIN_SPEED;
+        VZ = (Math.sign(VZ) || 1) * MIN_SPEED;
+    }
+
+    function syncAnimation() {
+        if (disposed) return;
+        if (canAnimate()) {
+            if (rafId === null) render();
+        } else {
+            pause();
+            if (!document.hidden) drawFrame(false);
+        }
+    }
+
+    const onResize = () => {
+        resizeCanvas();
+        drawFrame(false);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+        isInView = entry.isIntersecting;
+        syncAnimation();
+    });
+    observer.observe(canvas);
+    window.addEventListener("resize", onResize);
+    document.addEventListener("visibilitychange", syncAnimation);
+    motionPreference.addEventListener("change", syncAnimation);
+    syncAnimation();
 
     return () => {
         disposed = true;
-        window.cancelAnimationFrame(rafId);
+        pause();
+        observer.disconnect();
         window.removeEventListener("resize", onResize);
+        document.removeEventListener("visibilitychange", syncAnimation);
+        motionPreference.removeEventListener("change", syncAnimation);
         canvas.removeEventListener("mousemove", onMouseMove);
         canvas.removeEventListener("mouseout", onMouseOut);
     };
 };
-

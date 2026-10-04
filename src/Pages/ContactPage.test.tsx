@@ -33,6 +33,38 @@ test("shared contact fields retain their independent values and encode the email
 test("an empty subject keeps the existing default email subject", () => {
   const open = jest.spyOn(window, "open").mockImplementation(() => null);
   render(<ContactPage />);
+  fireEvent.change(screen.getByLabelText("Enter your name*"), { target: { value: "Alex" } });
+  fireEvent.change(screen.getByLabelText("Enter your email*"), { target: { value: "alex@example.com" } });
+  fireEvent.change(screen.getByLabelText("Enter your Message*"), { target: { value: "Hello" } });
   fireEvent.click(screen.getByRole("button", { name: "Send Email" }));
   expect(new URL(open.mock.calls[0][0] ?? "").searchParams.get("subject")).toBe("Regarding your inquiry");
+});
+
+test.each([
+  ["Enter your name*", ""],
+  ["Enter your email*", ""],
+  ["Enter your email*", "invalid-email"],
+  ["Enter your Message*", ""],
+])("invalid %s prevents opening a draft", (label, value) => {
+  const open = jest.spyOn(window, "open").mockImplementation(() => null);
+  const { container } = render(<ContactPage />);
+  fireEvent.change(screen.getByLabelText("Enter your name*"), { target: { value: "Alex" } });
+  fireEvent.change(screen.getByLabelText("Enter your email*"), { target: { value: "alex@example.com" } });
+  fireEvent.change(screen.getByLabelText("Enter your Message*"), { target: { value: "Hello" } });
+  fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  fireEvent.click(screen.getByRole("button", { name: "Send Email" }));
+  // Programmatic submission must also respect validity.
+  fireEvent.submit(container.querySelector("form")!);
+  expect(open).not.toHaveBeenCalled();
+});
+
+test("a valid form submission opens one draft", () => {
+  const open = jest.spyOn(window, "open").mockImplementation(() => null);
+  const { container } = render(<ContactPage />);
+  fireEvent.change(screen.getByLabelText("Enter your name*"), { target: { value: "Alex" } });
+  fireEvent.change(screen.getByLabelText("Enter your email*"), { target: { value: "alex@example.com" } });
+  fireEvent.change(screen.getByLabelText("Enter your Message*"), { target: { value: "Hello" } });
+  expect(screen.getByRole("button", { name: "Send Email" })).toHaveAttribute("type", "submit");
+  fireEvent.submit(container.querySelector("form")!);
+  expect(open).toHaveBeenCalledTimes(1);
 });

@@ -11,12 +11,13 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 - One continuous portfolio page with section navigation and smooth scrolling
 - Sidebar open by default beside desktop content, with a three-dot toggle; phones/tablets start closed with a hamburger toggle
 - Light and dark themes, particle effects, and animated role text
+- The skills sphere pauses off-screen and in hidden tabs, with a static view for reduced motion
 - A centered hero with an outline Resume button, compact social links, and an engineering impact bar using the Experience logos
 - Three-paragraph About narrative with a Key Highlights card
 - Six skills sections with every skill linked to official documentation in a new tab
 - Project category filters
 - GitHub, LinkedIn, X, and resume links
-- Contact section with email, location, and a form that opens the visitor's email client
+- Contact section with email, location, and a validated form that opens the visitor's email client
 
 ## Stack
 
@@ -70,7 +71,7 @@ The menu and page use the same typed section registry, so their order stays alig
 | `#blogs` | Blogs |
 | `#contact` | Contact |
 
-Old `/certification` and `#certification` links resolve to `#certifications`. Legacy section routes preserve query strings when normalized.
+Old `/certification` and `#certification` links resolve to `#certifications`. Legacy section routes preserve query strings when normalized. Deep links wait for font layout, and the stats card reserves its space while loading.
 
 ## Updating content
 

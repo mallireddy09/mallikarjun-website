@@ -21,7 +21,7 @@ const CONTACT_FIELDS: (FormFieldProps & { name: keyof ContactForm })[] = [
   { name: "name", id: "name", label: "Enter your name*", type: "text", required: true },
   { name: "replyEmail", id: "email", label: "Enter your email*", type: "email", required: true },
   { name: "subject", id: "subject", label: "Enter your subject", type: "text" },
-  { name: "message", id: "textarea", label: "Enter your Message*", multiline: true, cols: 30, rows: 10 },
+  { name: "message", id: "textarea", label: "Enter your Message*", multiline: true, required: true, cols: 30, rows: 10 },
 ];
 
 function ContactPage() {
@@ -32,7 +32,9 @@ function ContactPage() {
     setForm((current) => ({ ...current, [name]: value }));
   };
 
-  const sendEmail = () => {
+  const sendEmail: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
     const { name, replyEmail, subject, message } = form;
     const emailSubject = subject || "Regarding your inquiry";
     const body = `Hello,\n\nI am ${name}.\n${message}\n\nFrom: ${name} (${replyEmail})`;
@@ -51,7 +53,7 @@ function ContactPage() {
             <div className="contact-title">
               <h4>Get In Touch</h4>
             </div>
-            <form className="form" onSubmit={(e) => e.preventDefault()}>
+            <form className="form" onSubmit={sendEmail}>
               {CONTACT_FIELDS.map((field) => (
                 <FormField
                   key={field.name}
@@ -61,7 +63,7 @@ function ContactPage() {
                 />
               ))}
               <div className="form-field f-button">
-                <SecondaryButton title="Send Email" onClick={sendEmail} />
+                <SecondaryButton title="Send Email" type="submit" />
               </div>
             </form>
           </div>

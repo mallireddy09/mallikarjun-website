@@ -60,11 +60,13 @@ function Skills({ theme }: ThemeProps) {
         <AnimatedSection delay={0.35}>
           <div className="leetcode-section">
             <span className="section-label">LeetCode Profile</span>
-            <ExternalLink href={PROFILE.leetcode}>
+            <ExternalLink href={PROFILE.leetcode} className="leetcode-card">
               <img
                 src={`https://leetcard.jacoblin.cool/mallikarjun09?theme=${leetcodeTheme}&font=Gowun%20Batang&ext=heatmap&border=0`}
                 alt={`LeetCode stats for ${PROFILE.name}`}
                 className="leetcode-img"
+                width="500"
+                height="320"
               />
             </ExternalLink>
           </div>
@@ -187,9 +189,16 @@ const SkillsStyled = styled.section`
       font-weight: 700;
       margin-bottom: 1.2rem;
     }
+    .leetcode-card {
+      display: block;
+      width: min(100%, 500px);
+      aspect-ratio: 25 / 16;
+    }
     .leetcode-img {
       display: block;
-      max-width: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       border-radius: 12px;
     }
   }
