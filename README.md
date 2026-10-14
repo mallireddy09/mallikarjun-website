@@ -21,14 +21,14 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 
 ## Stack
 
-- React 18 + TypeScript/TSX + Create React App
-- React Router 6
+- React 18 + TypeScript/TSX + Vite
+- React Router 7
 - styled-components + MUI
 - react-particles / tsparticles, react-typed
 
 ## Getting started
 
-Use Node.js 24 and npm to match the deployment workflow.
+Use Node.js 24.15+ (24.x LTS) and npm 11.16.0 to match the deployment workflow. Dependency lifecycle scripts are disabled by `.npmrc`; the build works without them.
 
 ```bash
 git clone https://github.com/mallireddy09/mallikarjun-website.git
@@ -46,14 +46,19 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm start` | Development server |
 | `npm run typecheck` | Strict TypeScript checks, including tests |
 | `npm run build` | Production build to `./build` |
-| `npm test` | Run tests |
-| `npm test -- --watchAll=false --runInBand` | Run tests once, as in CI |
+| `npm test` | Run tests once |
+| `npm run test:watch` | Watch tests during development |
+| `npm run audit` | Check all dependencies for known vulnerabilities |
+| `npm run preview` | Preview the production build |
+| `npm run test:browser` | Test the production build in desktop/mobile Chromium |
 
 To build locally with the live site's asset and router path:
 
 ```bash
 PUBLIC_URL=/mallireddy09 npm run build
 ```
+
+For production-browser checks, run `npx --no-install playwright install chromium`, build with `PUBLIC_URL=/mallireddy09 npm run build`, then run `npm run test:browser`. These checks exercise the actual bundle, navigation, and CSP enforcement.
 
 ## Site structure
 
@@ -88,11 +93,11 @@ Old `/certification` and `#certification` links resolve to `#certifications`. Le
 
 React components and tests use `.tsx`; data, helpers, hooks, and styles use `.ts`. `tsconfig.json` enables strict checking, and `src/types/portfolio.ts` holds shared content and theme types.
 
-### TypeScript compatibility
+### Build and TypeScript configuration
 
-The current Create React App 5 build uses the pinned TypeScript 4.9.5 compiler. CRA requires `moduleResolution: "node"` and rewrites other resolution settings during startup/build; its TypeScript peer dependency supports versions 3 and 4.
+Vite builds from the root `index.html` into `build/`. TypeScript uses `moduleResolution: "bundler"`; Vitest runs the existing component and helper tests with jsdom. `PUBLIC_URL=/mallireddy09` sets Vite's base path and React Router's basename together.
 
-The legacy `node` (`node10`) resolution setting is [deprecated in TypeScript 6 and removed in TypeScript 7](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html). Migrating this bundled web app to a build tool such as Vite and a modern TypeScript compiler will allow `moduleResolution: "bundler"`. Changing this setting alone, or suppressing the warning, does not make the CRA build compatible with TypeScript 7.
+The development and preview servers bind to loopback by default. Do not expose them as production servers. Only the contents of `build/` belong on the public host.
 
 `npm run typecheck` also checks for unused local declarations and parameters. Before deleting assets, check application imports, CSS, HTML metadata, and manifest references: the MR² share image and app icons are used outside React components.
 
@@ -114,10 +119,19 @@ The legacy `node` (`node10`) resolution setting is [deprecated in TypeScript 6 a
 
 ## Deploy
 
-Pushes to `main` in `mallireddy09/mallikarjun-website` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow installs dependencies with `npm ci`, checks TypeScript, runs tests, builds with `PUBLIC_URL=/mallireddy09`, and publishes the generated files to the `gh-pages` branch of [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09).
+Pushes to `main` in `mallireddy09/mallikarjun-website` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow runs on pull requests and pushes to `main`. Its `verify` job installs with lifecycle scripts disabled, audits every dependency, checks TypeScript, runs tests, and builds with `PUBLIC_URL=/mallireddy09`. A separate `deploy` job runs only for `main`, downloads the verified build artifact, and publishes the generated files to the `gh-pages` branch of [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09).
 
 In the `mallireddy09/mallireddy09` repository's **Settings → Pages**, select **Deploy from a branch**, then **gh-pages** and **/ (root)**. The site URL is [mallireddy09.github.io/mallireddy09/](https://mallireddy09.github.io/mallireddy09/).
 
 The source repository's `PAGES_DEPLOY_KEY` Actions secret contains a deploy key with write access to the publishing repository. The workflow uses `peaceiris/actions-gh-pages`, pinned to its v4 commit, to publish across repositories. The code remains in `mallikarjun-website`; `mallireddy09` holds the published build so the site's URL keeps the requested path.
 
 `PUBLIC_URL` sets the asset paths and router basename. The workflow also creates `404.html` for older section URLs such as `/about`. Generated `build/` files are not committed to the source repository.
+
+## Security controls
+
+- `.npmrc` disables dependency lifecycle scripts. Keep this policy enabled for installs and CI; review any future exception before running it.
+- CI fails on any reported dependency vulnerability. Dependabot checks npm dependencies and pinned GitHub Actions weekly.
+- All workflow actions are pinned to commit SHAs. Checkout credentials are not persisted; the deployment key is available only in the separate publishing job, which runs no application or dependency scripts.
+- Production HTML includes a Content Security Policy: scripts are restricted to the site and the exact JSON-LD hash, objects and form posts are blocked, and external image/font origins are allowlisted. Inline styles remain allowed for MUI/styled-components. Development HTML omits this production policy for Vite's development runtime.
+- `.env*` and private-key files are ignored, except `.env.example`. Never put secrets into `VITE_*` variables: those are public client-side values.
+- GitHub Pages enforces HTTPS and supplies HSTS. It does not provide configurable HTTP response headers. CSP `frame-ancestors`, `X-Content-Type-Options`, and `Permissions-Policy` require a host or reverse proxy supporting custom response headers; putting them in a meta tag or a `_headers` file does not configure GitHub Pages.

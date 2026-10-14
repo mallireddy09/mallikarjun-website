@@ -1,8 +1,9 @@
+import { vi } from "vitest";
 import type { PropsWithChildren } from "react";
 import { fireEvent, render, screen } from '@testing-library/react';
 import ProjectsPage from './ProjectsPage';
 
-jest.mock('../Components/AnimatedSection', () => ({ children }: PropsWithChildren) => children);
+vi.mock('../Components/AnimatedSection', () => ({ default: ({ children }: PropsWithChildren) => children }));
 
 test('category buttons show matching projects and All restores the list', () => {
     render(<ProjectsPage />);

@@ -1,30 +1,31 @@
+import { vi } from "vitest";
 import { act } from "react";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import PortfolioPage from "./PortfolioPage";
 
-jest.mock("./HomePage", () => () => <div>Home</div>);
-jest.mock("./AboutPage", () => () => <div>About</div>);
-jest.mock("./Skills", () => () => <div>Skills</div>);
-jest.mock("./ExperiencePage", () => () => <div>Experience</div>);
-jest.mock("./EducationPage", () => () => <div>Education</div>);
-jest.mock("./ProjectsPage", () => () => <div>Projects</div>);
-jest.mock("./BlogsPage", () => () => <div>Blogs</div>);
-jest.mock("./CertificationPage", () => () => <div>Certifications</div>);
-jest.mock("./ContactPage", () => () => <div>Contact</div>);
+vi.mock("./HomePage", () => ({ default: () => <div>Home</div> }));
+vi.mock("./AboutPage", () => ({ default: () => <div>About</div> }));
+vi.mock("./Skills", () => ({ default: () => <div>Skills</div> }));
+vi.mock("./ExperiencePage", () => ({ default: () => <div>Experience</div> }));
+vi.mock("./EducationPage", () => ({ default: () => <div>Education</div> }));
+vi.mock("./ProjectsPage", () => ({ default: () => <div>Projects</div> }));
+vi.mock("./BlogsPage", () => ({ default: () => <div>Blogs</div> }));
+vi.mock("./CertificationPage", () => ({ default: () => <div>Certifications</div> }));
+vi.mock("./ContactPage", () => ({ default: () => <div>Contact</div> }));
 
 const originalScroll = HTMLElement.prototype.scrollIntoView;
-const scroll = jest.fn();
+const scroll = vi.fn();
 const originalFonts = Object.getOwnPropertyDescriptor(document, "fonts");
 
 beforeEach(() => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
   scroll.mockClear();
   HTMLElement.prototype.scrollIntoView = scroll;
 });
 
 afterEach(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
   HTMLElement.prototype.scrollIntoView = originalScroll;
   if (originalFonts) Object.defineProperty(document, "fonts", originalFonts);
   else Reflect.deleteProperty(document, "fonts");
@@ -33,9 +34,9 @@ afterEach(() => {
 
 async function settleScroll() {
   await act(async () => {
-    jest.advanceTimersByTime(16);
+    vi.advanceTimersByTime(16);
     await Promise.resolve();
-    jest.advanceTimersByTime(16);
+    vi.advanceTimersByTime(16);
   });
 }
 
@@ -82,7 +83,7 @@ test("deep-link alignment waits for fonts to finish loading", async () => {
   render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage theme="dark-theme" /></MemoryRouter>);
   await settleScroll();
   expect(scroll).not.toHaveBeenCalled();
-  await act(async () => { finishFonts(); await Promise.resolve(); jest.advanceTimersByTime(16); });
+  await act(async () => { finishFonts(); await Promise.resolve(); vi.advanceTimersByTime(16); });
   expect(scroll.mock.instances[0]).toBe(document.getElementById("education"));
 });
 
@@ -94,7 +95,7 @@ test("pending font alignment is cancelled on unmount", async () => {
   const { unmount } = render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage theme="dark-theme" /></MemoryRouter>);
   await settleScroll();
   unmount();
-  await act(async () => { finishFonts(); await Promise.resolve(); jest.advanceTimersByTime(16); });
+  await act(async () => { finishFonts(); await Promise.resolve(); vi.advanceTimersByTime(16); });
   expect(scroll).not.toHaveBeenCalled();
 });
 
@@ -106,6 +107,6 @@ test("pending alignment does not override a newer sidebar anchor", async () => {
   render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage theme="dark-theme" /></MemoryRouter>);
   await settleScroll();
   window.history.replaceState(null, "", "#projects");
-  await act(async () => { finishFonts(); await Promise.resolve(); jest.advanceTimersByTime(16); });
+  await act(async () => { finishFonts(); await Promise.resolve(); vi.advanceTimersByTime(16); });
   expect(scroll).not.toHaveBeenCalled();
 });

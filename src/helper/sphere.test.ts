@@ -1,9 +1,10 @@
+import { vi, type Mock } from "vitest";
 import { initSkillSphere } from "./sphere";
 
 interface MockMediaQueryList extends MediaQueryList {
   matches: boolean;
-  addEventListener: jest.Mock;
-  removeEventListener: jest.Mock;
+  addEventListener: Mock;
+  removeEventListener: Mock;
 }
 
 const originalMotion = window.matchMedia;
@@ -17,15 +18,15 @@ let observer: IntersectionObserver;
 let canvas: HTMLCanvasElement;
 let cleanup: (() => void) | undefined;
 let frames: Map<number, FrameRequestCallback>;
-let context: { [key: string]: jest.Mock };
+let context: { [key: string]: Mock };
 
 class MockObserver implements IntersectionObserver {
   root = null;
   rootMargin = "0px";
   thresholds = [0];
-  observe = jest.fn();
-  unobserve = jest.fn();
-  disconnect = jest.fn();
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
   takeRecords = () => [];
   constructor(callback: IntersectionObserverCallback) {
     observer = this;
@@ -45,34 +46,34 @@ function setHidden(hidden: boolean) {
 }
 
 beforeEach(() => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
   document.body.innerHTML = '<canvas id="myCanvas"></canvas><div id="svg-container"><svg><path fill="#fff" d="M0 0h1v1z" /></svg><svg><path fill="#fff" d="M0 0h1v1z" /></svg></div>';
   canvas = document.querySelector("canvas")!;
   Object.defineProperties(canvas, { clientWidth: { value: 800 }, clientHeight: { value: 500 } });
-  jest.spyOn(canvas, "getBoundingClientRect").mockReturnValue({ x: 0, y: 0, top: 0, bottom: 500, left: 0, right: 800, width: 800, height: 500, toJSON: () => ({}) });
-  context = Object.fromEntries(["setTransform", "clearRect", "save", "beginPath", "translate", "scale", "fill", "restore"].map(name => [name, jest.fn()]));
-  jest.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context as unknown as CanvasRenderingContext2D);
+  vi.spyOn(canvas, "getBoundingClientRect").mockReturnValue({ x: 0, y: 0, top: 0, bottom: 500, left: 0, right: 800, width: 800, height: 500, toJSON: () => ({}) });
+  context = Object.fromEntries(["setTransform", "clearRect", "save", "beginPath", "translate", "scale", "fill", "restore"].map(name => [name, vi.fn()]));
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context as unknown as CanvasRenderingContext2D);
   Object.defineProperty(window, "Path2D", { configurable: true, value: class {} });
   Object.defineProperty(window, "IntersectionObserver", { configurable: true, value: MockObserver });
   motion = {
     matches: false, media: "(prefers-reduced-motion: reduce)", onchange: null,
-    addListener: jest.fn(), removeListener: jest.fn(), dispatchEvent: jest.fn(),
-    addEventListener: jest.fn((_event: string, callback: () => void) => { motionChanged = callback; }),
-    removeEventListener: jest.fn(),
+    addListener: vi.fn(), removeListener: vi.fn(), dispatchEvent: vi.fn(),
+    addEventListener: vi.fn((_event: string, callback: () => void) => { motionChanged = callback; }),
+    removeEventListener: vi.fn(),
   };
-  window.matchMedia = jest.fn(() => motion);
+  window.matchMedia = vi.fn(() => motion);
   Object.defineProperty(document, "hidden", { configurable: true, value: false });
   frames = new Map();
   let frameId = 0;
-  jest.spyOn(window, "requestAnimationFrame").mockImplementation(callback => { frames.set(++frameId, callback); return frameId; });
-  jest.spyOn(window, "cancelAnimationFrame").mockImplementation(id => { frames.delete(id); });
+  vi.spyOn(window, "requestAnimationFrame").mockImplementation(callback => { frames.set(++frameId, callback); return frameId; });
+  vi.spyOn(window, "cancelAnimationFrame").mockImplementation(id => { frames.delete(id); });
 });
 
 afterEach(() => {
   cleanup?.();
   cleanup = undefined;
-  jest.restoreAllMocks();
-  jest.useRealTimers();
+  vi.restoreAllMocks();
+  vi.useRealTimers();
   window.matchMedia = originalMotion;
   for (const [target, key, descriptor] of [
     [window, "IntersectionObserver", originalObserver],
@@ -90,8 +91,8 @@ test.each([[300, 150], [500, 350], [400, 250], [400, 450]])(
     cleanup = initSkillSphere();
     move(x, y);
     canvas.dispatchEvent(new MouseEvent("mouseout"));
-    jest.advanceTimersByTime(20000);
-    expect(jest.getTimerCount()).toBe(0);
+    vi.advanceTimersByTime(20000);
+    expect(vi.getTimerCount()).toBe(0);
     expect(frames.size).toBe(1);
   }
 );
@@ -100,11 +101,11 @@ test("repeated mouseout keeps one timer and re-entry cancels it", () => {
   cleanup = initSkillSphere();
   move(300, 150);
   canvas.dispatchEvent(new MouseEvent("mouseout"));
-  expect(jest.getTimerCount()).toBe(1);
+  expect(vi.getTimerCount()).toBe(1);
   canvas.dispatchEvent(new MouseEvent("mouseout"));
-  expect(jest.getTimerCount()).toBe(1);
+  expect(vi.getTimerCount()).toBe(1);
   move(300, 150);
-  expect(jest.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(0);
 });
 
 test("animation pauses off-screen and in hidden tabs, then resumes once", () => {
@@ -113,9 +114,9 @@ test("animation pauses off-screen and in hidden tabs, then resumes once", () => 
   canvas.dispatchEvent(new MouseEvent("mouseout"));
   intersect(false);
   expect(frames.size).toBe(0);
-  expect(jest.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(0);
   const pausedDraws = context.clearRect.mock.calls.length;
-  jest.advanceTimersByTime(2000);
+  vi.advanceTimersByTime(2000);
   expect(context.clearRect).toHaveBeenCalledTimes(pausedDraws);
   intersect(true);
   expect(frames.size).toBe(1);
@@ -128,7 +129,7 @@ test("animation pauses off-screen and in hidden tabs, then resumes once", () => 
 });
 
 test("an initially off-screen sphere does not start an animation loop", () => {
-  jest.mocked(canvas.getBoundingClientRect).mockReturnValue({ x: 0, y: 2000, top: 2000, bottom: 2500, left: 0, right: 800, width: 800, height: 500, toJSON: () => ({}) });
+  vi.mocked(canvas.getBoundingClientRect).mockReturnValue({ x: 0, y: 2000, top: 2000, bottom: 2500, left: 0, right: 800, width: 800, height: 500, toJSON: () => ({}) });
   cleanup = initSkillSphere();
   expect(context.clearRect).toHaveBeenCalled();
   expect(frames.size).toBe(0);
@@ -143,7 +144,7 @@ test("reduced motion draws a static sphere and responds to preference changes", 
   expect(frames.size).toBe(0);
   move(300, 150);
   canvas.dispatchEvent(new MouseEvent("mouseout"));
-  expect(jest.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(0);
   motion.matches = false;
   motionChanged();
   expect(frames.size).toBe(1);
@@ -151,7 +152,7 @@ test("reduced motion draws a static sphere and responds to preference changes", 
   motionChanged();
   expect(frames.size).toBe(0);
   const staticDraws = context.clearRect.mock.calls.length;
-  jest.advanceTimersByTime(2000);
+  vi.advanceTimersByTime(2000);
   expect(context.clearRect).toHaveBeenCalledTimes(staticDraws);
   window.dispatchEvent(new Event("resize"));
   expect(context.clearRect).toHaveBeenCalledTimes(staticDraws + 1);
@@ -166,7 +167,7 @@ test("unmount cancels callbacks and removes observation and listeners", () => {
   cleanup();
   cleanup = undefined;
   expect(frames.size).toBe(0);
-  expect(jest.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(0);
   expect(observer.disconnect).toHaveBeenCalled();
   expect(motion.removeEventListener).toHaveBeenCalledWith("change", motionChanged);
   const draws = context.clearRect.mock.calls.length;

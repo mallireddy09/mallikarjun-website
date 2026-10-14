@@ -1,15 +1,16 @@
+import { vi, type Mock } from "vitest";
 import { act } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 
-jest.mock("./Pages/PortfolioPage", () => () => null);
+vi.mock("./Pages/PortfolioPage", () => ({ default: () => null }));
 
 const originalMatchMedia = window.matchMedia;
 interface MockMediaQueryList extends MediaQueryList {
   matches: boolean;
-  addEventListener: jest.Mock;
-  removeEventListener: jest.Mock;
+  addEventListener: Mock;
+  removeEventListener: Mock;
 }
 let media: MockMediaQueryList;
 let onMediaChange: (event: Pick<MediaQueryListEvent, "matches">) => void;
@@ -19,13 +20,13 @@ beforeEach(() => {
     matches: false,
     media: "(min-width: 1201px) and (pointer: fine)",
     onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-    addEventListener: jest.fn((_event: string, listener: typeof onMediaChange) => { onMediaChange = listener; }),
-    removeEventListener: jest.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+    addEventListener: vi.fn((_event: string, listener: typeof onMediaChange) => { onMediaChange = listener; }),
+    removeEventListener: vi.fn(),
   };
-  window.matchMedia = jest.fn(() => media);
+  window.matchMedia = vi.fn(() => media);
 });
 
 afterEach(() => {
@@ -67,7 +68,7 @@ test("overlay and section links close the sidebar and restore menu focus", () =>
     <MemoryRouter><App /><div id="about" /></MemoryRouter>
   );
   const target = container.querySelector<HTMLElement>("#about")!;
-  target.scrollIntoView = jest.fn();
+  target.scrollIntoView = vi.fn();
   const menuButton = screen.getByRole("button", { name: "Open menu" });
   fireEvent.click(menuButton);
   expect(document.body).toHaveClass("nav-open");
@@ -102,7 +103,7 @@ test("desktop sidebar starts open without blocking content and stays open after 
   themeButton.dispatchEvent(tab);
   expect(tab.defaultPrevented).toBe(false);
 
-  container.querySelector<HTMLElement>("#about")!.scrollIntoView = jest.fn();
+  container.querySelector<HTMLElement>("#about")!.scrollIntoView = vi.fn();
   fireEvent.click(sidebar.querySelector('a[href="#about"]')!);
   expect(menuButton).toHaveAttribute("aria-expanded", "true");
   fireEvent.click(menuButton);
