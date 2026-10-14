@@ -1,11 +1,12 @@
+import { vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import ContactPage from "./ContactPage";
 import { PROFILE } from "../data/profile";
 
-afterEach(() => jest.restoreAllMocks());
+afterEach(() => vi.restoreAllMocks());
 
 test("shared contact fields retain their independent values and encode the email draft", () => {
-  const open = jest.spyOn(window, "open").mockImplementation(() => null);
+  const open = vi.spyOn(window, "open").mockImplementation(() => null);
   render(<ContactPage />);
   const values = [
     ["Enter your name*", "Alex & Sam"],
@@ -31,7 +32,7 @@ test("shared contact fields retain their independent values and encode the email
 });
 
 test("an empty subject keeps the existing default email subject", () => {
-  const open = jest.spyOn(window, "open").mockImplementation(() => null);
+  const open = vi.spyOn(window, "open").mockImplementation(() => null);
   render(<ContactPage />);
   fireEvent.change(screen.getByLabelText("Enter your name*"), { target: { value: "Alex" } });
   fireEvent.change(screen.getByLabelText("Enter your email*"), { target: { value: "alex@example.com" } });
@@ -46,7 +47,7 @@ test.each([
   ["Enter your email*", "invalid-email"],
   ["Enter your Message*", ""],
 ])("invalid %s prevents opening a draft", (label, value) => {
-  const open = jest.spyOn(window, "open").mockImplementation(() => null);
+  const open = vi.spyOn(window, "open").mockImplementation(() => null);
   const { container } = render(<ContactPage />);
   fireEvent.change(screen.getByLabelText("Enter your name*"), { target: { value: "Alex" } });
   fireEvent.change(screen.getByLabelText("Enter your email*"), { target: { value: "alex@example.com" } });
@@ -59,7 +60,7 @@ test.each([
 });
 
 test("a valid form submission opens one draft", () => {
-  const open = jest.spyOn(window, "open").mockImplementation(() => null);
+  const open = vi.spyOn(window, "open").mockImplementation(() => null);
   const { container } = render(<ContactPage />);
   fireEvent.change(screen.getByLabelText("Enter your name*"), { target: { value: "Alex" } });
   fireEvent.change(screen.getByLabelText("Enter your email*"), { target: { value: "alex@example.com" } });
@@ -67,4 +68,20 @@ test("a valid form submission opens one draft", () => {
   expect(screen.getByRole("button", { name: "Send Email" })).toHaveAttribute("type", "submit");
   fireEvent.submit(container.querySelector("form")!);
   expect(open).toHaveBeenCalledTimes(1);
+});
+
+test("contact input cannot add email recipients or interpret HTML", () => {
+  const open = vi.spyOn(window, "open").mockImplementation(() => null);
+  render(<ContactPage />);
+  const payload = "&bcc=attacker@example.com&body=<script>alert(1)</script>";
+  fireEvent.change(screen.getByLabelText("Enter your name*"), { target: { value: "Alex" } });
+  fireEvent.change(screen.getByLabelText("Enter your email*"), { target: { value: "alex@example.com" } });
+  fireEvent.change(screen.getByLabelText("Enter your subject"), { target: { value: payload } });
+  fireEvent.change(screen.getByLabelText("Enter your Message*"), { target: { value: payload } });
+  fireEvent.click(screen.getByRole("button", { name: "Send Email" }));
+  const url = new URL(open.mock.calls[0][0] ?? "");
+  expect(url.protocol + url.pathname).toBe(`mailto:${PROFILE.email}`);
+  expect([...url.searchParams.keys()]).toEqual(["subject", "body"]);
+  expect(url.searchParams.get("subject")).toBe(payload);
+  expect(document.querySelector("script")).toBeNull();
 });

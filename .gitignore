@@ -7,16 +7,20 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
+/.playwright-mcp
 
 # production
 /build
 
 # misc
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env
+.env.*
+!.env.example
+*.pem
+*.key
 .tmp-pdf/
 
 npm-debug.log*
