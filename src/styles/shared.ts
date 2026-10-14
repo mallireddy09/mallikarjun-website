@@ -1,6 +1,6 @@
 import { css } from "styled-components";
 
-export const glassSurface = css`
+const glassSurface = css`
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
 `;

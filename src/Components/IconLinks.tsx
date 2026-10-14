@@ -1,7 +1,7 @@
 import type { SvgIconComponent } from "@mui/icons-material";
 import ExternalLink from "./ExternalLink";
 
-export interface IconLink {
+interface IconLink {
   key: string;
   href?: string;
   label: string;
