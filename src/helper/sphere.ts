@@ -12,7 +12,7 @@ export const initSkillSphere = () => {
     const canvas = canvasElement;
 
     const COLORS: string[][] = Array.from({ length: svgs.children.length }, () => []);
-    let PATHS = [...svgs?.children].map((svg, i) => {
+    let PATHS = [...svgs.children].map((svg, i) => {
         if (svg.children[0].tagName === "g") {
             svg = svg.children[0];
             COLORS[i] = Array(svg.children.length);

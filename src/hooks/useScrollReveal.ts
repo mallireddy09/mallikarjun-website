@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
  * Reveals when any part of the element enters the viewport.
  * Uses threshold 0 so tall sections (e.g. certification grids) still show.
  */
-export function useScrollReveal(options: Pick<IntersectionObserverInit, "threshold" | "rootMargin"> = {}) {
+function useScrollReveal(options: Pick<IntersectionObserverInit, "threshold" | "rootMargin"> = {}) {
   const { threshold = 0, rootMargin = "0px 0px -8% 0px" } = options;
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);

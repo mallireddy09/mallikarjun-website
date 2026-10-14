@@ -4,8 +4,7 @@ import { initSkillSphere } from '../helper/sphere'
 
 const SkillSphere = () => {
     useEffect(() => {
-        const cleanup = initSkillSphere();
-        return typeof cleanup === "function" ? cleanup : undefined;
+        return initSkillSphere();
     }, [])
 
   return (

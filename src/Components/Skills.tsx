@@ -8,7 +8,6 @@ import skillsSections from "../data/skills";
 import { PROFILE } from "../data/profile";
 import ExternalLink from "./ExternalLink";
 import { glassCard } from "../styles/shared";
-import "./styles.css";
 
 function Skills({ theme }: ThemeProps) {
   const leetcodeTheme = theme === "light-theme" ? "light" : "dark";
