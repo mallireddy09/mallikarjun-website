@@ -68,9 +68,9 @@ export const initSkillSphere = () => {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         PERSPECTIVE = width * (window.innerWidth > 768 ? 0.8 : 1.2);
-        PROJECTION_CENTER_X = width / (window.innerWidth > 768 ? 1.8 : 1.5);
-        PROJECTION_CENTER_Y = height / 1.6;
-        GLOBE_RADIUS = Math.min(width, height) / (window.innerWidth > 768 ? 2.6 : 3);
+        PROJECTION_CENTER_X = width / 2;
+        PROJECTION_CENTER_Y = height / 2;
+        GLOBE_RADIUS = Math.min(width, height) / 3.2;
     }
 
     resizeCanvas();
@@ -153,8 +153,8 @@ export const initSkillSphere = () => {
         project(animate: boolean) {
             if (animate) this.rotate();
             this.scaleProjected = PERSPECTIVE / (PERSPECTIVE + this.z * GLOBE_RADIUS);
-            this.xProjected = (this.x * GLOBE_RADIUS * this.scaleProjected) + PROJECTION_CENTER_X - DOT_RADIUS * this.scaleProjected;
-            this.yProjected = (this.y * GLOBE_RADIUS * this.scaleProjected) + PROJECTION_CENTER_Y - DOT_RADIUS * this.scaleProjected;
+            this.xProjected = (this.x * GLOBE_RADIUS * this.scaleProjected) + PROJECTION_CENTER_X - DOT_RADIUS * this.scaleProjected * SCALE * width / 1920;
+            this.yProjected = (this.y * GLOBE_RADIUS * this.scaleProjected) + PROJECTION_CENTER_Y - DOT_RADIUS * this.scaleProjected * SCALE * width / 1920;
         }
         draw(animate: boolean) {
             this.project(animate);

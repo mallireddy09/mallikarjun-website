@@ -8,6 +8,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import MenuIcon from "@mui/icons-material/Menu";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CloseIcon from "@mui/icons-material/Close";
+import Particle from "./Components/Particle";
 import Sidebar from "./Components/SideBar";
 import PortfolioPage from "./Pages/PortfolioPage";
 import { DESKTOP_QUERY } from "./styles/media";
@@ -75,6 +76,7 @@ function App() {
 
   return (
     <div className="App">
+      <SiteNetworkStyled aria-hidden="true"><Particle theme={theme} /></SiteNetworkStyled>
       <Sidebar navToggle={navToggle} theme={theme} onClose={isDesktop ? undefined : closeNav} />
 
       {isOverlayOpen && (
@@ -124,6 +126,13 @@ function App() {
     </div>
   );
 }
+
+const SiteNetworkStyled = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+`;
 
 const MainContentStyled = styled.main<{ $sidebarOpen: boolean }>`
   position: relative;

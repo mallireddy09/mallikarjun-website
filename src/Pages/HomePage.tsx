@@ -1,38 +1,46 @@
+import { publicAsset } from "../helper/publicAsset";
 import type { ThemeProps } from "../types/portfolio";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import GithubIcon from "@mui/icons-material/GitHub";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import XIcon from "@mui/icons-material/X";
-import Particle from "../Components/Particle";
 import { ReactTyped as Typed } from "react-typed";
 import PrimaryButton from "../Components/PrimaryButton";
 import { PROFILE, HERO_ROLES, HERO_SUMMARY, PAST_IMPACT } from "../data/profile";
-import "./styles.css";
 import IconLinks from "../Components/IconLinks";
-import { companyLogo, gradientText } from "../styles/shared";
+import { gradientText } from "../styles/shared";
+import CompanyLogo from "../Components/CompanyLogo";
+import LiveDataPipeline from "../Components/LiveDataPipeline";
 import { DRAWER_MEDIA } from "../styles/media";
 
 const SOCIAL_LINKS = [
-  { key: "github", href: PROFILE.github, label: "GitHub", Icon: GithubIcon, className: "icon i-github" },
-  { key: "linkedin", href: PROFILE.linkedin, label: "LinkedIn", Icon: LinkedInIcon, className: "icon i-linkedin" },
-  { key: "twitter", href: PROFILE.twitter, label: "X (Twitter)", Icon: XIcon, className: "icon" },
+  { key: "github", href: PROFILE.github, label: "GitHub", image: publicAsset("/images/3d/github-clear-3d.webp"), className: "icon i-github" },
+  { key: "linkedin", href: PROFILE.linkedin, label: "LinkedIn", image: publicAsset("/images/3d/linkedin-brand-3d.webp"), className: "icon i-linkedin" },
+  { key: "twitter", href: PROFILE.twitter, label: "X (Twitter)", image: publicAsset("/images/3d/x-brand-3d.webp"), className: "icon" },
 ];
 
-function HomePage({ theme }: ThemeProps) {
+function HomePage(_props: ThemeProps) {
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(preference.matches);
+    update();
+    preference.addEventListener("change", update);
+    return () => preference.removeEventListener("change", update);
+  }, []);
+  const [hasScrolled, setHasScrolled] = useState(() => window.scrollY > 24);
+  useEffect(() => {
+    const updateScroll = () => setHasScrolled(window.scrollY > 24);
+    updateScroll();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    return () => window.removeEventListener("scroll", updateScroll);
+  }, []);
   return (
     <HomePageStyled>
-      <div className="particle-con">
-        <Particle theme={theme} />
-      </div>
 
-      <div className="hero-glow" />
-      <div className="underlayText">{PROFILE.name}</div>
       <div className="hero-content">
         <div className="typography">
-          <div className="status-badge">
-            <span className="pulse" />
-            Data Engineer at NVIDIA
-          </div>
+          <div className="hero-main">
+          <div className="hero-intro">
+
           <h1>
             <span className="greeting">Hi, I'm</span>
             {" "}
@@ -40,38 +48,43 @@ function HomePage({ theme }: ThemeProps) {
           </h1>
           <h5 aria-label="Data Engineer, AI/ML Engineer, and Cloud Platform Engineer">
             <span aria-hidden="true">
-              <Typed
+              {reducedMotion ? <span className="typing">{HERO_ROLES[0]}</span> : <Typed
                 strings={HERO_ROLES}
                 typeSpeed={80}
                 backSpeed={40}
                 loop
                 className="typing"
-              />
+              />}
             </span>
           </h5>
           <p>{HERO_SUMMARY}</p>
           <div className="social">
             <div className="hero-actions">
-              <PrimaryButton title="Resume" showDownloadIcon />
+              <PrimaryButton title="Resume" showDownloadIcon iconOnly iconSrc={publicAsset("/images/3d/resume-clear-3d.webp")} />
             </div>
             <div className="icons">
               <IconLinks links={SOCIAL_LINKS} />
             </div>
+          </div>
+          </div>
+          <LiveDataPipeline />
           </div>
           <div className="impact-bar" aria-label="Engineering impact at">
             <span className="impact-label">ENGINEERING IMPACT AT:</span>
             <ul>
               {PAST_IMPACT.map((company) => (
                 <li key={company.name}>
-                  <img src={company.logo} alt="" />
-                  {company.name}
+                  <span className="impact-company">
+                    <CompanyLogo src={company.logo} eager />
+                    {company.name}
+                  </span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
       </div>
-      <div className="scroll-indicator" aria-hidden="true">
+      <div className={`scroll-indicator${hasScrolled ? " is-hidden" : ""}`} aria-hidden="true">
         <div className="mouse">
           <div className="wheel" />
         </div>
@@ -89,35 +102,14 @@ const HomePageStyled = styled.header`
   position: relative;
   overflow: hidden;
 
-  .underlayText {
-    top: 0;
+  .hero-main { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: end; gap: 28px; }
+  .hero-intro { min-width: 0; }
+  .hero-art { position: absolute; right: 0; top: 0; width: calc((100% - 28px) * .45); max-width: 420px; height: 100%; pointer-events: none; }
+  .icons .social-art { display: block; width: 48px; height: 48px; object-fit: contain; }
+  @media(max-width: 700px) {
+    .hero-main { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .hero-art { position: relative; right: auto; top: auto; width: min(100%, 360px); height: auto; aspect-ratio: 600 / 630; justify-self: center; }
   }
-
-  .particle-con {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .hero-glow {
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(600px, 120vw);
-    height: min(600px, 120vw);
-    background: radial-gradient(
-      circle,
-      rgba(var(--primary-color-rgb), 0.08) 0%,
-      transparent 70%
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-
   .typing {
     font-weight: 300;
     color: var(--primary-color);
@@ -127,41 +119,11 @@ const HomePageStyled = styled.header`
     ${gradientText}
   }
 
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    border-radius: 50px;
-    border: 1px solid var(--border-color);
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    font-size: clamp(0.75rem, 2vw, 0.85rem);
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    max-width: 100%;
-    white-space: nowrap;
-    .pulse {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: #00d26a;
-      display: inline-block;
-      animation: pulse 2s ease-in-out infinite;
-    }
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.5); }
-  }
-
   .typography {
     position: relative;
     min-width: 0;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     line-height: 1.5;
     z-index: 1;
     h1 {
@@ -179,7 +141,7 @@ const HomePageStyled = styled.header`
       margin-bottom: 1rem;
     }
     p {
-      max-width: 800px;
+      max-width: min(100%, 470px);
       color: var(--font-light-color);
       @media screen and (max-width: 502px) {
         font-size: 0.95rem;
@@ -209,8 +171,8 @@ const HomePageStyled = styled.header`
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 44px;
-          height: 44px;
+          width: 58px;
+          height: 58px;
           border-radius: 50%;
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           cursor: pointer;
@@ -231,9 +193,8 @@ const HomePageStyled = styled.header`
         gap: 0.65rem;
       }
       .i-github:hover {
-        border-color: #5f4687;
-        color: #5f4687;
-        box-shadow: 0 4px 12px rgba(95, 70, 135, 0.3);
+        border-color: var(--white-color);
+        color: var(--white-color);
       }
       .i-linkedin:hover {
         border-color: #0077b5;
@@ -244,14 +205,25 @@ const HomePageStyled = styled.header`
   }
 
   .hero-content {
-    width: min(100%, 1000px);
+    width: min(100%, 1400px);
     margin: 0 auto;
-    padding: calc(var(--fixed-chrome) + 1.5rem) 3rem 6rem;
+    padding: calc(var(--fixed-chrome) + 1rem) 3rem 2rem;
     position: relative;
     z-index: 1;
   }
 
   .impact-bar {
+    .impact-company {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+    }
+    li:hover .impact-company { transform: translateY(-3px); }
+    @media(prefers-reduced-motion: reduce) {
+      .impact-company { transition: none; }
+      li:hover .impact-company { transform: none; }
+    }
     margin-top: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
@@ -275,9 +247,6 @@ const HomePageStyled = styled.header`
         align-items: center;
         gap: 0.45rem;
       }
-      img {
-        ${companyLogo}
-      }
       li:not(:last-child)::after {
         content: "·";
         margin-left: 0.75rem;
@@ -296,7 +265,15 @@ const HomePageStyled = styled.header`
     .hero-content { padding: calc(var(--fixed-chrome) + 0.75rem) 1rem 2rem; }
   }
 
+  @media(min-width: 701px) {
+    .hero-content { padding-left: clamp(20px, 3vw, 48px); padding-right: clamp(20px, 3vw, 48px); }
+  }
+
   .scroll-indicator {
+    opacity: 1;
+    transition: opacity .2s ease;
+    pointer-events: none;
+    &.is-hidden { opacity: 0; }
     position: absolute;
     bottom: 2rem;
     left: 50%;

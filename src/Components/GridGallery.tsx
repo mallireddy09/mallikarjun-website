@@ -1,143 +1,49 @@
+import { useState } from "react";
 import type { GalleryItem } from "../types/portfolio";
 import styled from "styled-components";
 import ExternalLink from "./ExternalLink";
-import { glassCard } from "../styles/shared";
+import { liquidGlassSurface, liquidGlassSelected } from "../styles/shared";
 
 function GridGallery({ items, altPrefix = "item" }: { items: readonly GalleryItem[]; altPrefix?: string }) {
-  return (
-    <GridGalleryStyled>
-      {items.map((item) => (
-        <div key={item.id} className="gallery-item">
-          {item.image ? (
-            <div className="image">
-              <img
-                src={item.image}
-                alt={`${altPrefix}_${item.id}`}
-                loading="lazy"
-              />
-            </div>
-          ) : (
-            <div className="text-card">
-              <span className="issuer">{item.by}</span>
-              {(item.month || item.date) && (
-                <span className="issued">
-                  {[item.month, item.date].filter(Boolean).join(" ")}
-                </span>
-              )}
-            </div>
-          )}
-          <div className="title">
-            <ExternalLink href={item.link}>
-              {item.title}
-            </ExternalLink>
-          </div>
-        </div>
-      ))}
-    </GridGalleryStyled>
-  );
+  const [selected, setSelected] = useState<number | null>(null);
+  return <GridGalleryStyled data-gallery={altPrefix}>
+    {items.map(item => <ExternalLink key={item.id} href={item.link} aria-label={`${item.title} (opens in a new tab)`} className={`gallery-item${selected === item.id ? " is-selected" : ""}`} onClick={() => setSelected(item.id)}>
+      {item.image ? <div className="image"><img src={item.image} alt="" loading="lazy" /></div> : <div className="text-card">
+        <span className="issuer">{item.by}</span>
+        {(item.month || item.date) && <span className="issued">{[item.month, item.date].filter(Boolean).join(" ")}</span>}
+      </div>}
+      <h3 className="title">{item.title}</h3>
+    </ExternalLink>)}
+  </GridGalleryStyled>;
 }
 
 const GridGalleryStyled = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
-
-  @media screen and (max-width: 900px) {
-    gap: 1.25rem;
-  }
-
-  @media screen and (max-width: 600px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
+  align-items: stretch;
   .gallery-item {
-    ${glassCard}
-    padding: 1rem;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    min-width: 0;
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--card-hover-shadow);
-      border-color: var(--primary-color);
-    }
-
-    @media (hover: none) {
-      &:hover {
-        transform: none;
-      }
-    }
-  }
-
-  .image {
-    width: 100%;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-    border-radius: 12px;
-    aspect-ratio: 16 / 10;
-    background: var(--background-dark-grey);
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-
-      &:hover {
-        cursor: pointer;
-        transform: scale(1.04);
-      }
-    }
-  }
-
-  .text-card {
-    min-height: 8rem;
+    ${liquidGlassSurface}
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1.5rem 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 12px;
-    background: linear-gradient(
-      135deg,
-      rgba(var(--primary-color-rgb), 0.12),
-      rgba(var(--primary-color-rgb), 0.04)
-    );
-    border: 1px solid var(--glass-border);
-
-    .issuer {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--primary-color);
-    }
-    .issued {
-      font-size: 0.9rem;
-      color: var(--font-light-color);
-    }
+    min-width: 0;
+    padding: 14px;
+    border-radius: 22px;
+    color: var(--white-color);
+    transition: transform .25s, border-color .25s, box-shadow .25s;
   }
-
-  .title {
-    a {
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 0.5rem 0;
-      display: inline-block;
-      color: var(--white-color);
-      cursor: pointer;
-      transition: color 0.3s ease;
-      word-wrap: break-word;
-      line-height: 1.4;
-    }
-    a:hover {
-      color: var(--primary-color);
-    }
-  }
+  .gallery-item:hover, .gallery-item:focus-visible, .gallery-item.is-selected { ${liquidGlassSelected} }
+  .gallery-item:hover { transform: translateY(-3px); }
+  .gallery-item:active { transform: translateY(-1px) scale(.995); }
+  .image { width: 100%; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden; background: #fff; }
+  .image img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .title { font-size: 17px; line-height: 1.45; font-weight: 600; color: inherit; padding: 18px 6px 8px; }
+  .text-card { min-height: 130px; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 24px 16px; border-radius: 14px; background: var(--background-light-color-2); }
+  .issuer { color: var(--primary-color); font-size: 16px; font-weight: 700; }
+  .issued { color: var(--font-light-color); font-size: 15px; }
+  @media(max-width: 900px) { gap: 1.25rem; }
+  @media(max-width: 600px) { grid-template-columns: 1fr; gap: 16px; .gallery-item { padding: 10px; } .title { padding: 16px 8px 10px; } }
+  @media(prefers-reduced-motion: reduce) { .gallery-item { transition: none; } .gallery-item:hover, .gallery-item:active { transform: none; } }
 `;
 
 export default GridGallery;

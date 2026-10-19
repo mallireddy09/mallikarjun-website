@@ -32,7 +32,6 @@ export interface Project {
   category: string;
   image: string;
   title: string;
-  text: string;
   github?: string;
   demo?: string;
   store?: string;

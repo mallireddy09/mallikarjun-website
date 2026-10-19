@@ -1,24 +1,23 @@
+import { publicAsset } from "../helper/publicAsset";
 import type { Project } from "../types/portfolio";
-import trackmymoney from "../img/portImages/trackmymoney.jpg";
+
 
 const projects: Project[] = [
   {
     id: 1,
     category: "React Native / App Development",
-    image: trackmymoney,
+    image: publicAsset("/images/3d/track-money-3d.webp"),
     store: "https://play.google.com/store/apps/details?id=com.ksk_expense_manager",
     title: "Track My Money",
-    text: "React Native, Node JS, MongoDB, AWS lambda, Otpless",
   },
   {
     id: 2,
     category: "Machine Learning",
     image:
-      "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DS0701EN-SkillsNetwork/api/Images/landing_1.gif",
+      publicAsset("/images/3d/spacex-3d.webp"),
     github:
       "https://github.com/mallireddy09/IBM-Applied-Data-Science-Capstone-Project/tree/main/IBM-Data-Science-Capstone-SpaceX-main",
     title: "Space X Falcon 9 First Stage Landing Prediction",
-    text: "Python, Sqlite, Machine Learning Algorithms",
   },
 ];
 

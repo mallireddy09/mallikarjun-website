@@ -2,6 +2,7 @@ import { vi } from "vitest";
 import type { PropsWithChildren } from "react";
 import { fireEvent, render, screen } from '@testing-library/react';
 import ProjectsPage from './ProjectsPage';
+import projects from '../data/projects';
 
 vi.mock('../Components/AnimatedSection', () => ({ default: ({ children }: PropsWithChildren) => children }));
 
@@ -26,17 +27,17 @@ test('category buttons show matching projects and All restores the list', () => 
     expect(screen.getByRole('button', { name: 'All' })).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('project hover and mobile actions share destinations and omit unavailable links', () => {
-    const { container } = render(<ProjectsPage />);
-    for (const card of container.querySelectorAll('.grid-item')) {
-        const actions = (selector: string) => Array.from(card.querySelectorAll(`${selector} a`)).map(a => ({
-            href: a.getAttribute('href'), label: a.getAttribute('aria-label'),
-        }));
-        expect(actions('.overlay')).toEqual(actions('.mobile-links'));
-        expect(actions('.overlay')).toHaveLength(1);
-        for (const link of card.querySelectorAll('a')) {
-            expect(link).toHaveAttribute('target', '_blank');
-            expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-        }
+test('each project image and title share one link to the correct destination', () => {
+    render(<ProjectsPage />);
+    for (const project of projects) {
+        const link = screen.getByRole('link', { name: `${project.title} (opens in a new tab)` });
+        expect(link).toHaveAttribute('href', project.store || project.github || project.demo);
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+        expect(link.querySelector('img')).toHaveAttribute('src', project.image);
+        expect(link.querySelector('h3')).toHaveTextContent(project.title);
+        expect(Array.from(link.children).map(child => child.tagName)).toEqual(['DIV', 'H3']);
     }
+    expect(screen.queryByText('View on Google Play')).not.toBeInTheDocument();
+    expect(screen.queryByText('View on GitHub')).not.toBeInTheDocument();
 });

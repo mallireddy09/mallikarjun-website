@@ -3,13 +3,11 @@ import { companies } from "./companies";
 export const PROFILE = {
   name: "Mallikarjun Reddy",
   email: "mallireddy0912@gmail.com",
-  location: "United States",
   github: "https://github.com/mallireddy09",
   linkedin: "https://www.linkedin.com/in/mallireddy09/",
   twitter: "https://x.com/mallireddy09",
   resume:
     "https://drive.google.com/file/d/1UppfWTSqy5KcXqWSr9PwjwqOBsqEcQPK/view?usp=sharing",
-  leetcode: "https://leetcode.com/u/mallikarjun09/",
 };
 
 export const HERO_ROLES = [
@@ -29,9 +27,9 @@ export const ABOUT_PARAGRAPHS = [
   "I hold an M.S. in Data Science from the University at Buffalo. That foundation connects my infrastructure work with statistical thinking, machine learning, and the insights that well-designed data platforms make possible.",
 ];
 
-export const ABOUT_HIGHLIGHTS = [
-  { label: "Degree", value: "M.S. in Data Science", detail: "University at Buffalo (UB)" },
-  { label: "Current Role", value: "Data & Observability", detail: "NVIDIA" },
-  { label: "Cloud Tech", value: "AWS · GCP · Azure" },
-  { label: "Location", value: PROFILE.location },
+export const ENGINEERING_PRINCIPLES = [
+  { title: "Trust Before Throughput", text: "Fast data means little if people can’t trust it." },
+  { title: "Design for the Bad Day", text: "Retries, failures, and unexpected inputs belong in the design, not the postmortem." },
+  { title: "Make the Invisible Visible", text: "A system should tell you what happened, where, and why." },
+  { title: "Keep Complexity Behind the Interface", text: "The infrastructure can be sophisticated. Using it shouldn’t have to be." },
 ];

@@ -1,11 +1,12 @@
+import { publicAsset } from "../helper/publicAsset";
 import type { Company } from "../types/portfolio";
-import nvidiaLogo from "../img/companies/nvidia.png";
-import homeDepotLogo from "../img/companies/homedepot.png";
-import microsoftLogo from "../img/companies/microsoft.svg";
-import buffaloLogo from "../img/companies/buffalo.png";
-import nineleapsLogo from "../img/companies/nineleaps.png";
-import uberLogo from "../img/companies/uber.jpg";
-import gitamLogo from "../img/companies/gitam.png";
+const gitamLogo = publicAsset("images/3d/gitam-brand-clear.png");
+const nvidiaLogo = publicAsset("/images/3d/nvidia-brand-render.webp");
+const homeDepotLogo = publicAsset("/images/3d/home-depot-brand-render.webp");
+const microsoftLogo = publicAsset("/images/3d/microsoft-brand-render.webp");
+const buffaloLogo = publicAsset("/images/3d/buffalo-brand-render.webp");
+const nineleapsLogo = publicAsset("/images/3d/nineleaps-brand-render.webp");
+const uberLogo = publicAsset("/images/3d/uber-brand-render.webp");
 
 export const companies = {
   nvidia: {

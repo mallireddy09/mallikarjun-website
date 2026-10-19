@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import ExternalLink from "./ExternalLink";
-import { companyLogo } from "../styles/shared";
+import CompanyLogo from "./CompanyLogo";
 
 interface ResumeItemProps {
   year: string; title: string; subTitle: string; link: string; text?: string; logo?: string;
@@ -16,7 +16,7 @@ function ResumeItem({ year, title, subTitle, text, link, logo }: ResumeItemProps
         <p className="mobile-year">{year}</p>
         <h5>{title}</h5>
         <ExternalLink href={link} className="company-link">
-          {logo && <img src={logo} alt="" className="company-logo" />}
+          {logo && <CompanyLogo src={logo} />}
           <h6>{subTitle}</h6>
         </ExternalLink>
         {text && <p>{text}</p>}
@@ -111,9 +111,13 @@ const ResumeItemStyled = styled.div`
       gap: 0.55rem;
       margin-bottom: 0.4rem;
       max-width: 100%;
+      transition: transform .4s cubic-bezier(.16, 1, .3, 1);
 
-      .company-logo {
-        ${companyLogo}
+      &:hover, &:focus-visible { transform: translateY(-3px); }
+
+      @media(prefers-reduced-motion: reduce) {
+        transition: none;
+        &:hover, &:focus-visible { transform: none; }
       }
 
       h6 {

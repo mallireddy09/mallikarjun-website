@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import useContentReveal from "../hooks/useContentReveal";
 import type { ComponentType } from "react";
 import type { ThemeProps } from "../types/portfolio";
 import type { SectionId } from "../data/sections";
@@ -34,6 +35,8 @@ function pathToSectionId(pathname: string) {
 }
 
 function PortfolioPage({ theme }: ThemeProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  useContentReveal(contentRef);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -65,7 +68,7 @@ function PortfolioPage({ theme }: ThemeProps) {
   }, [location.pathname, location.hash, location.search, navigate]);
 
   return (
-    <PortfolioStyled>
+    <PortfolioStyled ref={contentRef}>
       {SECTIONS.map(({ id }) => {
         const Component = SECTION_COMPONENTS[id];
         return (
@@ -82,6 +85,11 @@ const PortfolioStyled = styled.div`
   width: 100%;
   max-width: 100%;
   overflow-x: clip;
+
+  .scroll-reveal-pending { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal-pending { opacity: 1; }
+  }
 
   .portfolio-section {
     scroll-margin-top: calc(var(--fixed-chrome) + 0.75rem);
