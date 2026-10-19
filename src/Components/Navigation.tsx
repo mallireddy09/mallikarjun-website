@@ -1,44 +1,21 @@
+import { publicAsset } from "../helper/publicAsset";
 import type { ThemeProps } from "../types/portfolio";
 import type { SectionId } from "../data/sections";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import avatar from "../img/arjun_image.jpg";
-import home from "../Components/Assets/home.svg";
-import darkHome from "../Components/Assets/darkHome.svg";
-import about from "../Components/Assets/about.svg";
-import resume from "../Components/Assets/resume.svg";
-import project from "../Components/Assets/project.svg";
-import blog from "../Components/Assets/blog.svg";
-import certification from "../Components/Assets/certification.svg";
-import contact from "../Components/Assets/contact.svg";
-import darkAbout from "../Components/Assets/darkAbout.svg";
-import darkResume from "../Components/Assets/darkResume.svg";
-import darkProject from "../Components/Assets/darkProject.svg";
-import darkBlog from "../Components/Assets/darkBlog.svg";
-import darkCertification from "../Components/Assets/darkCertification.svg";
-import darkContact from "../Components/Assets/darkContact.svg";
-import skills from "../Components/Assets/skills.svg";
-import darkSkills from "../Components/Assets/darkSkills.svg";
-import darkEducation from "../Components/Assets/darkEducation.svg";
-import education from "../Components/Assets/education.svg";
 import { SECTIONS } from "../data/sections";
 import { scrollToSection } from "../helper/navigation";
 
-const NAV_ICONS: Record<SectionId, { icon: string; darkIcon: string }> = {
-  home: { icon: home, darkIcon: darkHome },
-  about: { icon: about, darkIcon: darkAbout },
-  skills: { icon: skills, darkIcon: darkSkills },
-  experience: { icon: resume, darkIcon: darkResume },
-  education: { icon: education, darkIcon: darkEducation },
-  projects: { icon: project, darkIcon: darkProject },
-  blogs: { icon: blog, darkIcon: darkBlog },
-  certifications: { icon: certification, darkIcon: darkCertification },
-  contact: { icon: contact, darkIcon: darkContact },
+const NAV_POSITIONS: Record<SectionId, string> = {
+  home: "0% 0%", about: "50% 0%", experience: "100% 0%",
+  projects: "0% 50%", skills: "50% 50%", certifications: "100% 50%",
+  education: "0% 100%", blogs: "50% 100%", contact: "100% 100%",
 };
 
-function Navigation({ theme, onClose }: ThemeProps & { onClose?: () => void }) {
+function Navigation({ onClose }: ThemeProps & { onClose?: () => void }) {
   const [activeSection, setActiveSection] = useState<SectionId>("home");
-  const isLight = theme === "light-theme";
+  const [clickedTab, setClickedTab] = useState<{ id: SectionId | null; count: number }>({ id: null, count: 0 });
 
   useEffect(() => {
     let frame = 0;
@@ -91,7 +68,8 @@ function Navigation({ theme, onClose }: ThemeProps & { onClose?: () => void }) {
 
   const handleSectionClick = (id: SectionId) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    if (scrollToSection(id)) {
+    setClickedTab(current => ({ id, count: current.count + 1 }));
+    if (scrollToSection(id, { behavior: "instant" })) {
       setActiveSection(id);
     }
     onClose?.();
@@ -100,25 +78,21 @@ function Navigation({ theme, onClose }: ThemeProps & { onClose?: () => void }) {
   return (
     <NavigationStyled>
       <div className="avatar">
-        <img src={avatar} alt="Mallikarjun Reddy" />
+        <a href="#home" onClick={handleSectionClick("home")} aria-label="Mallikarjun Reddy home"><img src={avatar} alt="Mallikarjun Reddy" /></a>
       </div>
       <ul className="nav-items">
         {SECTIONS.map((item) => {
-          const icons = NAV_ICONS[item.id];
           return (
             <li className="nav-item" key={item.id}>
               <a
                 href={`#${item.id}`}
-                className={activeSection === item.id ? "active-class" : ""}
+                className={`${activeSection === item.id ? "active-class" : ""} ${clickedTab.id === item.id ? "is-clicked" : ""}`.trim()}
                 aria-current={activeSection === item.id ? "location" : undefined}
                 onClick={handleSectionClick(item.id)}
               >
-                <img
-                  src={isLight ? icons.darkIcon : icons.icon}
-                  alt={item.label}
-                  className="nav-icon"
-                />
-                {item.label}
+                <span key={clickedTab.id === item.id ? clickedTab.count : 0} aria-hidden="true" className="nav-sheen" />
+                <span aria-hidden="true" className={`nav-icon${item.id === "blogs" ? " blogs-icon" : ""}`} style={item.id === "blogs" ? undefined : { backgroundPosition: NAV_POSITIONS[item.id] }} />
+                <span className="nav-label">{item.label}</span>
               </a>
             </li>
           );
@@ -162,53 +136,72 @@ const NavigationStyled = styled.nav`
   }
 
   .nav-icon {
-    width: 20px;
-    height: 20px;
+    background-image: url("${publicAsset("/images/3d/navigation-v3-3d.webp")}");
+    background-size: 300% 300%;
+    display: inline-block;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
     margin-right: 10px;
     vertical-align: middle;
-    opacity: 0.8;
+    opacity: 1;
     transition: opacity 0.3s ease;
+  }
+
+  .nav-icon.blogs-icon {
+    background-image: url("${publicAsset("/images/3d/blogs-standalone-3d.webp")}");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   .nav-items {
     width: 100%;
-    padding: 0.5rem 0;
+    padding: 14px 12px;
     flex: 1;
-    .active-class {
-      color: var(--primary-color) !important;
-      background-color: var(--background-light-color-2);
-      border-right: 3px solid var(--primary-color);
-      .nav-icon {
-        opacity: 1;
-      }
-    }
-    li {
-      display: block;
-      a {
-        display: flex;
-        align-items: center;
-        min-height: 44px;
-        padding: 0.75rem 1.5rem;
-        position: relative;
-        z-index: 10;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-        color: var(--font-light-color);
-        -webkit-tap-highlight-color: transparent;
-        &:hover {
-          cursor: pointer;
-          color: var(--primary-color);
-          background-color: var(--background-light-color-2);
-          padding-left: 2rem;
-          .nav-icon {
-            opacity: 1;
-          }
-        }
-      }
-    }
+    display: grid;
+    align-content: start;
+    gap: 6px;
+  }
+  .nav-items li { display: block; min-width: 0; }
+  .nav-items a {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 8px 12px;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    color: var(--font-light-color);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    transition: background-color .2s, border-color .2s, box-shadow .2s, color .2s, transform .2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-label { color: inherit; }
+  .nav-items a:hover { background-color: rgba(var(--primary-color-rgb), .07); color: var(--white-color); }
+  .nav-items a:active { transform: scale(.98); }
+  .nav-items a.active-class {
+    color: var(--primary-color);
+    background: linear-gradient(125deg, rgba(var(--primary-color-rgb), .32), rgba(var(--primary-color-rgb), .09));
+    border-color: rgba(var(--primary-color-rgb), .45);
+    box-shadow: inset 0 1px 0 rgba(218, 242, 255, .35), inset 0 -1px 0 rgba(var(--primary-color-rgb), .12), 0 5px 16px rgba(var(--primary-color-rgb), .14);
+    backdrop-filter: blur(12px);
+  }
+  .nav-sheen { position: absolute; inset: -50% auto -50% 0; width: 35%; pointer-events: none; z-index: -1; opacity: 0; background: linear-gradient(90deg, transparent, rgba(219, 244, 255, .4), transparent); transform: translateX(-160%) skewX(-20deg); }
+  .nav-items a.is-clicked .nav-sheen { animation: nav-liquid-sweep .7s ease-out 1; }
+  @keyframes nav-liquid-sweep {
+    0% { transform: translateX(-160%) skewX(-20deg); opacity: 0; }
+    25% { opacity: 1; }
+    100% { transform: translateX(420%) skewX(-20deg); opacity: 0; }
+  }
+  .light-theme & .nav-items a.active-class { background: linear-gradient(125deg, rgba(235, 249, 255, .94), rgba(136, 191, 252, .38)); border-color: rgba(var(--primary-color-rgb), .3); box-shadow: inset 0 1px 0 #fff, 0 5px 16px rgba(var(--primary-color-rgb), .12); }
+  @media(prefers-reduced-motion: reduce) {
+    .nav-items a, .nav-icon { transition: none; }
+    .nav-items a.is-clicked .nav-sheen { animation: none; }
   }
 
   footer {

@@ -4,6 +4,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 
+vi.mock("./Components/Particle", () => ({ default: () => null }));
+
 vi.mock("./Pages/PortfolioPage", () => ({ default: () => null }));
 
 const originalMatchMedia = window.matchMedia;
@@ -78,7 +80,7 @@ test("overlay and section links close the sidebar and restore menu focus", () =>
 
   fireEvent.click(menuButton);
   fireEvent.click(container.querySelector('#site-sidebar a[href="#about"]')!);
-  expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
+  expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "instant", block: "start" });
   expect(window.location.hash).toBe("#about");
   expect(container.querySelector('#site-sidebar a[href="#about"]')!).toHaveAttribute("aria-current", "location");
   expect(menuButton).toHaveAttribute("aria-expanded", "false");

@@ -5,11 +5,11 @@ import { PROFILE } from "../data/profile";
 import { scrollToSection } from "../helper/navigation";
 import ExternalLink from "./ExternalLink";
 
-function PrimaryButton({ title, href, showDownloadIcon = false }: { title: string; href?: string; showDownloadIcon?: boolean }) {
+function PrimaryButton({ title, href, showDownloadIcon = false, iconSrc, iconOnly = false }: { title: string; href?: string; showDownloadIcon?: boolean; iconSrc?: string; iconOnly?: boolean }) {
   const content = (
     <>
-      {showDownloadIcon && <FileDownloadOutlinedIcon />}
-      {title}
+      {showDownloadIcon && (iconSrc ? <img src={iconSrc} alt="" width="44" height="44" /> : <FileDownloadOutlinedIcon />)}
+      {!iconOnly && title}
     </>
   );
 
@@ -23,10 +23,12 @@ function PrimaryButton({ title, href, showDownloadIcon = false }: { title: strin
   };
 
   return (
-    <PrimaryButtonStyled>
+    <PrimaryButtonStyled className={iconOnly ? "icon-only" : undefined}>
       <Link
         href={href || PROFILE.resume}
         onClick={handleHashClick}
+        aria-label={iconOnly ? title : undefined}
+        title={iconOnly ? title : undefined}
       >
         {content}
       </Link>
@@ -44,6 +46,19 @@ const PrimaryButtonStyled = styled.div`
 
   @media screen and (max-width: 480px) {
     font-size: 0.8rem;
+  }
+
+  img { display: block; object-fit: contain; }
+
+  &.icon-only a {
+    width: 58px;
+    height: 58px;
+    min-height: 58px;
+    padding: 0;
+    border-width: 1px;
+    border-radius: 50%;
+    img { width: 48px; height: 48px; }
+    &:hover { transform: translateY(-3px); }
   }
 
   a {

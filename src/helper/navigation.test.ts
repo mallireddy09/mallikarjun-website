@@ -43,3 +43,12 @@ test("old certification anchors scroll to the plural section and preserve the re
   expect(window.location.pathname + window.location.search + window.location.hash)
     .toBe("/mallireddy09/?ref=shared#certifications");
 });
+
+test("sidebar navigation can jump instantly to a distant section", () => {
+  document.body.innerHTML = '<section id="certifications"></section>';
+  const target = document.getElementById("certifications")!;
+  target.scrollIntoView = vi.fn();
+  expect(scrollToSection("certifications", { behavior: "instant" })).toBe(true);
+  expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "instant", block: "start" });
+  expect(window.location.hash).toBe("#certifications");
+});

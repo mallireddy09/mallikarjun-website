@@ -1,5 +1,43 @@
 import { expect, test } from "@playwright/test";
 
+test("hero typing follows reduced-motion preference changes", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("./");
+  const role = page.locator(".hero-intro .typing");
+  await expect(role).toHaveText("A Data Engineer");
+  await expect(page.locator(".hero-intro .typed-cursor")).toHaveCount(0);
+  await page.waitForTimeout(1600);
+  await expect(role).toHaveText("A Data Engineer");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect(page.locator(".hero-intro .typed-cursor")).toHaveCount(1);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(role).toHaveText("A Data Engineer");
+  await expect(page.locator(".hero-intro .typed-cursor")).toHaveCount(0);
+});
+
+test("HTML, SVG, and CSS images load under the deployment base", async ({ page }) => {
+  await page.goto("./");
+  const results = await page.evaluate(async () => {
+    const urls = new Set<string>();
+    document.querySelectorAll<HTMLImageElement>("img").forEach(image => urls.add(image.src));
+    document.querySelectorAll<SVGImageElement>("svg image").forEach(image => urls.add(new URL(image.href.baseVal, location.href).href));
+    document.querySelectorAll(".nav-icon").forEach(element => {
+      const url = getComputedStyle(element).backgroundImage.match(/url\(["']?([^"')]+)["']?\)/)?.[1];
+      if (url) urls.add(new URL(url, location.href).href);
+    });
+    return Promise.all([...urls].map(async url => {
+      const image = new Image();
+      image.src = url;
+      try { await image.decode(); return { url, loaded: true }; }
+      catch { return { url, loaded: false }; }
+    }));
+  });
+  expect(results.length).toBeGreaterThan(20);
+  expect(results.filter(result => !result.loaded)).toEqual([]);
+  const origin = new URL(page.url()).origin;
+  expect(results.filter(({ url }) => url.startsWith(origin) && !new URL(url).pathname.startsWith("/mallireddy09/"))).toEqual([]);
+});
+
 test("production bundle renders and preserves navigation under CSP", async ({ page }) => {
   const errors: string[] = [];
   const violations: string[] = [];

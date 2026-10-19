@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { ABOUT_PARAGRAPHS, ABOUT_HIGHLIGHTS } from "../data/profile";
-import { glassCard } from "../styles/shared";
+import { ABOUT_PARAGRAPHS, ENGINEERING_PRINCIPLES } from "../data/profile";
+import { liquidGlassSurface, liquidGlassSelected } from "../styles/shared";
 
 function ImageSection() {
   return (
@@ -10,18 +10,16 @@ function ImageSection() {
         {ABOUT_PARAGRAPHS.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
       </div>
       <aside className="highlights-card" aria-labelledby="highlights-title">
-        <h3 id="highlights-title">Key Highlights</h3>
-        <dl>
-          {ABOUT_HIGHLIGHTS.map(({ label, value, detail }) => (
-            <div className="highlight" key={label}>
-              <dt>{label}</dt>
-              <dd>
-                <span className="highlight-pill">{value}</span>
-                {detail && <span className="highlight-detail">{detail}</span>}
-              </dd>
-            </div>
+        <h3 id="highlights-title">The Engineer Behind the Pipelines</h3>
+        <p className="principles-intro">What I care about beyond making the job run.</p>
+        <ol className="principles-list">
+          {ENGINEERING_PRINCIPLES.map(({ title, text }, index) => (
+            <li key={title}>
+              <h4><span className="principle-number">{String(index + 1).padStart(2, "0")} / </span>{title}</h4>
+              <p>{text}</p>
+            </li>
           ))}
-        </dl>
+        </ol>
       </aside>
     </ImageSectionStyled>
   );
@@ -51,52 +49,64 @@ const ImageSectionStyled = styled.div`
   }
 
   .highlights-card {
-    ${glassCard}
-    padding: 1.5rem;
-    box-shadow: var(--card-shadow);
+    ${liquidGlassSurface}
+    ${liquidGlassSelected}
+    position: relative;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    border-radius: 24px;
     min-width: 0;
     h3 {
-      font-size: 1.15rem;
+      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      line-height: 1.35;
       color: var(--white-color);
-      margin-bottom: 1.25rem;
+      letter-spacing: -.02em;
     }
-    dl { display: grid; gap: 1.25rem; }
-    dt {
-      font-size: 0.7rem;
+    .principles-intro {
+      margin-top: .6rem;
+      color: var(--font-light-color);
+      font-size: .85rem;
+      line-height: 1.6;
+    }
+    .principles-list {
+      display: grid;
+      gap: 0;
+      margin: 1.5rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    li {
+      padding: 1.1rem 0;
+      border-top: 1px solid rgba(var(--primary-color-rgb), .2);
+      min-width: 0;
+    }
+    li:last-child { padding-bottom: 0; }
+    h4 {
+      font-size: .72rem;
+      font-weight: 700;
+      line-height: 1.65;
+      letter-spacing: .055em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.4rem;
-      color: var(--font-light-color);
-    }
-    .highlight-pill {
-      display: inline-block;
-      border: 1px solid var(--border-color);
-      border-radius: 50px;
-      padding: 0.4rem 0.85rem;
-      background: var(--background-light-color-2);
       color: var(--white-color);
-      font-size: 0.85rem;
-      font-weight: 600;
-      max-width: 100%;
     }
-    .highlight-detail {
-      display: block;
-      margin-top: 0.35rem;
-      font-size: 0.85rem;
+    .principle-number { color: var(--primary-color); white-space: nowrap; }
+    li p {
+      margin-top: .5rem;
       color: var(--font-light-color);
+      font-size: .88rem;
+      line-height: 1.7;
     }
   }
 
   @media screen and (max-width: 900px) {
     grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
-    .highlights-card dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
   }
 
   @media screen and (max-width: 480px) {
     .highlights-card {
       padding: 1.25rem;
-      dl { grid-template-columns: minmax(0, 1fr); }
+
     }
   }
 `;

@@ -1,180 +1,78 @@
 import type { Project } from "../types/portfolio";
 import styled from "styled-components";
-import GitHub from "@mui/icons-material/GitHub";
-import YouTube from "@mui/icons-material/YouTube";
-import Play from "@mui/icons-material/PlayArrowOutlined";
-import IconLinks from "./IconLinks";
-import { glassCard } from "../styles/shared";
+import ExternalLink from "./ExternalLink";
 
-const LINK_ICONS = [
-  { key: "github", Icon: GitHub },
-  { key: "demo", Icon: YouTube },
-  { key: "store", Icon: Play },
-] as const;
-
-function ProjectLinks({ item }: { item: Project }) {
-  return (
-    <IconLinks links={LINK_ICONS.map(({ key, Icon }) => ({
-      key, Icon, href: item[key], label: `${item.title} ${key}`,
-    }))} />
-  );
-}
-
-const Menu = ({ menuItem }: { menuItem: readonly Project[] }) => {
-  return (
-    <MenuItemStyled>
-      {menuItem.map((item) => (
-        <div className="grid-item" key={item.id}>
-          <div className="portfolio-content">
-            <div className="portfolio-image">
-              <img src={item.image} alt={item.title} loading="lazy" />
-              <div className="overlay">
-                <ProjectLinks item={item} />
-              </div>
-            </div>
-            <h6>{item.title}</h6>
-            <p>{item.text}</p>
-            <div className="mobile-links">
-              <ProjectLinks item={item} />
-            </div>
-          </div>
+const Menu = ({ menuItem }: { menuItem: readonly Project[] }) => (
+  <MenuItemStyled>
+    {menuItem.map(item => (
+      <ExternalLink
+        className="grid-item"
+        key={item.id}
+        href={item.store || item.github || item.demo}
+        aria-label={`${item.title} (opens in a new tab)`}
+      >
+        <div className="portfolio-image" data-motion={item.id === 1 ? "phone" : "rocket"}>
+          <img src={item.image} alt="" loading="lazy" />
         </div>
-      ))}
-    </MenuItemStyled>
-  );
-};
+        <h3>{item.title}</h3>
+      </ExternalLink>
+    ))}
+  </MenuItemStyled>
+);
 
 const MenuItemStyled = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
   padding: 1.5rem 0;
 
-  @media screen and (max-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (max-width: 600px) {
-    grid-template-columns: 1fr;
-    grid-gap: 1.25rem;
-    padding: 1rem 0;
-  }
-
   .grid-item {
-    ${glassCard}
-    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     overflow: hidden;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-
-    &:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--card-hover-shadow);
-      border-color: var(--primary-color);
-    }
-
-    &:hover .overlay {
-      opacity: 1;
-    }
-
-    .portfolio-content {
-      h6,
-      p {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-      }
-      h6 {
-        font-weight: 700;
-        color: var(--primary-color);
-        padding-top: 0.8rem;
-      }
-      p {
-        color: var(--font-light-color);
-        padding-bottom: 0.5rem;
-        line-height: 1.5;
-      }
-
-      .portfolio-image {
-        overflow: hidden;
-        position: relative;
-        aspect-ratio: 16 / 10;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-      }
-
-      .mobile-links {
-        display: none;
-        gap: 0.75rem;
-        padding: 0 1rem 1rem;
-
-        a {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          border: 1px solid var(--border-color);
-          color: var(--white-color);
-          transition: all 0.3s ease;
-
-          &:hover,
-          &:active {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-          }
-        }
-
-        @media (hover: none), (pointer: coarse) {
-          display: flex;
-        }
-      }
-    }
-
-    &:hover .portfolio-image img {
-      transform: scale(1.05);
-    }
-
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-
-      @media (hover: none), (pointer: coarse) {
-        display: none;
-      }
-
-      a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        margin: 0 8px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        transition: all 0.3s ease;
-        &:hover {
-          background: var(--primary-color);
-          border-color: var(--primary-color);
-          transform: scale(1.15);
-        }
-        svg {
-          font-size: 1.3rem;
-        }
-      }
-    }
+    border-radius: 20px;
+    background: var(--background-dark-grey);
+    color: var(--white-color);
+    transition: transform .25s ease;
+  }
+  .grid-item:hover, .grid-item:focus-visible { transform: translateY(-4px); }
+  .portfolio-image { overflow: hidden; aspect-ratio: 3 / 2; }
+  .portfolio-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center top;
+    animation: phone-float 5.5s ease-in-out infinite;
+  }
+  .portfolio-image[data-motion="rocket"] img { animation: rocket-float 6.5s ease-in-out infinite; }
+  @keyframes phone-float {
+    0%, 100% { transform: scale(1.04) translateY(-3px) rotate(-.5deg); }
+    50% { transform: scale(1.04) translateY(-9px) rotate(.5deg); }
+  }
+  @keyframes rocket-float {
+    0%, 100% { transform: scale(1.03) translateY(-1px); }
+    50% { transform: scale(1.03) translateY(-13px); }
+  }
+  h3 {
+    margin: 0;
+    padding: 22px 24px 26px;
+    font-size: clamp(20px, 2vw, 28px);
+    line-height: 1.3;
+    font-weight: 700;
+    color: inherit;
+  }
+  @media(max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1rem 0;
+    h3 { padding: 20px; }
+  }
+  @media(prefers-reduced-motion: reduce) {
+    .grid-item, .portfolio-image img { transition: none; }
+    .portfolio-image img, .portfolio-image[data-motion="rocket"] img { animation: none; transform: none; }
+    .grid-item:hover, .grid-item:focus-visible, .grid-item:hover img, .grid-item:focus-visible img { transform: none; }
   }
 `;
 

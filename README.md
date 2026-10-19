@@ -8,16 +8,16 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 
 ## Features
 
-- One continuous portfolio page with section navigation and smooth scrolling
+- One continuous portfolio page with instant sidebar navigation and content that smoothly reveals on scroll
 - Sidebar open by default beside desktop content, with a three-dot toggle; phones/tablets start closed with a hamburger toggle
 - Light and dark themes, particle effects, and animated role text
 - The skills sphere pauses off-screen and in hidden tabs, with a static view for reduced motion
-- A centered hero with an outline Resume button, compact social links, and an engineering impact bar using the Experience logos
-- Three-paragraph About narrative with a Key Highlights card
-- Six skills sections with every skill linked to official documentation in a new tab
-- Project category filters
+- A split hero with a live top-to-bottom data pipeline, 3D icons, matching circular Resume/social buttons, and an engineering impact bar
+- Three-paragraph About narrative with a liquid-glass engineering principles card
+- A compact skills sphere, interactive pipeline stages with typed descriptions, and six expandable skill groups linked to official documentation
+- Rounded project cards with category filters and clickable image/title links
 - GitHub, LinkedIn, X, and resume links
-- Contact section with email, location, and a validated form that opens the visitor's email client
+- A liquid-glass contact panel with a mail link and an icon-only copy-email button
 
 ## Stack
 
@@ -76,13 +76,13 @@ The menu and page use the same typed section registry, so their order stays alig
 | `#blogs` | Blogs |
 | `#contact` | Contact |
 
-Old `/certification` and `#certification` links resolve to `#certifications`. Legacy section routes preserve query strings when normalized. Deep links wait for font layout, and the stats card reserves its space while loading.
+Old `/certification` and `#certification` links resolve to `#certifications`. Legacy section routes preserve query strings when normalized. Deep links wait for font layout.
 
 ## Updating content
 
 | Location | Content |
 |----------|---------|
-| `src/data/profile.ts` | Name, summaries, roles, email, location, social links, and resume URL |
+| `src/data/profile.ts` | Name, summaries, roles, engineering principles, email, social links, and resume URL |
 | `src/data/experience.ts`, `src/data/companies.ts` | Work experience and company details |
 | `src/data/education.ts`, `src/data/skills.ts` | Education and skills |
 | `src/data/projects.ts`, `src/data/blogs.ts`, `src/data/certification.ts` | Projects, articles, and certifications |
@@ -106,9 +106,12 @@ The development and preview servers bind to loopback by default. Do not expose t
 - Use `src/helper/navigation.ts` for section scrolling; sidebar links, home buttons, and deep links share this implementation.
 - Use `ExternalLink` for links that open in a new tab and `IconLinks` for lists of icon links.
 - Use `Title` with `animated` for section headings, `GalleryPage` for image/text galleries, and `ResumeTimeline` for work and education entries.
-- Use `FormField` for labeled inputs and textareas. The project category `Button` is controlled by the selection in `ProjectsPage`.
+- The project category `Button` is controlled by the selection in `ProjectsPage`.
 - Reuse `src/styles/shared.ts` for glass surfaces and gradient text, and `src/styles/media.ts` for the desktop/drawer breakpoint.
 - Reuse `PrimaryButton` for outline CTAs; use `showDownloadIcon` for the resume action.
+- Use `publicAsset()` from `src/helper/publicAsset.ts` for public image URLs, including SVG images and CSS backgrounds, so they work under the deployment base path.
+- The 3D artwork in `public/images/3d/` uses compressed WebP files sized for their display. Keep small icons at roughly 2–3 times their CSS dimensions; reserve larger assets for project illustrations. Timeline company logos load lazily.
+- Scroll reveals respect reduced motion and reveal focused content immediately. Pipeline typing remains separate from these entrance effects.
 - Each skill appears once in `src/data/skills.ts`; AWS IAM and GCP IAM retain their distinct documentation links. Linux belongs in DevOps, transformation tools in orchestration, and monitoring tools in observability.
 
 ## Contact
