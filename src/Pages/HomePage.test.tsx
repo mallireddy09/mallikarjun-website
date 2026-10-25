@@ -11,8 +11,10 @@ beforeEach(() => {
   reduced = false;
   removeListener.mockClear();
   vi.useFakeTimers();
-  vi.stubGlobal("matchMedia", () => ({
-    get matches() { return reduced; },
+  vi.stubGlobal("matchMedia", (query: string) => ({
+    get matches() { return query.includes("prefers-reduced-motion") && reduced; },
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
     addEventListener: (_event: string, listener: () => void) => { preferenceChanged = listener; },
     removeEventListener: removeListener,
   }));
