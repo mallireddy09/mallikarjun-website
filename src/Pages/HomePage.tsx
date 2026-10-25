@@ -1,5 +1,4 @@
 import { publicAsset } from "../helper/publicAsset";
-import type { ThemeProps } from "../types/portfolio";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ReactTyped as Typed } from "react-typed";
@@ -7,17 +6,17 @@ import PrimaryButton from "../Components/PrimaryButton";
 import { PROFILE, HERO_ROLES, HERO_SUMMARY, PAST_IMPACT } from "../data/profile";
 import IconLinks from "../Components/IconLinks";
 import { gradientText } from "../styles/shared";
-import CompanyLogo from "../Components/CompanyLogo";
+import CompanyImpactPreview from "../Components/CompanyImpactPreview";
 import LiveDataPipeline from "../Components/LiveDataPipeline";
 import { DRAWER_MEDIA } from "../styles/media";
 
 const SOCIAL_LINKS = [
-  { key: "github", href: PROFILE.github, label: "GitHub", image: publicAsset("/images/3d/github-clear-3d.webp"), className: "icon i-github" },
-  { key: "linkedin", href: PROFILE.linkedin, label: "LinkedIn", image: publicAsset("/images/3d/linkedin-brand-3d.webp"), className: "icon i-linkedin" },
-  { key: "twitter", href: PROFILE.twitter, label: "X (Twitter)", image: publicAsset("/images/3d/x-brand-3d.webp"), className: "icon" },
+  { key: "github", href: PROFILE.github, label: "GitHub", image: publicAsset("/images/3d/github-clear-3d.webp"), className: "icon i-github", preview: { kind: "github" as const, handle: "mallireddy09" } },
+  { key: "linkedin", href: PROFILE.linkedin, label: "LinkedIn", image: publicAsset("/images/3d/linkedin-brand-3d.webp"), className: "icon i-linkedin", preview: { kind: "linkedin" as const, handle: "mallireddy09" } },
+  { key: "twitter", href: PROFILE.twitter, label: "X (Twitter)", image: publicAsset("/images/3d/x-brand-3d.webp"), className: "icon", preview: { kind: "x" as const, handle: "@MalliReddy09" } },
 ];
 
-function HomePage(_props: ThemeProps) {
+function HomePage() {
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -60,7 +59,7 @@ function HomePage(_props: ThemeProps) {
           <p>{HERO_SUMMARY}</p>
           <div className="social">
             <div className="hero-actions">
-              <PrimaryButton title="Resume" showDownloadIcon iconOnly iconSrc={publicAsset("/images/3d/resume-clear-3d.webp")} />
+              <PrimaryButton title="Resume" showDownloadIcon iconOnly iconSrc={publicAsset("/images/3d/resume-clear-3d.webp")} preview={{ kind: "resume", handle: "Google Drive" }} />
             </div>
             <div className="icons">
               <IconLinks links={SOCIAL_LINKS} />
@@ -74,10 +73,7 @@ function HomePage(_props: ThemeProps) {
             <ul>
               {PAST_IMPACT.map((company) => (
                 <li key={company.name}>
-                  <span className="impact-company">
-                    <CompanyLogo src={company.logo} eager />
-                    {company.name}
-                  </span>
+                  <CompanyImpactPreview company={company} />
                 </li>
               ))}
             </ul>
@@ -104,7 +100,7 @@ const HomePageStyled = styled.header`
 
   .hero-main { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: end; gap: 28px; }
   .hero-intro { min-width: 0; }
-  .hero-art { position: absolute; right: 0; top: 0; width: calc((100% - 28px) * .45); max-width: 420px; height: 100%; pointer-events: none; }
+  .hero-art { position: absolute; right: 0; top: 0; width: calc((100% - 28px) * .45); max-width: 420px; height: 100%; }
   .icons .social-art { display: block; width: 48px; height: 48px; object-fit: contain; }
   @media(max-width: 700px) {
     .hero-main { grid-template-columns: minmax(0, 1fr); gap: 24px; }
@@ -312,6 +308,10 @@ const HomePageStyled = styled.header`
     .scroll-indicator {
       display: none;
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-indicator, .scroll-indicator .mouse .wheel { animation: none; }
   }
 
   @keyframes bounce {

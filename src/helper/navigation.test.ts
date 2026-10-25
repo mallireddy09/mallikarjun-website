@@ -2,8 +2,19 @@ import { vi } from "vitest";
 import { scrollToSection } from "./navigation";
 
 afterEach(() => {
+  vi.unstubAllGlobals();
   document.body.innerHTML = "";
   window.history.replaceState(null, "", "/");
+});
+
+test("reduced motion overrides smooth scrolling without changing navigation", () => {
+  vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: true })));
+  document.body.innerHTML = '<section id="contact"></section>';
+  const target = document.getElementById("contact")!;
+  target.scrollIntoView = vi.fn();
+  expect(scrollToSection("contact", { behavior: "smooth" })).toBe(true);
+  expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "instant", block: "start" });
+  expect(window.location.hash).toBe("#contact");
 });
 
 test("section navigation keeps the repository path and query string", () => {

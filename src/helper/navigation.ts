@@ -6,7 +6,8 @@ export function scrollToSection(id: string, { updateHash = true, behavior = "smo
   const element = document.getElementById(sectionId);
   if (!element) return false;
 
-  element.scrollIntoView({ behavior, block: "start" });
+  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  element.scrollIntoView({ behavior: reducedMotion ? "instant" : behavior, block: "start" });
   if (updateHash) {
     window.history.replaceState(null, "", `#${sectionId}`);
   }

@@ -53,7 +53,7 @@ test.each([
 ])("normalizes %s while preserving its query string", async (url, section) => {
   const { container } = render(
     <MemoryRouter initialEntries={[url]}>
-      <PortfolioPage theme="dark-theme" />
+      <PortfolioPage />
       <CurrentLocation />
     </MemoryRouter>
   );
@@ -66,7 +66,7 @@ test.each([
 test("an unknown anchor keeps its URL and does not scroll", async () => {
   render(
     <MemoryRouter initialEntries={["/?ref=shared#missing"]}>
-      <PortfolioPage theme="dark-theme" />
+      <PortfolioPage />
       <CurrentLocation />
     </MemoryRouter>
   );
@@ -80,7 +80,7 @@ test("deep-link alignment waits for fonts to finish loading", async () => {
   Object.defineProperty(document, "fonts", { configurable: true, value: {
     ready: new Promise<void>((resolve) => { finishFonts = resolve; }),
   } });
-  render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage theme="dark-theme" /></MemoryRouter>);
+  render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage /></MemoryRouter>);
   await settleScroll();
   expect(scroll).not.toHaveBeenCalled();
   await act(async () => { finishFonts(); await Promise.resolve(); vi.advanceTimersByTime(16); });
@@ -92,7 +92,7 @@ test("pending font alignment is cancelled on unmount", async () => {
   Object.defineProperty(document, "fonts", { configurable: true, value: {
     ready: new Promise<void>((resolve) => { finishFonts = resolve; }),
   } });
-  const { unmount } = render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage theme="dark-theme" /></MemoryRouter>);
+  const { unmount } = render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage /></MemoryRouter>);
   await settleScroll();
   unmount();
   await act(async () => { finishFonts(); await Promise.resolve(); vi.advanceTimersByTime(16); });
@@ -104,7 +104,7 @@ test("pending alignment does not override a newer sidebar anchor", async () => {
   Object.defineProperty(document, "fonts", { configurable: true, value: {
     ready: new Promise<void>((resolve) => { finishFonts = resolve; }),
   } });
-  render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage theme="dark-theme" /></MemoryRouter>);
+  render(<MemoryRouter initialEntries={["/#education"]}><PortfolioPage /></MemoryRouter>);
   await settleScroll();
   window.history.replaceState(null, "", "#projects");
   await act(async () => { finishFonts(); await Promise.resolve(); vi.advanceTimersByTime(16); });

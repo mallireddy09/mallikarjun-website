@@ -65,11 +65,12 @@ html {
 }
 
 html, body {
-  overflow-x: clip;
   max-width: 100%;
 }
 
 body{
+    /* Keep root overflow visible so modal body scroll locks reach the viewport. */
+    overflow-x: clip;
     background-color: var(--background-dark-color);
     color: var(--font-light-color);
     font-size: 1.05rem;
@@ -279,6 +280,19 @@ p{
 .nav-toggle{
     transform: translateX(0) !important;
     z-index: 20;
+}
+.ham-burger-menu {
+    transition: opacity 0.2s ease, translate 0.2s ease;
+}
+.site-controls.is-hidden:not(:has(:focus-visible)) .theme-toggle-btn,
+.site-controls.is-hidden:not(:has(:focus-visible)) .ham-burger-menu {
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 calc(-100% - 2rem - var(--safe-top));
+}
+@media (prefers-reduced-motion: reduce) {
+    .site-controls .theme-toggle-btn,
+    .site-controls .ham-burger-menu { transition: none; }
 }
 @media ${DRAWER_MEDIA}{
     .ham-burger-menu{

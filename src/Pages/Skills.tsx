@@ -1,11 +1,10 @@
-import type { ThemeProps } from "../types/portfolio";
 import Skills from "../Components/Skills";
 import { MainLayout } from "../styles/Layouts";
 
-function SkillsPage({ theme }: ThemeProps) {
+function SkillsPage() {
   return (
     <MainLayout>
-      <Skills theme={theme} />
+      <Skills />
     </MainLayout>
   );
 }

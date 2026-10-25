@@ -17,11 +17,29 @@ function App() {
   const [theme, setTheme] = useState<Theme>("dark-theme");
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
   const [navToggle, setNavToggle] = useState(isDesktop);
+  const [controlsHidden, setControlsHidden] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const isOverlayOpen = navToggle && !isDesktop;
   const closeNav = useCallback(() => {
     setNavToggle(false);
     menuButtonRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
+    let previousScroll = window.scrollY;
+    const onScroll = () => {
+      const currentScroll = Math.max(0, window.scrollY);
+      if (currentScroll <= 64) {
+        setControlsHidden(false);
+      } else if (Math.abs(currentScroll - previousScroll) < 8) {
+        return;
+      } else {
+        setControlsHidden(currentScroll > previousScroll);
+      }
+      previousScroll = currentScroll;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -77,7 +95,7 @@ function App() {
   return (
     <div className="App">
       <SiteNetworkStyled aria-hidden="true"><Particle theme={theme} /></SiteNetworkStyled>
-      <Sidebar navToggle={navToggle} theme={theme} onClose={isDesktop ? undefined : closeNav} />
+      <Sidebar navToggle={navToggle} onClose={isDesktop ? undefined : closeNav} />
 
       {isOverlayOpen && (
         <div
@@ -90,25 +108,27 @@ function App() {
         />
       )}
 
-      <button
-        className="theme-toggle-btn"
-        onClick={themeToggler}
-        aria-label="Toggle theme"
-      >
-        {theme === "dark-theme" ? <LightModeIcon /> : <DarkModeIcon />}
-      </button>
-
-      <div className="ham-burger-menu">
-        <IconButton
-          ref={menuButtonRef}
-          onClick={() => navToggle ? closeNav() : setNavToggle(true)}
-          aria-label={navToggle ? "Close menu" : "Open menu"}
-          aria-expanded={navToggle}
-          aria-controls="site-sidebar"
+      <div className={`site-controls${controlsHidden && !isOverlayOpen ? " is-hidden" : ""}`}>
+        <button
+          className="theme-toggle-btn"
+          onClick={themeToggler}
+          aria-label="Toggle theme"
         >
-          {navToggle ? <CloseIcon className="mobile-menu-icon" /> : <MenuIcon className="mobile-menu-icon" />}
-          <MoreVertIcon className="desktop-menu-icon" />
-        </IconButton>
+          {theme === "dark-theme" ? <LightModeIcon /> : <DarkModeIcon />}
+        </button>
+
+        <div className="ham-burger-menu">
+          <IconButton
+            ref={menuButtonRef}
+            onClick={() => navToggle ? closeNav() : setNavToggle(true)}
+            aria-label={navToggle ? "Close menu" : "Open menu"}
+            aria-expanded={navToggle}
+            aria-controls="site-sidebar"
+          >
+            {navToggle ? <CloseIcon className="mobile-menu-icon" /> : <MenuIcon className="mobile-menu-icon" />}
+            <MoreVertIcon className="desktop-menu-icon" />
+          </IconButton>
+        </div>
       </div>
 
       <MainContentStyled $sidebarOpen={isDesktop && navToggle}>
@@ -120,7 +140,7 @@ function App() {
         </div>
 
         <Routes>
-          <Route path="/*" element={<PortfolioPage theme={theme} />} />
+          <Route path="/*" element={<PortfolioPage />} />
         </Routes>
       </MainContentStyled>
     </div>

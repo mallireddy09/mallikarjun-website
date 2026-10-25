@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { MainLayout } from "../styles/Layouts";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
@@ -7,11 +7,19 @@ import { lightLiquidGlass } from "../styles/shared";
 import { PROFILE } from "../data/profile";
 
 function ContactPage() {
-  const [copied, setCopied] = useState(false);
+  const [copiedAt, setCopiedAt] = useState<number | null>(null);
+  const copied = copiedAt !== null;
   const [copyError, setCopyError] = useState(false);
+
+  useEffect(() => {
+    if (copiedAt === null) return;
+    const timer = window.setTimeout(() => setCopiedAt(null), 10_000);
+    return () => window.clearTimeout(timer);
+  }, [copiedAt]);
+
   const copyEmail = async () => {
-    try { await navigator.clipboard.writeText(PROFILE.email); setCopied(true); setCopyError(false); }
-    catch { setCopied(false); setCopyError(true); }
+    try { await navigator.clipboard.writeText(PROFILE.email); setCopiedAt(Date.now()); setCopyError(false); }
+    catch { setCopiedAt(null); setCopyError(true); }
   };
   return (
     <MainLayout>
@@ -47,7 +55,13 @@ const ContactPageStyled = styled.section`
   .contact-bottom p { font-size: clamp(18px, 1.7vw, 24px); line-height: 1.5; }
   .contact-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
   .say-hello { display: inline-flex; align-items: center; gap: 24px; padding: 10px 10px 10px 26px; background: linear-gradient(135deg, #183858, #090d15); border: 1px solid rgba(191, 226, 255, .3); box-shadow: inset 0 1px 0 rgba(225, 244, 255, .2); color: #a6cdff; border-radius: 100px; font-weight: 600; }
-  .say-hello span { display: grid; place-items: center; width: 46px; height: 46px; background: #19263b; color: #74acff; border-radius: 50%; font-size: 32px; }
+  .say-hello span { display: grid; place-items: center; width: 46px; height: 46px; background: #19263b; color: #74acff; border-radius: 50%; font-size: 32px; animation: hello-arrow-nudge 3s ease-in-out infinite; }
+  .say-hello:hover span, .say-hello:focus-visible span { animation-duration: 1.5s; }
+  @keyframes hello-arrow-nudge {
+    0%, 60%, 100% { transform: translateX(0); }
+    72%, 88% { transform: translateX(4px); }
+    80% { transform: translateX(0); }
+  }
   .copy-email { display: grid; place-items: center; width: 66px; height: 66px; flex: 0 0 66px; background: rgba(240, 249, 255, .3); border: 2px solid rgba(27, 83, 146, .24); border-radius: 50%; color: #090d15; cursor: pointer; }
   .copy-email svg { width: 26px; height: 26px; }
   .copy-email:hover, .copy-email.is-copied { background: linear-gradient(135deg, rgba(240, 251, 255, .9), rgba(139, 198, 255, .7)); color: #123c66; box-shadow: inset 0 1px 0 #fff, 0 6px 18px rgba(38, 125, 246, .2); }
@@ -59,7 +73,11 @@ const ContactPageStyled = styled.section`
   .copy-status { font-size: 14px; margin-top: 14px; overflow-wrap: anywhere; }
   .copy-status:empty { display: none; }
   .copy-status:not(.has-error) { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  @media(prefers-reduced-motion: reduce) { .say-hello, .copy-email { transition: none; } }
+  @media(prefers-reduced-motion: reduce) {
+    .say-hello, .copy-email { transition: none; }
+    .say-hello span { animation: none; }
+    .say-hello:hover, .copy-email:hover { transform: none; }
+  }
 
 `;
 

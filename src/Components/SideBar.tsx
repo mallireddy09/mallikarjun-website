@@ -1,8 +1,7 @@
-import type { ThemeProps } from "../types/portfolio";
 import styled from "styled-components";
 import Navigation from "./Navigation";
 
-function Sidebar({ navToggle, theme, onClose }: ThemeProps & { navToggle: boolean; onClose?: () => void }) {
+function Sidebar({ navToggle, onClose }: { navToggle: boolean; onClose?: () => void }) {
   return (
     <SidebarStyled
       id="site-sidebar"
@@ -10,7 +9,7 @@ function Sidebar({ navToggle, theme, onClose }: ThemeProps & { navToggle: boolea
       aria-hidden={!navToggle}
       inert={navToggle ? undefined : ""}
     >
-      <Navigation theme={theme} onClose={onClose} />
+      <Navigation onClose={onClose} isOpen={navToggle} />
     </SidebarStyled>
   );
 }

@@ -1,6 +1,7 @@
 import type { Project } from "../types/portfolio";
 import styled from "styled-components";
 import ExternalLink from "./ExternalLink";
+import ProjectPreview from "./ProjectPreview";
 
 const Menu = ({ menuItem }: { menuItem: readonly Project[] }) => (
   <MenuItemStyled>
@@ -11,8 +12,8 @@ const Menu = ({ menuItem }: { menuItem: readonly Project[] }) => (
         href={item.store || item.github || item.demo}
         aria-label={`${item.title} (opens in a new tab)`}
       >
-        <div className="portfolio-image" data-motion={item.id === 1 ? "phone" : "rocket"}>
-          <img src={item.image} alt="" loading="lazy" />
+        <div className="portfolio-image">
+          {item.preview ? <ProjectPreview kind={item.preview} image={item.image}/> : <img src={item.image} alt="" loading="lazy" />}
         </div>
         <h3>{item.title}</h3>
       </ExternalLink>
@@ -37,24 +38,8 @@ const MenuItemStyled = styled.div`
     transition: transform .25s ease;
   }
   .grid-item:hover, .grid-item:focus-visible { transform: translateY(-4px); }
-  .portfolio-image { overflow: hidden; aspect-ratio: 3 / 2; }
-  .portfolio-image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform-origin: center top;
-    animation: phone-float 5.5s ease-in-out infinite;
-  }
-  .portfolio-image[data-motion="rocket"] img { animation: rocket-float 6.5s ease-in-out infinite; }
-  @keyframes phone-float {
-    0%, 100% { transform: scale(1.04) translateY(-3px) rotate(-.5deg); }
-    50% { transform: scale(1.04) translateY(-9px) rotate(.5deg); }
-  }
-  @keyframes rocket-float {
-    0%, 100% { transform: scale(1.03) translateY(-1px); }
-    50% { transform: scale(1.03) translateY(-13px); }
-  }
+  .portfolio-image { position: relative; overflow: hidden; aspect-ratio: 3 / 2; }
+  .portfolio-image > img { display: block; width: 100%; height: 100%; object-fit: cover; }
   h3 {
     margin: 0;
     padding: 22px 24px 26px;
@@ -70,8 +55,7 @@ const MenuItemStyled = styled.div`
     h3 { padding: 20px; }
   }
   @media(prefers-reduced-motion: reduce) {
-    .grid-item, .portfolio-image img { transition: none; }
-    .portfolio-image img, .portfolio-image[data-motion="rocket"] img { animation: none; transform: none; }
+    .grid-item { transition: none; }
     .grid-item:hover, .grid-item:focus-visible, .grid-item:hover img, .grid-item:focus-visible img { transform: none; }
   }
 `;
