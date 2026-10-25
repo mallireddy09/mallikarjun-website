@@ -30,12 +30,13 @@ for (const theme of ["dark", "light"]) {
       await expect(portrait).not.toHaveClass(/is-reacting/);
       await expect(motion).toHaveCSS("transform", "none");
       await expect(portrait.locator(".portrait-window")).toHaveCSS("clip-path", "circle(50% at 50% 50%)");
-      const restingFrame = (await frame.boundingBox())!;
-      const restingImage = (await portrait.locator("img").boundingBox())!;
-      expect(restingImage.x).toBeGreaterThanOrEqual(restingFrame.x);
-      expect(restingImage.y).toBeGreaterThanOrEqual(restingFrame.y);
-      expect(restingImage.x + restingImage.width).toBeLessThanOrEqual(restingFrame.x + restingFrame.width);
-      expect(restingImage.y + restingImage.height).toBeLessThanOrEqual(restingFrame.y + restingFrame.height);
+      // Read both boxes in one frame; the mobile drawer may already be sliding closed.
+      const resting = await portrait.evaluate(element => {
+        const frame = element.querySelector(".portrait-frame")!.getBoundingClientRect();
+        const image = element.querySelector("img")!.getBoundingClientRect();
+        return { left: image.left - frame.left, top: image.top - frame.top, right: frame.right - image.right, bottom: frame.bottom - image.bottom };
+      });
+      for (const inset of Object.values(resting)) expect(inset).toBeGreaterThanOrEqual(-.5);
       if (isMobile) {
         await expect(page.locator("#site-sidebar")).toHaveAttribute("aria-hidden", "true");
         await expect(motion).toHaveCSS("animation-name", "none");

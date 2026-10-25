@@ -44,9 +44,8 @@ test("Uber car moves and company animations respect reduced motion", async ({ pa
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect.poll(() => car.evaluate(element => getComputedStyle(element).animationName)).toBe("none");
   const preview = page.getByRole("tooltip");
-  for (const element of await preview.locator("svg *").all()) {
-    expect(await element.evaluate(node => getComputedStyle(node).animationName)).toBe("none");
-  }
+  await expect(preview).toBeVisible();
+  await expect.poll(() => preview.locator("svg *").evaluateAll(elements => elements.length > 0 && elements.every(node => getComputedStyle(node).animationName === "none"))).toBe(true);
 });
 
 test("keyboard users can preview companies and dismiss with Escape", async ({ page, isMobile }) => {
@@ -70,6 +69,11 @@ test("keyboard users can preview companies and dismiss with Escape", async ({ pa
   const trigger = page.getByRole("button", { name: "Preview Uber", exact: true });
   if (isMobile) await trigger.tap(); else await trigger.hover();
   await expect(page.getByRole("tooltip")).toBeVisible();
+  if (isMobile) {
+    await trigger.dispatchEvent("mouseout", { relatedTarget: null });
+    await page.waitForTimeout(200);
+    await expect(page.getByRole("tooltip")).toBeVisible();
+  }
   await page.getByText("ENGINEERING IMPACT AT:", { exact: true }).click();
   await expect(page.getByRole("tooltip")).toBeHidden();
   expect(errors).toEqual([]);
@@ -90,9 +94,8 @@ test("NVIDIA fans and workload indicators animate and stop for reduced motion", 
   await expect.poll(() => flow.evaluate(element => getComputedStyle(element).strokeDashoffset)).not.toBe(offset);
   await expect(preview.locator(".compute-bar")).toHaveCount(12);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  for (const element of await preview.locator(".scene-motion").all()) {
-    expect(await element.evaluate(node => getComputedStyle(node).animationName)).toBe("none");
-  }
+  await expect(preview).toBeVisible();
+  await expect.poll(() => preview.locator(".scene-motion").evaluateAll(elements => elements.length > 0 && elements.every(node => getComputedStyle(node).animationName === "none"))).toBe(true);
 });
 
 for (const company of [
@@ -114,8 +117,7 @@ for (const company of [
       await expect(preview.locator(".wheel-spokes")).toHaveCount(2);
     }
     await page.emulateMedia({ reducedMotion: "reduce" });
-    for (const element of await preview.locator(".scene-motion").all()) {
-      expect(await element.evaluate(node => getComputedStyle(node).animationName)).toBe("none");
-    }
+    await expect(preview).toBeVisible();
+    await expect.poll(() => preview.locator(".scene-motion").evaluateAll(elements => elements.length > 0 && elements.every(node => getComputedStyle(node).animationName === "none"))).toBe(true);
   });
 }

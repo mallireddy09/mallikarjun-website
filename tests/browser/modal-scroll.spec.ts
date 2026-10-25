@@ -3,7 +3,14 @@ import { expect, test, type Page } from "@playwright/test";
 async function scrollAt(page: Page, touch: boolean, x: number, y: number, distance = 240) {
   if (touch) {
     const session = await page.context().newCDPSession(page);
-    await session.send("Input.synthesizeScrollGesture", { x, y, yDistance: -distance, gestureSourceType: "touch", preventFling: true });
+    // Dispatch an actual swipe: synthesized scroll gestures can be ignored by Linux headless Chromium.
+    await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });
+    const end = Math.max(12, y - distance);
+    for (let step = 1; step <= 10; step++) {
+      await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: y + (end - y) * step / 10 }] });
+      await page.waitForTimeout(16);
+    }
+    await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
     await session.detach();
   } else {
     await page.mouse.move(x, y);

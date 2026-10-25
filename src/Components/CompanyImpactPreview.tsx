@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { ClickAwayListener, Tooltip, type TooltipProps } from "@mui/material";
+import { ClickAwayListener, Tooltip, useMediaQuery, type TooltipProps } from "@mui/material";
 import styled from "styled-components";
 import CompanyLogo from "./CompanyLogo";
 import { HOVER_PREVIEW_QUERY } from "../styles/media";
@@ -165,11 +165,12 @@ function CompanyScene({ name }: { name: CompanyName }) {
 
 export default function CompanyImpactPreview({ company }: { company: { name: string; logo: string } }) {
   const [open, setOpen] = useState(false);
+  const canHover = useMediaQuery(HOVER_PREVIEW_QUERY);
   const name = company.name as CompanyName;
   const scene = scenes[name];
   if (!scene) return <span className="impact-company"><CompanyLogo src={company.logo} eager />{company.name}</span>;
   return <ClickAwayListener onClickAway={() => setOpen(false)}><span className="company-preview-trigger"><PreviewTooltip
-    open={open} describeChild disableTouchListener enterDelay={180} leaveDelay={150} placement="top"
+    open={open} describeChild disableTouchListener disableHoverListener={!canHover} enterDelay={180} leaveDelay={150} placement="top"
     onOpen={event => { if (window.matchMedia(HOVER_PREVIEW_QUERY).matches || (event.type === "focus" && event.currentTarget.matches(":focus-visible"))) setOpen(true); }}
     onClose={event => { setOpen(false); if (event.type === "keydown") event.stopPropagation(); }}
     slotProps={{ popper: { popperOptions: { strategy: "fixed" }, modifiers: [{ name: "preventOverflow", options: { altAxis: true, tether: false, padding: 16 } }] } }}
