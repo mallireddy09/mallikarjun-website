@@ -4,13 +4,13 @@ for (const theme of ["dark", "light"]) {
   test(`fixed tab amounts and proportional pie reconcile in ${theme} mode`, async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
+    await page.clock.install();
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("./");
     if (theme === "light") await page.getByRole("button", { name: "Toggle theme" }).click();
     const preview = page.locator('[data-preview="finance"]');
     await preview.scrollIntoViewIfNeeded();
     await expect(preview).toHaveAttribute("data-running", "true");
-    await page.clock.install();
     await page.clock.pauseAt(new Date(Date.now() + 100));
     const snapshot = () => preview.evaluate(node => {
       const number = (text: string | null | undefined) => Number(text?.replace(/[^0-9]/g, ""));
@@ -103,6 +103,7 @@ for (const theme of ["dark", "light"]) {
 }
 
 test("rocket launches, returns and lands while its background stays fixed", async ({ page }) => {
+  await page.clock.install();
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("./");
   const preview = page.locator('[data-preview="rocket"]');
@@ -110,7 +111,6 @@ test("rocket launches, returns and lands while its background stays fixed", asyn
   await expect(preview).toHaveAttribute("data-running", "true");
   await expect(preview.locator(".flight-backdrop")).toHaveCSS("transform", "none");
   const rig = preview.locator(".rocket-rig");
-  await page.clock.install();
   const snapshot = () => preview.evaluate(node => {
     const rig = node.querySelector<HTMLElement>(".rocket-rig")!;
     const offset = -new DOMMatrix(getComputedStyle(rig).transform).m42 / rig.getBoundingClientRect().height;
