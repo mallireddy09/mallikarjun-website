@@ -8,6 +8,31 @@ const profiles = [
 ];
 
 for (const theme of ["dark", "light"]) {
+  test(`focused profile previews hide when their icons scroll offscreen in ${theme} mode`, async ({ page, isMobile }) => {
+    test.skip(isMobile);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto("./");
+      if (theme === "light") await page.getByRole("button", { name: "Toggle theme" }).click();
+      for (const profile of profiles) {
+        const link = page.locator(".social").getByRole("link", { name: profile.label, exact: true });
+        await page.keyboard.press("Tab");
+        await link.focus();
+        const preview = page.getByRole("tooltip").filter({ hasText: profile.destination });
+        await expect(preview).toBeVisible();
+        await page.locator("#projects").scrollIntoViewIfNeeded();
+        await expect(link).toBeFocused();
+        await expect(link).not.toBeInViewport();
+        await expect(page.getByRole("tooltip")).toHaveCount(0);
+        await link.scrollIntoViewIfNeeded();
+        await expect(preview).toBeVisible();
+        await link.blur();
+        await expect(page.getByRole("tooltip")).toHaveCount(0);
+      }
+    }
+  });
+
   test(`profile icons show their account previews in ${theme} mode`, async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop");
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -58,7 +83,9 @@ test("profile icons open their configured pages in a new tab", async ({ page, co
   // Stub external page responses so this test verifies navigation without signing in.
   await context.route(url => profiles.some(profile => url.href === profile.href), route => route.fulfill({ contentType: "text/html", body: "<title>Profile destination</title>" }));
   await page.goto("./");
-  for (const profile of profiles) {
+  let popupCount = 0;
+  page.on("popup", () => popupCount++);
+  for (const [index, profile] of profiles.entries()) {
     const link = page.locator(".social").getByRole("link", { name: profile.label, exact: true });
     await expect(link).toHaveAttribute("href", profile.href);
     await expect(link).toHaveAttribute("rel", "noopener noreferrer");
@@ -67,8 +94,19 @@ test("profile icons open their configured pages in a new tab", async ({ page, co
       await page.locator(".social").getByRole("link", { name: "Resume", exact: true }).hover();
       await expect(page.getByRole("tooltip").filter({ hasText: "drive.google.com" })).toBeVisible();
     }
-    const [popup] = await Promise.all([page.waitForEvent("popup"), link.click()]);
+    if (isMobile) {
+      await link.tap();
+      await expect(page.getByRole("dialog", { name: `${profile.label} preview` })).toBeVisible();
+      expect(context.pages()).toHaveLength(1);
+      expect(popupCount).toBe(index);
+    }
+    const destination = isMobile ? page.getByRole("link", { name: `Open ${profile.label} ↗`, exact: true }) : link;
+    const [popup] = await Promise.all([page.waitForEvent("popup"), destination.click()]);
     await expect(popup).toHaveURL(profile.href);
+    expect(popupCount).toBe(index + 1);
+    expect(context.pages()).toHaveLength(2);
     await popup.close();
+    expect(context.pages()).toHaveLength(1);
+    if (isMobile) await page.getByRole("button", { name: "Close preview" }).click();
   }
 });

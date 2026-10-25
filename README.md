@@ -16,25 +16,31 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 - Three-paragraph About narrative with a liquid-glass engineering principles card
 - A compact skills sphere, interactive pipeline stages with typed descriptions, and six expandable skill groups linked to official documentation
 - Rounded project cards with category filters, clickable image/title links, a 3D finance phone and pie chart, and an animated SpaceX launch/landing preview
-- Platform-specific 3D hover previews for GitHub, LinkedIn, X, and the resume, positioned clear of navigation
+- Platform-specific 3D previews for GitHub, LinkedIn, X, and the resume, using mouse hover or touch dialogs with destination links
 - Animated navigation icons, an emerging profile portrait, and company scenes for NVIDIA, Microsoft, The Home Depot, and Uber
 - Seven selected certifications, controlled by `src/data/certification.ts`
 - A liquid-glass contact panel with an animated mail link and a copy-email confirmation that resets after ten seconds
 
 ## Stack
 
-- React 18 + TypeScript/TSX + Vite
+- React 19.3.1 + TypeScript 7.0.2/TSX + Vite 8.3.5
 - React Router 7
-- styled-components + MUI
-- react-particles / tsparticles, react-typed
+- styled-components 6.6 + MUI 9.5
+- @tsparticles/react + @tsparticles/slim 4.4, react-typed
+- Vitest 5.0.5 + Playwright 1.64.1
+
+Direct dependencies are pinned to stable releases checked on October 25, 2026. Node.js uses the latest 24.x LTS patch, with `@types/node` kept on the matching 24.x release line. The workflow uses Ubuntu 24.04 LTS and SHA-pinned Actions with Node 24 runtimes. Dependency versions and their complete resolved tree are recorded in `package.json` and `package-lock.json`.
 
 ## Getting started
 
-Use Node.js 24.15+ (24.x LTS) and npm 11.16.0 to match the deployment workflow. Dependency lifecycle scripts are disabled by `.npmrc`; the build works without them.
+Use Node.js 24.22.1 LTS (pinned in `.nvmrc`) and npm 12.2.1 to match the deployment workflow. Dependency lifecycle scripts are disabled by `.npmrc`; the build works without them.
 
 ```bash
 git clone https://github.com/mallireddy09/mallikarjun-website.git
 cd mallikarjun-website
+nvm install
+nvm use
+npm install --global npm@12.2.1 --ignore-scripts
 npm ci
 npm start
 ```
@@ -151,11 +157,13 @@ The development and preview servers bind to loopback by default. Do not expose t
 
 ## Deploy
 
-Pushes to `main` in `mallireddy09/mallikarjun-website` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow runs on pull requests and pushes to `main`. Its `verify` job installs with lifecycle scripts disabled, audits every dependency, checks TypeScript, runs tests, and builds with `PUBLIC_URL=/mallireddy09`. A separate `deploy` job runs only for `main`, downloads the verified build artifact, and publishes the generated files to the `gh-pages` branch of [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09).
+The current app version is `0.1.1`. Release tags use `v<version>` and match `package.json`. Production builds include `version.json` with the version and, in GitHub Actions, the source commit SHA.
+
+Pushes to `main` in `mallireddy09/mallikarjun-website` trigger [`.github/workflows/publish.yml`](.github/workflows/publish.yml). The workflow runs on pull requests and pushes to `main`. Its `verify` job installs with lifecycle scripts disabled, audits every dependency, checks TypeScript, runs tests, and builds with `PUBLIC_URL=/mallireddy09`. Both jobs use Ubuntu 24.04 LTS with immutable Action commit pins and Node 24 Action runtimes. A separate `deploy` job runs only for `main`, downloads the verified build artifact, and publishes the generated files to the `gh-pages` branch of [mallireddy09/mallireddy09](https://github.com/mallireddy09/mallireddy09).
 
 In the `mallireddy09/mallireddy09` repository's **Settings → Pages**, select **Deploy from a branch**, then **gh-pages** and **/ (root)**. The site URL is [mallireddy09.github.io/mallireddy09/](https://mallireddy09.github.io/mallireddy09/).
 
-The source repository's `PAGES_DEPLOY_KEY` Actions secret contains a deploy key with write access to the publishing repository. The workflow uses `peaceiris/actions-gh-pages`, pinned to its v4 commit, to publish across repositories. The code remains in `mallikarjun-website`; `mallireddy09` holds the published build so the site's URL keeps the requested path.
+The source repository's `PAGES_DEPLOY_KEY` Actions secret contains a deploy key with write access to the publishing repository. The workflow uses `peaceiris/actions-gh-pages`, pinned to its v4.1.0 commit, to publish across repositories. The code remains in `mallikarjun-website`; `mallireddy09` holds the published build so the site's URL keeps the requested path.
 
 `PUBLIC_URL` sets the asset paths and router basename. The workflow also creates `404.html` for older section URLs such as `/about`. Generated `build/` files are not committed to the source repository.
 

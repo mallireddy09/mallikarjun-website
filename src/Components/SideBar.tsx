@@ -7,14 +7,14 @@ function Sidebar({ navToggle, onClose }: { navToggle: boolean; onClose?: () => v
       id="site-sidebar"
       className={`${navToggle ? "nav-toggle" : ""}`}
       aria-hidden={!navToggle}
-      inert={navToggle ? undefined : ""}
+      inert={!navToggle}
     >
       <Navigation onClose={onClose} isOpen={navToggle} />
     </SidebarStyled>
   );
 }
 
-const SidebarStyled = styled.div<{ inert?: "" }>`
+const SidebarStyled = styled.div`
   width: min(var(--sidebar-width), 85vw);
   position: fixed;
   top: 0;

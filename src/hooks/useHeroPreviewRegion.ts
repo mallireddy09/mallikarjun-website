@@ -8,7 +8,7 @@ export interface HeroPreviewRegion {
 }
 
 /** Reserve the intro area for hover previews; leave navigation, icons and the diagram clear. */
-export default function useHeroPreviewRegion(active: boolean) {
+export default function useHeroPreviewRegion(active: boolean, trigger?: Element | null) {
   const [region, setRegion] = useState<HeroPreviewRegion | null>(null);
   useLayoutEffect(() => {
     if (!active) return;
@@ -28,7 +28,20 @@ export default function useHeroPreviewRegion(active: boolean) {
       const belowTop = Math.max(16, icons.bottom + 24, (impact?.bottom ?? icons.bottom) + 24);
       const top = aboveBottom - 16 >= 140 ? 16 : belowTop;
       const bottom = top === 16 ? aboveBottom : innerHeight - 16;
-      const next = right - left >= 180 && bottom - top >= 100 ? { left, top, width: right - left, height: bottom - top } : null;
+      let next: HeroPreviewRegion | null = right - left >= 180 && bottom - top >= 100 ? { left, top, width: right - left, height: bottom - top } : { left: 16, top: 16, width: innerWidth - 32, height: innerHeight - 32 };
+      if (trigger) {
+        const target = trigger.getBoundingClientRect();
+        if (target.bottom <= 16 || target.top >= innerHeight - 16 || target.right <= left || target.left >= innerWidth - 16) {
+          next = null;
+        } else if (next.left < target.right + 12 && next.left + next.width > target.left - 12 && next.top < target.bottom + 12 && next.top + next.height > target.top - 12) {
+          // An interactive preview must leave its stage reachable by the pointer.
+          const above = { left, top: 16, width: right - left, height: Math.min(innerHeight - 16, target.top - 12) - 16 };
+          const belowTop = Math.max(16, target.bottom + 12);
+          const below = { left, top: belowTop, width: right - left, height: innerHeight - 16 - belowTop };
+          next = above.height >= below.height ? above : below;
+          if (next.width < 180 || next.height < 100) next = null;
+        }
+      }
       setRegion(current => JSON.stringify(current) === JSON.stringify(next) ? current : next);
     };
     update();
@@ -42,6 +55,6 @@ export default function useHeroPreviewRegion(active: boolean) {
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [active]);
+  }, [active, trigger]);
   return active ? region : null;
 }

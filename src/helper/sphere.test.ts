@@ -23,6 +23,7 @@ let context: { [key: string]: Mock };
 class MockObserver implements IntersectionObserver {
   root = null;
   rootMargin = "0px";
+  scrollMargin = "0px";
   thresholds = [0];
   observe = vi.fn();
   unobserve = vi.fn();

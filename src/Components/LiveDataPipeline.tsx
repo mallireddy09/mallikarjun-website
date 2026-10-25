@@ -87,7 +87,7 @@ export default function LiveDataPipeline() {
     };
   }, []);
   const [hovered, setHovered] = useState<{ id: PipelineStageId; element: SVGGElement } | null>(null);
-  const previewRegion = useHeroPreviewRegion(hovered !== null);
+  const previewRegion = useHeroPreviewRegion(hovered !== null, hovered?.element);
   const closeTimer = useRef<number | undefined>(undefined);
   const hoverEnabled = useRef(true);
   const cancelHoverClose = () => window.clearTimeout(closeTimer.current);

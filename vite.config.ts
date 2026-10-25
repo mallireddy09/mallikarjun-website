@@ -1,13 +1,9 @@
 import react from "@vitejs/plugin-react";
 import { createHash } from "node:crypto";
 import { defineConfig } from "vitest/config";
+import packageMetadata from "./package.json";
 
 export default defineConfig({
-  // MUI 5's deep icon imports default to CommonJS. Use its shipped ESM
-  // components so Rolldown does not treat a module object as a React element.
-  resolve: {
-    alias: [{ find: /^@mui\/icons-material\/(.+)$/, replacement: "@mui/icons-material/esm/$1" }],
-  },
   plugins: [react(), {
     name: "production-content-security-policy",
     apply: "build",
@@ -34,6 +30,16 @@ export default defineConfig({
         },
         injectTo: "head-prepend",
       }];
+    },
+  }, {
+    name: "release-metadata",
+    apply: "build",
+    generateBundle() {
+      this.emitFile({
+        type: "asset",
+        fileName: "version.json",
+        source: JSON.stringify({ version: packageMetadata.version, commit: process.env.GITHUB_SHA ?? null }) + "\n",
+      });
     },
   }],
   base: process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL.replace(/\/$/, "")}/` : "/",

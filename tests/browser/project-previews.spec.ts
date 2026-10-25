@@ -149,7 +149,10 @@ test("rocket launches, returns and lands while its background stays fixed", asyn
   await expect(preview).toHaveAttribute("data-running", "false");
   const paused = await snapshot();
   await page.clock.fastForward(4000);
-  expect(await snapshot()).toEqual(paused);
+  const stillPaused = await snapshot();
+  expect(stillPaused).toMatchObject({ altitude: paused.altitude, speed: paused.speed });
+  // Browser transform matrices can round a stationary pose by subpixel amounts.
+  expect(stillPaused.offset).toBeCloseTo(paused.offset, 5);
   await preview.scrollIntoViewIfNeeded();
   await expect(preview).toHaveAttribute("data-running", "true");
   await page.clock.fastForward(3500);

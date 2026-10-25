@@ -14,7 +14,7 @@ function Cover({ platform }: { platform: "x" | "linkedin" }) {
   </svg>;
 }
 
-export default function ProfilePagePreview({ kind, handle, displayUrl }: { kind: ProfileKind; handle: string; displayUrl: string }) {
+export default function ProfilePagePreview({ kind, handle, displayUrl, touch = false }: { kind: ProfileKind; handle: string; displayUrl: string; touch?: boolean }) {
   const avatar = <img className="preview-portrait" src={portrait} alt="" width="84" height="84" />;
   return <Preview className={`native-preview native-${kind}`} data-platform={kind}>
     {kind === "resume" ? <>
@@ -34,7 +34,7 @@ export default function ProfilePagePreview({ kind, handle, displayUrl }: { kind:
     </> : <>
       <Cover platform="x"/><div className="x-body">{avatar}<span className="x-brand" aria-hidden="true">𝕏</span><h3>{PROFILE.name}</h3><div className="account-handle">{handle}</div><p>Building data systems <span className="x-mention">@NVIDIA</span> | Previously <span className="x-mention">@Microsoft</span> &amp; <span className="x-mention">@Uber</span></p><div className="x-meta">Science &amp; Technology · United States<br/>Joined August 2018</div></div>
     </>}
-    <footer>{displayUrl}<span aria-hidden="true"> ↗</span><small>Click the icon to open {kind === "resume" ? "my resume" : "my profile"}.</small></footer>
+    <footer>{displayUrl}<span aria-hidden="true"> ↗</span><small>{touch ? "Use the link below to open" : "Click the icon to open"} {kind === "resume" ? "my resume" : "my profile"}.</small></footer>
   </Preview>;
 }
 

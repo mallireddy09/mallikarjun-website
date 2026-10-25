@@ -3,7 +3,7 @@ import { useEffect, type RefObject } from "react";
 const TARGETS = ".about-narrative > p, .highlights-card, .grid-item, .gallery-item, .resume-content > *, .pipeline, .skill-groups > details, .contact-banner, .skills-heading-row";
 
 /** One observer for the page, including cards added by project filters. */
-export default function useContentReveal(ref: RefObject<HTMLDivElement>) {
+export default function useContentReveal(ref: RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const root = ref.current;
     if (!root || !window.IntersectionObserver || !Element.prototype.animate) return;
