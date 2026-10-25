@@ -1,21 +1,25 @@
-import { publicAsset } from "../helper/publicAsset";
-import type { ThemeProps } from "../types/portfolio";
 import type { SectionId } from "../data/sections";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import avatar from "../img/arjun_image.jpg";
 import { SECTIONS } from "../data/sections";
 import { scrollToSection } from "../helper/navigation";
+import NavigationIcon from "./NavigationIcon";
+import ProfilePortrait from "./ProfilePortrait";
 
-const NAV_POSITIONS: Record<SectionId, string> = {
-  home: "0% 0%", about: "50% 0%", experience: "100% 0%",
-  projects: "0% 50%", skills: "50% 50%", certifications: "100% 50%",
-  education: "0% 100%", blogs: "50% 100%", contact: "100% 100%",
-};
-
-function Navigation({ onClose }: ThemeProps & { onClose?: () => void }) {
+function Navigation({ onClose, isOpen = true }: { onClose?: () => void; isOpen?: boolean }) {
   const [activeSection, setActiveSection] = useState<SectionId>("home");
   const [clickedTab, setClickedTab] = useState<{ id: SectionId | null; count: number }>({ id: null, count: 0 });
+
+  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    if (!isOpen) clearTimeout(closeTimer.current);
+    return () => clearTimeout(closeTimer.current);
+  }, [isOpen, onClose]);
+  useEffect(() => {
+    if (!clickedTab.id) return;
+    const timer = setTimeout(() => setClickedTab(current => ({ ...current, id: null })), 950);
+    return () => clearTimeout(timer);
+  }, [clickedTab]);
 
   useEffect(() => {
     let frame = 0;
@@ -68,17 +72,23 @@ function Navigation({ onClose }: ThemeProps & { onClose?: () => void }) {
 
   const handleSectionClick = (id: SectionId) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    setClickedTab(current => ({ id, count: current.count + 1 }));
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setClickedTab(current => ({ id: reducedMotion ? null : id, count: current.count + 1 }));
     if (scrollToSection(id, { behavior: "instant" })) {
       setActiveSection(id);
     }
-    onClose?.();
+    clearTimeout(closeTimer.current);
+    if (onClose) {
+      // Let touch users see the icon react before dismissing the drawer.
+      if (reducedMotion) onClose();
+      else closeTimer.current = setTimeout(onClose, 780);
+    }
   };
 
   return (
     <NavigationStyled>
       <div className="avatar">
-        <a href="#home" onClick={handleSectionClick("home")} aria-label="Mallikarjun Reddy home"><img src={avatar} alt="Mallikarjun Reddy" /></a>
+        <ProfilePortrait onClick={handleSectionClick("home")} visible={isOpen} />
       </div>
       <ul className="nav-items">
         {SECTIONS.map((item) => {
@@ -90,8 +100,8 @@ function Navigation({ onClose }: ThemeProps & { onClose?: () => void }) {
                 aria-current={activeSection === item.id ? "location" : undefined}
                 onClick={handleSectionClick(item.id)}
               >
-                <span key={clickedTab.id === item.id ? clickedTab.count : 0} aria-hidden="true" className="nav-sheen" />
-                <span aria-hidden="true" className={`nav-icon${item.id === "blogs" ? " blogs-icon" : ""}`} style={item.id === "blogs" ? undefined : { backgroundPosition: NAV_POSITIONS[item.id] }} />
+                <span key={`sheen-${clickedTab.id === item.id ? clickedTab.count : 0}`} aria-hidden="true" className="nav-sheen" />
+                <NavigationIcon key={`icon-${clickedTab.id === item.id ? clickedTab.count : 0}`} id={item.id} reacting={clickedTab.id === item.id} />
                 <span className="nav-label">{item.label}</span>
               </a>
             </li>
@@ -120,39 +130,6 @@ const NavigationStyled = styled.nav`
     border-bottom: 1px solid var(--border-color);
     text-align: center;
     padding: 1.8rem 0;
-    img {
-      width: clamp(96px, 22vw, 130px);
-      height: clamp(96px, 22vw, 130px);
-      border-radius: 50%;
-      border: 3px solid var(--primary-color);
-      box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.2);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      object-fit: cover;
-      &:hover {
-        transform: scale(1.08);
-        box-shadow: 0 0 30px rgba(var(--primary-color-rgb), 0.35);
-      }
-    }
-  }
-
-  .nav-icon {
-    background-image: url("${publicAsset("/images/3d/navigation-v3-3d.webp")}");
-    background-size: 300% 300%;
-    display: inline-block;
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    margin-right: 10px;
-    vertical-align: middle;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-  }
-
-  .nav-icon.blogs-icon {
-    background-image: url("${publicAsset("/images/3d/blogs-standalone-3d.webp")}");
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
   }
 
   .nav-items {

@@ -1,0 +1,7 @@
+Tool: built-in image_gen (transparent_background: true)
+Identity reference: src/img/arjun_image.jpg
+Style reference: public/images/3d/linkedin-brand-3d.webp
+Final asset: public/images/3d/profile-mallikarjun-3d.png (384 x 384 PNG with alpha)
+
+Prompt:
+Use case: style-transfer, identity-preserve. Asset: small square profile avatar for a professional engineer portfolio sidebar. Image 1 is the edit target and identity reference; image 2 is only the supporting style reference for polished dimensional materials, softly rounded forms, studio light and crisp edges. Transform the person in image 1 into a premium stylized 3D rendered head-and-shoulders portrait. Preserve his recognizable facial identity, face shape, medium-brown skin, dark eyes, side-swept short black hair, eyebrows, mustache and trimmed beard, straight-on gaze and composed friendly expression. Retain the navy and olive plaid collared shirt. Tasteful realism with subtly simplified sculpted 3D forms, NOT exaggerated caricature or toy proportions. Render actual depth, sculpted hair and beard, soft warm key light, restrained cool blue rim lighting matching the site's blue 3D assets. Center the complete head and shoulders with comfortable clear margin for a circular crop, symmetrical front-facing pose, face large and readable at 130px. True transparent background, no rectangular backdrop, no circle badge, no frame, no lettering, no logos, no watermark. One person only.

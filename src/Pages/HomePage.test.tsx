@@ -11,8 +11,10 @@ beforeEach(() => {
   reduced = false;
   removeListener.mockClear();
   vi.useFakeTimers();
-  vi.stubGlobal("matchMedia", () => ({
-    get matches() { return reduced; },
+  vi.stubGlobal("matchMedia", (query: string) => ({
+    get matches() { return query.includes("prefers-reduced-motion") && reduced; },
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
     addEventListener: (_event: string, listener: () => void) => { preferenceChanged = listener; },
     removeEventListener: removeListener,
   }));
@@ -21,7 +23,7 @@ afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 test("reduced motion renders a complete role without a blinking cursor", () => {
   reduced = true;
-  const { container } = render(<HomePage theme="dark-theme" />);
+  const { container } = render(<HomePage />);
   expect(container.querySelector(".typing")).toHaveTextContent(HERO_ROLES[0]);
   expect(container.querySelector(".typed-cursor")).toBeNull();
   act(() => { vi.advanceTimersByTime(10000); });
@@ -29,7 +31,7 @@ test("reduced motion renders a complete role without a blinking cursor", () => {
 });
 
 test("typing stops and restarts when the motion preference changes", () => {
-  const { container, unmount } = render(<HomePage theme="dark-theme" />);
+  const { container, unmount } = render(<HomePage />);
   act(() => { vi.advanceTimersByTime(400); });
   expect(container.querySelector(".typed-cursor")).not.toBeNull();
   reduced = true;

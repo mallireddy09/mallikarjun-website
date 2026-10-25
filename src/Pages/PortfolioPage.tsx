@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import useContentReveal from "../hooks/useContentReveal";
 import type { ComponentType } from "react";
-import type { ThemeProps } from "../types/portfolio";
 import type { SectionId } from "../data/sections";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -17,7 +16,7 @@ import ContactPage from "./ContactPage";
 import { SECTIONS, resolveSectionId } from "../data/sections";
 import { scrollToSection } from "../helper/navigation";
 
-const SECTION_COMPONENTS: Record<SectionId, ComponentType<ThemeProps>> = {
+const SECTION_COMPONENTS: Record<SectionId, ComponentType> = {
   home: HomePage,
   about: AboutPage,
   skills: SkillsPage,
@@ -34,7 +33,7 @@ function pathToSectionId(pathname: string) {
   return pathname.replace(/^\//, "").split("/")[0] || "home";
 }
 
-function PortfolioPage({ theme }: ThemeProps) {
+function PortfolioPage() {
   const contentRef = useRef<HTMLDivElement>(null);
   useContentReveal(contentRef);
   const location = useLocation();
@@ -73,7 +72,7 @@ function PortfolioPage({ theme }: ThemeProps) {
         const Component = SECTION_COMPONENTS[id];
         return (
           <section key={id} id={id} className="portfolio-section">
-            <Component theme={theme} />
+            <Component />
           </section>
         );
       })}

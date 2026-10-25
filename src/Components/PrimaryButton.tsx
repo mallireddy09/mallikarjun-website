@@ -4,8 +4,9 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { PROFILE } from "../data/profile";
 import { scrollToSection } from "../helper/navigation";
 import ExternalLink from "./ExternalLink";
+import ProfileLinkPreview, { type ProfilePreviewDetails } from "./ProfileLinkPreview";
 
-function PrimaryButton({ title, href, showDownloadIcon = false, iconSrc, iconOnly = false }: { title: string; href?: string; showDownloadIcon?: boolean; iconSrc?: string; iconOnly?: boolean }) {
+function PrimaryButton({ title, href, showDownloadIcon = false, iconSrc, iconOnly = false, preview }: { title: string; href?: string; showDownloadIcon?: boolean; iconSrc?: string; iconOnly?: boolean; preview?: ProfilePreviewDetails }) {
   const content = (
     <>
       {showDownloadIcon && (iconSrc ? <img src={iconSrc} alt="" width="44" height="44" /> : <FileDownloadOutlinedIcon />)}
@@ -22,16 +23,20 @@ function PrimaryButton({ title, href, showDownloadIcon = false, iconSrc, iconOnl
     scrollToSection(href.slice(1));
   };
 
+  const link = (
+    <Link
+      href={href || PROFILE.resume}
+      onClick={handleHashClick}
+      aria-label={iconOnly ? title : undefined}
+      title={iconOnly && !preview ? title : undefined}
+    >
+      {content}
+    </Link>
+  );
+
   return (
     <PrimaryButtonStyled className={iconOnly ? "icon-only" : undefined}>
-      <Link
-        href={href || PROFILE.resume}
-        onClick={handleHashClick}
-        aria-label={iconOnly ? title : undefined}
-        title={iconOnly ? title : undefined}
-      >
-        {content}
-      </Link>
+      {preview && !isHashLink ? <ProfileLinkPreview label={title} href={href || PROFILE.resume} {...preview}>{link}</ProfileLinkPreview> : link}
     </PrimaryButtonStyled>
   );
 }

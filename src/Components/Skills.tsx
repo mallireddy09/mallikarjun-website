@@ -1,22 +1,21 @@
-import { publicAsset } from "../helper/publicAsset";
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import type { ThemeProps } from "../types/portfolio";
 import Title from "./Title";
 import SkillSphere from "./SkillSphere";
 import StageTypedText from "./StageTypedText";
+import PipelineArtwork from "./PipelineArtwork";
 import skillsSections from "../data/skills";
 import ExternalLink from "./ExternalLink";
 import { liquidGlassSurface, liquidGlassSelected } from "../styles/shared";
 
 const STAGES = [
-  { name: "Ingest", image: publicAsset("/images/3d/pipeline-ingest-3d.webp"), title: "Start with the right signal.", text: "Bring application events, database changes, and messages into a dependable ingestion layer.", tools: "Kafka · Pub/Sub · Python" },
-  { name: "Process", image: publicAsset("/images/3d/pipeline-process-3d.webp"), title: "Turn data into something useful.", text: "Transform raw events into trusted datasets with scalable processing and dependable orchestration.", tools: "Spark · Flink · Airflow · dbt" },
-  { name: "Store", image: publicAsset("/images/3d/pipeline-store-3d.webp"), title: "Give every dataset a home.", text: "Design warehouses, lakehouses, and search systems around how people need to use their data.", tools: "Snowflake · Databricks · OpenSearch" },
-  { name: "Observe", image: publicAsset("/images/3d/pipeline-observe-3d.webp"), title: "Know how your platform performs.", text: "Make reliability visible with monitoring, data quality checks, and dashboards that help teams act.", tools: "Grafana · Kibana · Azure Monitor" },
+  { name: "Ingest", artwork: "ingest" as const, title: "Start with the right signal.", text: "Bring application events, database changes, and messages into a dependable ingestion layer.", tools: "Kafka · Pub/Sub · Python" },
+  { name: "Process", artwork: "process" as const, title: "Turn data into something useful.", text: "Transform raw events into trusted datasets with scalable processing and dependable orchestration.", tools: "Spark · Flink · Airflow · dbt" },
+  { name: "Store", artwork: "database" as const, title: "Give every dataset a home.", text: "Design warehouses, lakehouses, and search systems around how people need to use their data.", tools: "Snowflake · Databricks · OpenSearch" },
+  { name: "Observe", artwork: "observe" as const, title: "Know how your platform performs.", text: "Make reliability visible with monitoring, data quality checks, and dashboards that help teams act.", tools: "Grafana · Kibana · Azure Monitor" },
 ];
 
-function Skills(_props: ThemeProps) {
+function Skills() {
   const [active, setActive] = useState(0);
   const [glassTrigger, setGlassTrigger] = useState({ index: -1, count: 0 });
   const [arrowTrigger, setArrowTrigger] = useState({ index: -1, count: 0 });
@@ -38,7 +37,7 @@ function Skills(_props: ThemeProps) {
         {STAGES.map((item, index) => <button key={item.name} className={glassTrigger.index === index ? "stage-clicked" : undefined} ref={el => { tabs.current[index] = el; }} role="tab" id={`stage-${index}`} aria-selected={active === index} aria-controls="stage-panel" tabIndex={active === index ? 0 : -1} onClick={() => selectStage(index)} onKeyDown={event => {
           const next = event.key === "ArrowRight" ? (index + 1) % 4 : event.key === "ArrowLeft" ? (index + 3) % 4 : event.key === "Home" ? 0 : event.key === "End" ? 3 : undefined;
           if (next !== undefined) { event.preventDefault(); selectStage(next); tabs.current[next]?.focus(); }
-        }}><span key={glassTrigger.index === index ? glassTrigger.count : 0} className="stage-sheen" aria-hidden="true" /><img className="stage-image" src={item.image} alt="" width="64" height="64" /><span className="stage-name">{item.name}</span><span key={`${index}-${arrowTrigger.index === index ? arrowTrigger.count : 0}`} className={`stage-arrow${arrowTrigger.index === index ? " is-moving" : ""}`} aria-hidden="true">{index === 3 ? "↗" : "→"}</span></button>)}
+        }}><span key={glassTrigger.index === index ? glassTrigger.count : 0} className="stage-sheen" aria-hidden="true" /><svg className="stage-image" viewBox="0 0 100 100" width="64" height="64" aria-hidden="true"><PipelineArtwork kind={item.artwork} /></svg><span className="stage-name">{item.name}</span><span key={`${index}-${arrowTrigger.index === index ? arrowTrigger.count : 0}`} className={`stage-arrow${arrowTrigger.index === index ? " is-moving" : ""}`} aria-hidden="true">{index === 3 ? "↗" : "→"}</span></button>)}
       </div>
       <div className="pipeline-flow" aria-hidden="true">
         <div className="flow-track"><span className="flow-packet" /></div>
@@ -144,6 +143,10 @@ const SkillsStyled = styled.div`
 
   @media(prefers-reduced-motion: reduce) { details > summary { transition: none; } }
 
+  @media(max-width: 800px) {
+    .stage-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
   @media(max-width: 650px) {
     .stage-tabs { grid-template-columns: 1fr 1fr; gap: 8px; }
     .stage-tabs button { padding: 16px 14px; font-size: 20px; }
@@ -156,6 +159,13 @@ const SkillsStyled = styled.div`
     summary { padding: 22px 20px; font-size: 17px; }
     .categories { grid-template-columns: 1fr; gap: 14px; }
     .skill-category { padding: 22px 20px; }
+  }
+
+  @media(max-width: 400px) {
+    .stage-tabs button { grid-template-columns: minmax(0, 1fr); }
+    .stage-image { grid-area: 1 / 1; }
+    .stage-arrow { grid-area: 1 / 1; justify-self: end; }
+    .stage-name { grid-area: 2 / 1; }
   }
 `;
 export default Skills;

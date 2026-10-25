@@ -7,7 +7,7 @@ function Title({ title, span, animated = false }: { title: string; span: string;
       <h2>
         {title}{" "}
         <b>
-          <span>{span}</span>
+          <span aria-hidden="true">{span}</span>
         </b>
       </h2>
     </TitleStyled>

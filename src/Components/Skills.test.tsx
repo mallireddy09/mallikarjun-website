@@ -8,7 +8,7 @@ vi.mock("../helper/sphere", () => ({ initSkillSphere: vi.fn(() => () => {}) }));
 vi.mock("./AnimatedSection", () => ({ default: ({ children }: PropsWithChildren) => children }));
 
 test("pipeline tabs change content and support keyboard navigation", () => {
-  render(<Skills theme="dark-theme" />);
+  render(<Skills />);
   expect(screen.getByRole("tabpanel")).toHaveTextContent("Start with the right signal.");
   fireEvent.click(screen.getByRole("tab", { name: "Process" }));
   expect(screen.getByRole("tabpanel")).toHaveTextContent("Turn data into something useful.");

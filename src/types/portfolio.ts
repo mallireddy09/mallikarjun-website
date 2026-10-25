@@ -28,6 +28,7 @@ export interface GalleryItem {
 }
 
 export interface Project {
+  preview?: "finance" | "rocket";
   id: number;
   category: string;
   image: string;

@@ -1,6 +1,6 @@
 import { vi, type Mock } from "vitest";
 import { act } from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 
@@ -32,6 +32,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   window.matchMedia = originalMatchMedia;
   window.history.replaceState(null, "", "/");
 });
@@ -65,7 +66,7 @@ test("sidebar starts closed and cycles keyboard focus while open", () => {
   expect(document.body).not.toHaveClass("nav-open");
 });
 
-test("overlay and section links close the sidebar and restore menu focus", () => {
+test("overlay and section links close the sidebar and restore menu focus", async () => {
   const { container } = render(
     <MemoryRouter><App /><div id="about" /></MemoryRouter>
   );
@@ -83,7 +84,8 @@ test("overlay and section links close the sidebar and restore menu focus", () =>
   expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "instant", block: "start" });
   expect(window.location.hash).toBe("#about");
   expect(container.querySelector('#site-sidebar a[href="#about"]')!).toHaveAttribute("aria-current", "location");
-  expect(menuButton).toHaveAttribute("aria-expanded", "false");
+  expect(menuButton).toHaveAttribute("aria-expanded", "true");
+  await waitFor(() => expect(menuButton).toHaveAttribute("aria-expanded", "false"));
   expect(menuButton).toHaveFocus();
 });
 
@@ -130,4 +132,19 @@ test("crossing the desktop breakpoint resets the menu to the device default", ()
   expect(screen.queryByRole("button", { name: "Close navigation" })).not.toBeInTheDocument();
   unmount();
   expect(media.removeEventListener).toHaveBeenCalledWith("change", onMediaChange);
+});
+
+ test("closing a reacting drawer cancels its pending dismissal before reopening", () => {
+  vi.useFakeTimers();
+  const { container, unmount } = render(<MemoryRouter><App /><div id="about" /></MemoryRouter>);
+  container.querySelector<HTMLElement>("#about")!.scrollIntoView = vi.fn();
+  const menu = screen.getByRole("button", { name: "Open menu" });
+  fireEvent.click(menu);
+  fireEvent.click(container.querySelector('#site-sidebar a[href="#about"]')!);
+  expect(menu).toHaveAttribute("aria-expanded", "true");
+  fireEvent.click(menu);
+  fireEvent.click(menu);
+  act(() => vi.advanceTimersByTime(1000));
+  expect(menu).toHaveAttribute("aria-expanded", "true");
+  unmount();
 });

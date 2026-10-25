@@ -15,9 +15,11 @@ Personal portfolio for Mallikarjun Reddy — Data Engineer & AI/ML Engineer. The
 - A split hero with a live top-to-bottom data pipeline, 3D icons, matching circular Resume/social buttons, and an engineering impact bar
 - Three-paragraph About narrative with a liquid-glass engineering principles card
 - A compact skills sphere, interactive pipeline stages with typed descriptions, and six expandable skill groups linked to official documentation
-- Rounded project cards with category filters and clickable image/title links
-- GitHub, LinkedIn, X, and resume links
-- A liquid-glass contact panel with a mail link and an icon-only copy-email button
+- Rounded project cards with category filters, clickable image/title links, a 3D finance phone and pie chart, and an animated SpaceX launch/landing preview
+- Platform-specific 3D hover previews for GitHub, LinkedIn, X, and the resume, positioned clear of navigation
+- Animated navigation icons, an emerging profile portrait, and company scenes for NVIDIA, Microsoft, The Home Depot, and Uber
+- Seven selected certifications, controlled by `src/data/certification.ts`
+- A liquid-glass contact panel with an animated mail link and a copy-email confirmation that resets after ten seconds
 
 ## Stack
 
@@ -87,11 +89,38 @@ Old `/certification` and `#certification` links resolve to `#certifications`. Le
 | `src/data/education.ts`, `src/data/skills.ts` | Education and skills |
 | `src/data/projects.ts`, `src/data/blogs.ts`, `src/data/certification.ts` | Projects, articles, and certifications |
 | `src/data/sections.ts` | Section order and navigation labels |
+| `src/data/projectDemo.ts` | Fixed finance snapshots, tab timing, bill calculations, pie percentages, and synchronized rocket telemetry |
+| `src/data/pipeline.ts` | Pipeline definitions and examples |
 | `src/Pages/` | Section components |
 | `src/Components/`, `src/styles/` | Shared components, layouts, and styling |
 | `public/brand-mr-squared.svg`, `public/*mr2*` | Shared MR² artwork, favicons, and app icons |
 
 React components and tests use `.tsx`; data, helpers, hooks, and styles use `.ts`. `tsconfig.json` enables strict checking, and `src/types/portfolio.ts` holds shared content and theme types.
+
+### Interactive previews
+
+The finance and rocket previews use simulated demo data; they do not connect to financial accounts or flight services.
+
+- The finance phone cycles through Friends, Groups, and Activity every 4.2 seconds. Amounts stay fixed within each tab. On tab changes, the phone rows, total, monthly snapshot, and pie update together.
+- The phone’s “Total balance” and the monthly snapshot’s main amount show the sum of the visible bills. Income and saved amount are separate; saved equals income minus bills. For Activity, `$880 + $230 + $415 = $1,525`.
+- The 3D pie keeps a fixed orientation. Its slices and labels match the visible rows, and rounded percentages total 100%. The finance SVG recalculates only when the tab changes.
+- Rocket position, altitude, vertical speed, exhaust, and smoke share one timeline. Altitude and speed reach zero at touchdown.
+- Project playback pauses off screen and in hidden browser tabs. Reduced motion shows static previews; the hero scroll cue also stops animating.
+- Pipeline hover previews leave navigation clear. Clicking or tapping a stage opens a modal that locks background scrolling while allowing its own content to scroll.
+
+Artwork details and prompts are in [live project previews](docs/artwork/live-project-previews.md), [company scenes](docs/artwork/company-scenes.md), and the [profile prompt](docs/artwork/profile-3d.prompt.txt).
+
+### Verification
+
+```bash
+npm run typecheck
+npm test
+PUBLIC_URL=/mallireddy09 npm run build
+npm run test:browser
+npm run audit
+```
+
+Unit tests cover calculations and avoiding unnecessary finance renders. Playwright checks desktop and phone layouts, both themes, reduced-motion changes, profile links, modal scrolling, project tab totals and pie proportions, synchronized rocket motion, asset loading, and production CSP. Hover-only cases are skipped on touch devices. Browser checks use Chromium; they do not establish Safari or Firefox compatibility. There is no separate lint script; TypeScript checks unused declarations and parameters.
 
 ### Build and TypeScript configuration
 
@@ -110,7 +139,7 @@ The development and preview servers bind to loopback by default. Do not expose t
 - Reuse `src/styles/shared.ts` for glass surfaces and gradient text, and `src/styles/media.ts` for the desktop/drawer breakpoint.
 - Reuse `PrimaryButton` for outline CTAs; use `showDownloadIcon` for the resume action.
 - Use `publicAsset()` from `src/helper/publicAsset.ts` for public image URLs, including SVG images and CSS backgrounds, so they work under the deployment base path.
-- The 3D artwork in `public/images/3d/` uses compressed WebP files sized for their display. Keep small icons at roughly 2–3 times their CSS dimensions; reserve larger assets for project illustrations. Timeline company logos load lazily.
+- The 3D artwork in `public/images/3d/` uses compressed WebP/JPEG images and transparent PNG cutouts where needed. Keep small icons at roughly 2–3 times their CSS dimensions; reserve larger assets for project illustrations. Timeline company logos load lazily.
 - Scroll reveals respect reduced motion and reveal focused content immediately. Pipeline typing remains separate from these entrance effects.
 - Each skill appears once in `src/data/skills.ts`; AWS IAM and GCP IAM retain their distinct documentation links. Linux belongs in DevOps, transformation tools in orchestration, and monitoring tools in observability.
 

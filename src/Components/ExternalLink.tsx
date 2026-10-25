@@ -1,11 +1,11 @@
 import React from "react";
 
-function ExternalLink({ children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+const ExternalLink = React.forwardRef<HTMLAnchorElement, React.AnchorHTMLAttributes<HTMLAnchorElement>>(function ExternalLink({ children, ...props }, ref) {
   return (
-    <a {...props} target="_blank" rel="noopener noreferrer">
+    <a {...props} ref={ref} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );
-}
+});
 
 export default ExternalLink;

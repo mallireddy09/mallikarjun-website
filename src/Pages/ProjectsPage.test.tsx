@@ -4,12 +4,14 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import ProjectsPage from './ProjectsPage';
 import projects from '../data/projects';
 
+vi.mock('../hooks/useProjectPlayback', () => ({ default: () => ({ ref: { current: null }, running: false, time: 0 }) }));
+
 vi.mock('../Components/AnimatedSection', () => ({ default: ({ children }: PropsWithChildren) => children }));
 
 test('category buttons show matching projects and All restores the list', () => {
     render(<ProjectsPage />);
     const trackMoney = () => screen.queryByRole('heading', { name: 'Track My Money' });
-    const spaceX = () => screen.queryByRole('heading', { name: 'Space X Falcon 9 First Stage Landing Prediction' });
+    const spaceX = () => screen.queryByRole('heading', { name: 'SpaceX Falcon 9 First Stage Landing Prediction' });
     expect(trackMoney()).toBeInTheDocument();
     expect(spaceX()).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'All' })).toHaveAttribute('aria-pressed', 'true');
@@ -34,7 +36,9 @@ test('each project image and title share one link to the correct destination', (
         expect(link).toHaveAttribute('href', project.store || project.github || project.demo);
         expect(link).toHaveAttribute('target', '_blank');
         expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-        expect(link.querySelector('img')).toHaveAttribute('src', project.image);
+        expect(link.querySelector('.project-preview')).toHaveAttribute('data-preview', project.preview);
+        if (project.preview === 'rocket') expect(link.querySelector('.flight-backdrop')).toHaveAttribute('src', project.image);
+        else expect(link.querySelector('.finance-scene')).toBeInTheDocument();
         expect(link.querySelector('h3')).toHaveTextContent(project.title);
         expect(Array.from(link.children).map(child => child.tagName)).toEqual(['DIV', 'H3']);
     }

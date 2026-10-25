@@ -1,18 +1,66 @@
 import { expect, test } from "@playwright/test";
 
+test("sphere artwork preserves the React center and uses canvas-compatible shapes and colors", async ({ page }) => {
+  await page.goto("./");
+  const artwork = await page.evaluate(() => {
+    const context = document.createElement("canvas").getContext("2d")!;
+    const svgs = [...document.querySelectorAll("#svg-container > svg")];
+    const unsupported = svgs.flatMap(svg => {
+      const group = svg.firstElementChild?.tagName === "g" ? svg.firstElementChild : svg;
+      return [...group.children].filter(shape => {
+        const fill = shape.getAttribute("fill") ?? group.getAttribute("fill") ?? "#FFF";
+        return shape.tagName !== "path" || !shape.getAttribute("d") || !CSS.supports("color", fill);
+      }).map(shape => shape.outerHTML);
+    });
+    const reactPaths = document.querySelectorAll('#svg-container g[fill="#61DAFB"] path');
+    return {
+      count: svgs.length,
+      unsupported,
+      reactCenter: [...reactPaths].some(path => context.isPointInPath(new Path2D(path.getAttribute("d")!), 64, 47.5)),
+    };
+  });
+  expect(artwork.count).toBeGreaterThan(0);
+  expect(artwork.unsupported).toEqual([]);
+  expect(artwork.reactCenter).toBe(true);
+});
+
+test("deep links respect reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function (options) {
+      if (this.id === "contact" && typeof options === "object") {
+        this.setAttribute("data-scroll-behavior", options.behavior ?? "auto");
+      }
+      original.call(this, options);
+    };
+  });
+  await page.goto("./#contact");
+  await expect(page.locator("#contact")).toHaveAttribute("data-scroll-behavior", "instant");
+  await expect(page.locator("#contact")).toBeInViewport();
+});
+
 test("hero typing follows reduced-motion preference changes", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("./");
   const role = page.locator(".hero-intro .typing");
+  const cue = page.locator(".scroll-indicator");
+  const wheel = cue.locator(".wheel");
+  await expect(cue).toHaveCSS("animation-name", "none");
+  await expect(wheel).toHaveCSS("animation-name", "none");
   await expect(role).toHaveText("A Data Engineer");
   await expect(page.locator(".hero-intro .typed-cursor")).toHaveCount(0);
   await page.waitForTimeout(1600);
   await expect(role).toHaveText("A Data Engineer");
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(page.locator(".hero-intro .typed-cursor")).toHaveCount(1);
+  await expect(cue).toHaveCSS("animation-name", "bounce");
+  await expect(wheel).toHaveCSS("animation-name", "scroll-wheel");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(role).toHaveText("A Data Engineer");
   await expect(page.locator(".hero-intro .typed-cursor")).toHaveCount(0);
+  await expect(cue).toHaveCSS("animation-name", "none");
+  await expect(wheel).toHaveCSS("animation-name", "none");
 });
 
 test("HTML, SVG, and CSS images load under the deployment base", async ({ page }) => {
