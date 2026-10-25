@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /** Pause demo updates off screen, in background tabs, and for reduced motion. */
 export default function useProjectPlayback(ready = true, smooth = false) {
@@ -26,7 +26,7 @@ export default function useProjectPlayback(ready = true, smooth = false) {
       document.removeEventListener("visibilitychange", update);
     };
   }, []);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!running) return;
     let previous = performance.now();
     const tick = () => {
