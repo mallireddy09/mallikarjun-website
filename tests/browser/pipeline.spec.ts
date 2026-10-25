@@ -11,6 +11,32 @@ const stages = [
   { name: "AI / ML", example: "Estimated delivery: 2 days" },
 ];
 
+for (const theme of ["dark", "light"]) {
+  test(`short screens leave hovered pipeline stages clickable in ${theme} mode`, async ({ page, isMobile }) => {
+    test.skip(isMobile);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 390 }, { width: 844, height: 390 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto("./");
+      if (theme === "light") await page.getByRole("button", { name: "Toggle theme" }).click();
+      for (const stage of stages) {
+        const node = page.locator(".hero-art").getByRole("button", { name: stage.name, exact: true });
+        await node.hover();
+        const preview = page.locator('[aria-labelledby="pipeline-hover-title"]');
+        await expect(preview).toBeVisible();
+        expect(await node.evaluate(element => {
+          const box = element.getBoundingClientRect();
+          return document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)?.closest(".pipeline-node") === element;
+        })).toBe(true);
+        await node.click();
+        await expect(page.locator(".MuiDialog-root").getByRole("dialog", { name: stage.name, exact: true })).toBeVisible();
+        await page.getByRole("button", { name: "Close example" }).click();
+        await expect(page.getByRole("dialog")).toHaveCount(0);
+      }
+    }
+  });
+}
+
 test("phone-sized screens keep every example inside the viewport", async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   if (testInfo.project.name === "desktop") {
@@ -26,11 +52,13 @@ test("phone-sized screens keep every example inside the viewport", async ({ page
     await page.goto("./");
     const database = page.locator(".hero-art").getByRole("button", { name: "Databases", exact: true });
     await database.hover();
-    // A mouse used to emulate a phone must not open a desktop hover preview.
-    expect(await page.getByRole("dialog").count()).toBe(0);
+    if (testInfo.project.name === "desktop") {
+      await expect(page.getByRole("dialog", { name: "Databases", exact: true })).toBeVisible();
+      await page.keyboard.press("Escape");
+    } else expect(await page.getByRole("dialog").count()).toBe(0);
     for (const stage of stages) {
       const node = page.locator(".hero-art").getByRole("button", { name: stage.name, exact: true });
-      await node.click();
+      if (testInfo.project.name === "mobile") await node.tap(); else await node.click();
       const dialog = page.getByRole("dialog", { name: stage.name, exact: true });
       await expect(dialog).toBeVisible();
       const bounds = (await dialog.boundingBox())!;

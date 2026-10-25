@@ -10,7 +10,7 @@ function Navigation({ onClose, isOpen = true }: { onClose?: () => void; isOpen?:
   const [activeSection, setActiveSection] = useState<SectionId>("home");
   const [clickedTab, setClickedTab] = useState<{ id: SectionId | null; count: number }>({ id: null, count: 0 });
 
-  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
     if (!isOpen) clearTimeout(closeTimer.current);
     return () => clearTimeout(closeTimer.current);

@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import Particles from "react-particles";
-import { loadSlim } from "tsparticles-slim";
-import type { IParticlesProps } from "react-particles";
+import { useEffect, useMemo, useState } from "react";
+import Particles, { ParticlesProvider, type IParticlesProps } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
 import type { Theme, ThemeProps } from "../types/portfolio";
 
 function getParticleOptions(theme: Theme, prefersReduced: boolean): NonNullable<IParticlesProps["options"]> {
@@ -13,19 +12,20 @@ function getParticleOptions(theme: Theme, prefersReduced: boolean): NonNullable<
     fpsLimit: isMobile ? 30 : 45,
     interactivity: {
       detectsOn: "window",
-      events: { onClick: { enable: false }, onHover: { enable: !prefersReduced, mode: "repulse" }, resize: true },
+      events: { onClick: { enable: false }, onHover: { enable: !prefersReduced, mode: "repulse" } },
       modes: { repulse: { distance: 130, duration: .5, speed: 1, maxSpeed: 4, factor: 60 } },
     },
     particles: {
       color: { value: color },
       links: { color, distance: isMobile ? 110 : 155, enable: true, opacity: isLight ? .24 : .32, width: .8 },
       move: { direction: "none", enable: !prefersReduced, outModes: { default: "bounce" }, random: false, speed: .45, straight: false },
-      number: { density: { enable: true, area: 1200 }, value: prefersReduced ? 32 : isMobile ? 28 : 50 },
+      number: { density: { enable: true, width: 1200, height: 1000 }, value: prefersReduced ? 32 : isMobile ? 28 : 50 },
       opacity: { value: isLight ? .36 : .42 },
       shape: { type: "circle" },
       size: { value: { min: .8, max: 2 } },
     },
     detectRetina: true,
+    resize: { enable: true },
   };
 }
 
@@ -37,8 +37,7 @@ function Particle({ theme }: ThemeProps) {
     preference.addEventListener("change", update);
     return () => preference.removeEventListener("change", update);
   }, []);
-  const particlesInit = useCallback<NonNullable<IParticlesProps["init"]>>(async engine => { await loadSlim(engine); }, []);
   const options = useMemo(() => getParticleOptions(theme, prefersReduced), [theme, prefersReduced]);
-  return <Particles width="100%" height="100%" id="tsparticles" init={particlesInit} options={options} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />;
+  return <ParticlesProvider init={loadSlim}><Particles id="tsparticles" options={options} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} /></ParticlesProvider>;
 }
 export default Particle;
